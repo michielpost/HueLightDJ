@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Web", "HueLightDJ.Web\HueLightDJ.Web.csproj", "{29C86DC9-6C75-4468-9A22-A2C8E7DA419B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Effects", "HueLightDJ.Effects\HueLightDJ.Effects.csproj", "{7F07C78A-1FCF-4451-9312-2A70DD0328E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29C86DC9-6C75-4468-9A22-A2C8E7DA419B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29C86DC9-6C75-4468-9A22-A2C8E7DA419B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29C86DC9-6C75-4468-9A22-A2C8E7DA419B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29C86DC9-6C75-4468-9A22-A2C8E7DA419B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F7061EF6-6F93-4EA7-959A-4F7F263C65A3}
+	EndGlobalSection
+EndGlobal

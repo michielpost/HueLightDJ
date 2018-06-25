@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Q42.HueApi" Version="3.6.4" />
+    <PackageReference Include="Q42.HueApi.Entertainment" Version="1.1.0" />
+  </ItemGroup>
+
+</Project>

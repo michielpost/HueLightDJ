@@ -1,0 +1,41 @@
+@{
+  ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+  <div class="row">&nbsp;</div>
+  <div class="row">
+    <div class="col-6">&nbsp;</div>
+    <div class="col-6">
+      <input type="button" id="connectButton" value="Connect" />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <hr />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6">&nbsp;</div>
+    <div class="col-6">
+      <ul id="messagesList"></ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-6">&nbsp;</div>
+    <div class="col-6">
+      BPM: <button id="bpmMinMinButton">--</button> <button id="bpmMinButton">-</button> <p id="bpm"></p> <button id="bpmPlusButton">+</button> <button id="bpmPlusPlusButton">++</button>
+
+      <h3>test</h3>
+      <ul id="example-1">
+        <li v-for="item in items">
+          {{ item.name }}  <button v-on:click="start(item)">Start</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="~/lib/signalr/signalr.js"></script>
+<script src="~/js/effectList.js"></script>
+<script src="~/js/status.js"></script>
