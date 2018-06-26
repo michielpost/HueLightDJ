@@ -1,5 +1,5 @@
 @{
-  ViewData["Title"] = "Home Page";
+  ViewData["Title"] = "Hue Light DJ";
 }
 
 <div class="container">
@@ -29,7 +29,12 @@
       <h3>test</h3>
       <ul id="example-1">
         <li v-for="item in items">
-          {{ item.name }}  <button v-on:click="start(item)">Start</button>
+          {{ item.name }}
+          <span v-show="item.hasColorPicker">
+            <input type="color" v-model="item.color" />
+            <input type="checkbox" v-model="item.isRandom" />
+          </span>
+          <button v-on:click="start(item)">Start</button>
         </li>
       </ul>
     </div>

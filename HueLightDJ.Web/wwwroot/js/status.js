@@ -17,8 +17,11 @@ connection.on("effects", (effectlist) => {
             items: effectlist
         },
         methods: {
-            start(effect) {
-                connection.invoke("StartEffect", effect.typeName).catch(err => console.error(err.toString()));
+          start(effect) {
+            if (effect.isRandom) {
+              effect.color = null;
+            }
+            connection.invoke("StartEffect", effect.typeName, effect.color).catch(err => console.error(err.toString()));
             }
         }
     })

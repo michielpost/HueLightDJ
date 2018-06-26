@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  [HueEffect(Name = "Random colors (all different)")]
+		  [HueEffect(Name = "Random colors (all different)", HasColorPicker = false)]
 		  public class RandomColorsEffect : IHueEffect
 		  {
 					public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)

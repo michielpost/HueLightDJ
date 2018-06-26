@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  [HueEffect(Name = "Random Pulse from center with retrace")]
+		  [HueEffect(Name = "Random Pulse from center with retrace", HasColorPicker = false)]
 		  public class RandomPulseRetraceEffect : IHueEffect
 		  {
 					public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)

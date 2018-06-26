@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  [HueEffect(Name = "Single random pulse from center", IsBaseEffect = false)]
+		  [HueEffect(Name = "Single random pulse from center", IsBaseEffect = false, HasColorPicker = false)]
 		  public class SinglePulseEffect : IHueEffect
 		  {
 					public async Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ namespace HueLightDJ.Effects
 							  await Task.Delay(waitTime.Value.Value);
 							  randomPulseEffect.Stop();
 
-							  //TODO: Delete after NuGet package update with new RandomPulseEffect
+							  //TODO: DOES NOT WORK YET Delete after NuGet package update with new RandomPulseEffect
 							  layer.SetBrightness(0, transitionTime: TimeSpan.FromMilliseconds(0));
 					}
 		  }

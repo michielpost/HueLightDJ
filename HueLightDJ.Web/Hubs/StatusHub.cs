@@ -67,9 +67,9 @@ namespace HueLightDJ.Web.Hubs
 
 					}
 
-					public async void StartEffect(string typeName)
+					public async void StartEffect(string typeName, string colorHex)
 					{
-							  EffectService.StartEffect(typeName);
+							  EffectService.StartEffect(typeName, colorHex);
 							  await Clients.All.SendAsync("StatusMsg", "Started effect");
 
 					}
