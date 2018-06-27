@@ -16,6 +16,8 @@ namespace HueLightDJ.Web.Streaming
     private static int BPM { get; set; } = 120;
     public static Ref<TimeSpan?> WaitTime { get; set; } = TimeSpan.FromMilliseconds(500);
 
+    private static string _groupId;
+
     public static async Task<StreamingGroup> SetupAndReturnGroup()
     {
       var configSection = Startup.Configuration.GetSection("HueSetup");
@@ -37,7 +39,10 @@ namespace HueLightDJ.Web.Streaming
       if (group == null)
         throw new Exception("No Entertainment Group found. Create one using the Q42.HueApi.UniversalWindows.Sample");
       else
+      {
         Console.WriteLine($"Using Entertainment Group {group.Id}");
+        _groupId = group.Id;
+      }
 
       //Create a streaming group
       var stream = new StreamingGroup(group.Locations);
@@ -63,7 +68,10 @@ namespace HueLightDJ.Web.Streaming
       return stream;
     }
 
-
+    public static void Disconnect()
+    {
+      StreamingHueClient.LocalHueClient.SetStreamingAsync(_groupId, active: false);
+    }
 
     public async static Task<bool> IsStreamingActive()
     {

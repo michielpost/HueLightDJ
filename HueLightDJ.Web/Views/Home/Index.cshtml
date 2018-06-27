@@ -8,6 +8,7 @@
     <div class="col-6">&nbsp;</div>
     <div class="col-6">
       <input type="button" id="connectButton" value="Connect" />
+      <input type="button" id="disconnectButton" value="Disconnect" />
     </div>
   </div>
   <div class="row">
@@ -23,16 +24,28 @@
   </div>
   <div class="row">
     <div class="col-6">&nbsp;</div>
-    <div class="col-6">
+    <div class="col-6" id="effects">
       BPM: <button id="bpmMinMinButton">--</button> <button id="bpmMinButton">-</button> <p id="bpm"></p> <button id="bpmPlusButton">+</button> <button id="bpmPlusPlusButton">++</button>
 
-      <h3>test</h3>
-      <ul id="example-1">
-        <li v-for="item in items">
+      <h3>Long Running</h3>
+      <ul id="baseEffects">
+        <li v-for="item in baseEffects">
           {{ item.name }}
           <span v-show="item.hasColorPicker">
-            <input type="color" v-model="item.color" />
             <input type="checkbox" v-model="item.isRandom" />
+            <input type="color" v-model="item.color" v-show="!item.isRandom" />
+          </span>
+          <button v-on:click="start(item)">Start</button>
+        </li>
+      </ul>
+
+      <h3>Short Effects</h3>
+      <ul id="shortEffects">
+        <li v-for="item in shortEffects">
+          {{ item.name }}
+          <span v-show="item.hasColorPicker">
+            color (random): <input type="checkbox" v-model="item.isRandom" />
+            <input type="color" v-model="item.color" v-show="!item.isRandom" />
           </span>
           <button v-on:click="start(item)">Start</button>
         </li>

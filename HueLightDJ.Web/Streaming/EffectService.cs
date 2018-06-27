@@ -28,11 +28,12 @@ namespace HueLightDJ.Web.Streaming
       return EffectTypes;
     }
 
-    public static List<EffectViewModel> GetEffectViewModels()
+    public static EffectsVM GetEffectViewModels()
     {
       var all = GetEffectTypes();
 
-      List<EffectViewModel> result = new List<EffectViewModel>();
+      List<EffectViewModel> baseEffects = new List<EffectViewModel>();
+      List<EffectViewModel> shortEffects = new List<EffectViewModel>();
       foreach (var type in all)
       {
         var hueEffectAtt = type.GetCustomAttribute<HueEffectAttribute>();
@@ -41,11 +42,18 @@ namespace HueLightDJ.Web.Streaming
         effect.Name = hueEffectAtt.Name;
         effect.TypeName = type.Name;
         effect.HasColorPicker = hueEffectAtt.HasColorPicker;
-        result.Add(effect);
+
+        if (hueEffectAtt.IsBaseEffect)
+          baseEffects.Add(effect);
+        else
+          shortEffects.Add(effect);
       }
 
-      return result;
+      var vm = new EffectsVM();
+      vm.BaseEffects = baseEffects;
+      vm.ShortEffects = shortEffects;
 
+      return vm;
     }
 
     public static void StartEffect(string typeName, string colorHex)

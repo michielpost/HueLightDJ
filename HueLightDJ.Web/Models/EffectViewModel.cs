@@ -5,6 +5,13 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Web.Models
 {
+  public class EffectsVM
+  {
+    public List<EffectViewModel> BaseEffects { get; set; }
+    public List<EffectViewModel> ShortEffects { get; set; }
+
+  }
+
   public class EffectViewModel
   {
     public string Name { get; set; }
@@ -16,7 +23,7 @@ namespace HueLightDJ.Web.Models
     //VueJS properties:
     public string Color { get; set; }
 
-    public bool IsRandom { get; set; }
+    public bool IsRandom { get; set; } = true;
 
   }
 }

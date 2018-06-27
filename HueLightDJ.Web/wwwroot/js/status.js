@@ -10,11 +10,12 @@ connection.on("Status", (status) => {
     document.getElementById("bpm").innerHTML = status.bpm;
 });
 
-connection.on("effects", (effectlist) => {
+connection.on("effects", (effectvm) => {
     var example1 = new Vue({
-        el: '#example-1',
+        el: '#effects',
         data: {
-            items: effectlist
+          baseEffects: effectvm.baseEffects,
+          shortEffects: effectvm.shortEffects
         },
         methods: {
           start(effect) {
@@ -34,6 +35,10 @@ connection.start()
 document.getElementById("connectButton").addEventListener("click", event => {
     connection.invoke("Connect").catch(err => console.error(err.toString()));
     event.preventDefault();
+});
+document.getElementById("disconnectButton").addEventListener("click", event => {
+  connection.invoke("Disconnect").catch(err => console.error(err.toString()));
+  event.preventDefault();
 });
 
 document.getElementById("bpmPlusButton").addEventListener("click", event => {

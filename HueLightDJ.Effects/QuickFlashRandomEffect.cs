@@ -12,15 +12,17 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  [HueEffect(Name = "Quick Random Flash")]
-		  public class QuickFlashRandomEffect : IHueEffect
-		  {
-					public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
-					{
-							  if (!color.HasValue)
-										color = new Q42.HueApi.ColorConverters.RGBColor("FFFFFF");
+  [HueEffect(Name = "Quick Random Flash")]
+  public class QuickFlashRandomEffect : IHueEffect
+  {
+    public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    {
+      if (!color.HasValue)
+        color = new Q42.HueApi.ColorConverters.RGBColor("FFFFFF");
 
-							  return layer.FlashQuick(color, IteratorEffectMode.Random, waitTime: waitTime, cancellationToken: cancellationToken);
-					}
-		  }
+      var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count;
+
+      return layer.FlashQuick(color, IteratorEffectMode.Random, waitTime: TimeSpan.FromMilliseconds(customWaitMS), cancellationToken: cancellationToken);
+    }
+  }
 }
