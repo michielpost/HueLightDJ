@@ -15,6 +15,7 @@ namespace HueLightDJ.Web.Streaming
   public static class EffectService
   {
     private static List<TypeInfo> EffectTypes { get; set; }
+    private static List<TypeInfo> GroupEffectTypes { get; set; }
     private static Dictionary<EntertainmentLayer, RunningEffectInfo> layerInfo = new Dictionary<EntertainmentLayer, RunningEffectInfo>();
 
     public static List<TypeInfo> GetEffectTypes()
@@ -28,12 +29,26 @@ namespace HueLightDJ.Web.Streaming
       return EffectTypes;
     }
 
+    public static List<TypeInfo> GetGroupEffectTypes()
+    {
+      if (GroupEffectTypes == null)
+      {
+        var all = LoadAllGroupEffects();
+        GroupEffectTypes = all;
+      }
+
+      return GroupEffectTypes;
+    }
+
     public static EffectsVM GetEffectViewModels()
     {
       var all = GetEffectTypes();
+      var groupEffectsTypes = GetGroupEffectTypes();
+      var groups = GroupService.GetAll();
 
       List<EffectViewModel> baseEffects = new List<EffectViewModel>();
       List<EffectViewModel> shortEffects = new List<EffectViewModel>();
+      List<EffectViewModel> groupEffects = new List<EffectViewModel>();
       foreach (var type in all)
       {
         var hueEffectAtt = type.GetCustomAttribute<HueEffectAttribute>();
@@ -49,22 +64,38 @@ namespace HueLightDJ.Web.Streaming
           shortEffects.Add(effect);
       }
 
+      foreach (var type in groupEffectsTypes)
+      {
+        var hueEffectAtt = type.GetCustomAttribute<HueEffectAttribute>();
+
+        var effect = new EffectViewModel();
+        effect.Name = hueEffectAtt.Name;
+        effect.TypeName = type.Name;
+        effect.HasColorPicker = hueEffectAtt.HasColorPicker;
+
+        groupEffects.Add(effect);
+      }
+
       var vm = new EffectsVM();
       vm.BaseEffects = baseEffects;
       vm.ShortEffects = shortEffects;
-
+      vm.GroupEffects = groupEffects;
+      vm.Groups = groups.Select(x => new GroupInfoViewModel() { Name = x.Name }).ToList();
       return vm;
     }
 
-    public static void StartEffect(string typeName, string colorHex)
+    public static void StartEffect(string typeName, string colorHex, string group = null)
     {
       var all = GetEffectTypes();
+      var allGroup = GetGroupEffectTypes();
 
       var effectType = all.Where(x => x.Name == typeName).FirstOrDefault();
+      var groupEffectType = allGroup.Where(x => x.Name == typeName).FirstOrDefault();
+      var selectedEffect = string.IsNullOrEmpty(group) ? effectType : groupEffectType;
 
-      if (effectType != null)
+      if (selectedEffect != null)
       {
-        var hueEffectAtt = effectType.GetCustomAttribute<HueEffectAttribute>();
+        var hueEffectAtt = selectedEffect.GetCustomAttribute<HueEffectAttribute>();
 
         var layer = GetLayer(hueEffectAtt.IsBaseEffect);
 
@@ -83,11 +114,19 @@ namespace HueLightDJ.Web.Streaming
         if (!string.IsNullOrEmpty(colorHex))
           color = new RGBColor(colorHex);
 
-        MethodInfo methodInfo = effectType.GetMethod("Start");
+        MethodInfo methodInfo = selectedEffect.GetMethod("Start");
 
         object result = null;
         object[] parametersArray = new object[] { layer, waitTime, color, cts.Token };
-        object classInstance = Activator.CreateInstance(effectType, null);
+
+        if(!string.IsNullOrEmpty(group))
+        {
+          //get group
+          var selectedGroup = GroupService.GetAll().Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
+          parametersArray = new object[] { selectedGroup, waitTime, color, cts.Token };
+        }
+
+        object classInstance = Activator.CreateInstance(selectedEffect, null);
         result = methodInfo.Invoke(classInstance, parametersArray);
       }
     }
@@ -104,12 +143,35 @@ namespace HueLightDJ.Web.Streaming
     {
       List<TypeInfo> result = new List<TypeInfo>();
 
-      //Get all effects that inherit from BaseEffect
+      //Get all effects that implement IHueEffect
       Assembly ass = typeof(IHueEffect).Assembly;
 
       foreach (TypeInfo ti in ass.DefinedTypes)
       {
         if (ti.ImplementedInterfaces.Contains(typeof(IHueEffect)))
+        {
+          var hueEffectAtt = ti.GetCustomAttribute<HueEffectAttribute>();
+
+          if (hueEffectAtt != null)
+          {
+            result.Add(ti);
+          }
+        }
+      }
+
+      return result;
+    }
+
+    private static List<TypeInfo> LoadAllGroupEffects()
+    {
+      List<TypeInfo> result = new List<TypeInfo>();
+
+      //Get all effects that implement IHueGroupEffect
+      Assembly ass = typeof(IHueGroupEffect).Assembly;
+
+      foreach (TypeInfo ti in ass.DefinedTypes)
+      {
+        if (ti.ImplementedInterfaces.Contains(typeof(IHueGroupEffect)))
         {
           var hueEffectAtt = ti.GetCustomAttribute<HueEffectAttribute>();
 

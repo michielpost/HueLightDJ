@@ -74,6 +74,13 @@ namespace HueLightDJ.Web.Hubs
 
     }
 
+    public async void StartGroupEffect(string groupName, string typeName, string colorHex)
+    {
+      EffectService.StartEffect(typeName, colorHex, groupName);
+      await Clients.All.SendAsync("StatusMsg", "Started group effect");
+
+    }
+
     public Task IncreaseBPM(int value)
     {
       StreamingSetup.IncreaseBPM(value);

@@ -9,12 +9,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HueLightDJ.Effects
+namespace HueLightDJ.Effects.Group
 {
 		  [HueEffect(Name = "Random colors (all different)", HasColorPicker = false)]
-		  public class RandomColorsEffect : IHueEffect
-		  {
-					public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+		  public class RandomColorsEffect : IHueGroupEffect
+  {
+					public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
 					{
 							  return layer.SetRandomColor(IteratorEffectMode.AllIndividual, waitTime, cancellationToken: cancellationToken);
 					}

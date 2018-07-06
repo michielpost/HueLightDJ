@@ -20,7 +20,7 @@ namespace HueLightDJ.Effects
 							  if (!color.HasValue)
 										color = new Q42.HueApi.ColorConverters.RGBColor("FFFFFF");
 
-							  return layer.FlashQuick(color, IteratorEffectMode.All, waitTime: waitTime, cancellationToken: cancellationToken);
+							  return layer.To2DGroup().FlashQuick(color, IteratorEffectMode.All, waitTime: waitTime, cancellationToken: cancellationToken);
 					}
 		  }
 }

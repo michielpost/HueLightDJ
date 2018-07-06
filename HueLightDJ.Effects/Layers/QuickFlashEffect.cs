@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Quick Random Flash")]
-  public class QuickFlashRandomEffect : IHueEffect
+  [HueEffect(Name = "Quick Flash")]
+  public class QuickFlashEffect : IHueEffect
   {
     public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
@@ -22,7 +22,7 @@ namespace HueLightDJ.Effects
 
       var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count;
 
-      return layer.FlashQuick(color, IteratorEffectMode.Random, waitTime: TimeSpan.FromMilliseconds(customWaitMS), cancellationToken: cancellationToken);
+      return layer.To2DGroup().FlashQuick(color, IteratorEffectMode.Cycle, waitTime: TimeSpan.FromMilliseconds(customWaitMS), cancellationToken: cancellationToken);
     }
   }
 }

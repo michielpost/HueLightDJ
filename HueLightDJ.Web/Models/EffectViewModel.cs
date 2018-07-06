@@ -9,6 +9,8 @@ namespace HueLightDJ.Web.Models
   {
     public List<EffectViewModel> BaseEffects { get; set; }
     public List<EffectViewModel> ShortEffects { get; set; }
+    public List<EffectViewModel> GroupEffects { get; set; }
+    public List<GroupInfoViewModel> Groups { get; set; }
 
   }
 
@@ -24,6 +26,12 @@ namespace HueLightDJ.Web.Models
     public string Color { get; set; }
 
     public bool IsRandom { get; set; } = true;
+
+  }
+
+  public class GroupInfoViewModel
+  {
+    public string Name { get; set; }
 
   }
 }

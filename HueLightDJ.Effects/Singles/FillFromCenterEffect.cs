@@ -33,7 +33,7 @@ namespace HueLightDJ.Effects
 							  var customWaitTime = TimeSpan.FromMilliseconds(customWaitTimeMs);
 
 
-							  await orderedByDistance.SetColor(color.Value, IteratorEffectMode.Single, customWaitTime, cancellationToken: cancellationToken);
+							  await orderedByDistance.To2DGroup().SetColor(color.Value, IteratorEffectMode.Single, customWaitTime, cancellationToken: cancellationToken);
 							  layer.SetBrightness(0, transitionTime: TimeSpan.FromMilliseconds(0));
 					}
 		  }

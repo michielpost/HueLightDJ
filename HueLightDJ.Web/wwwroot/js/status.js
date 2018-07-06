@@ -15,7 +15,10 @@ connection.on("effects", (effectvm) => {
         el: '#effects',
         data: {
           baseEffects: effectvm.baseEffects,
-          shortEffects: effectvm.shortEffects
+          shortEffects: effectvm.shortEffects,
+          groupEffects: effectvm.groupEffects,
+          groups: effectvm.groups,
+          groupPicked: ""
         },
         methods: {
           start(effect) {
@@ -23,7 +26,13 @@ connection.on("effects", (effectvm) => {
               effect.color = null;
             }
             connection.invoke("StartEffect", effect.typeName, effect.color).catch(err => console.error(err.toString()));
+          },
+          startGroup(groupPicked, effect) {
+            if (effect.isRandom) {
+              effect.color = null;
             }
+            connection.invoke("StartGroupEffect", groupPicked, effect.typeName, effect.color).catch(err => console.error(err.toString()));
+          }
         }
     })
 });

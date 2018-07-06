@@ -6,21 +6,22 @@ using Q42.HueApi.Streaming.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HueLightDJ.Effects
+namespace HueLightDJ.Effects.Group
 {
   [HueEffect(Name = "Quick Flash")]
-  public class QuickFlashEffect : IHueEffect
+  public class QuickFlashEffect : IHueGroupEffect
   {
-    public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
         color = new Q42.HueApi.ColorConverters.RGBColor("FFFFFF");
 
-      var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count;
+      var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count();
 
       return layer.FlashQuick(color, IteratorEffectMode.Cycle, waitTime: TimeSpan.FromMilliseconds(customWaitMS), cancellationToken: cancellationToken);
     }

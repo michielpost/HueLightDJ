@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Circle Light")]
-  public class CircleLightEffect : IHueEffect
+  [HueEffect(Name = "Trailing Light")]
+  public class TrailingLightEffect : IHueEffect
   {
     public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
@@ -24,11 +24,9 @@ namespace HueLightDJ.Effects
         color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
       }
 
-      var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(0, 0));
+      var allLightsOrdered = layer.OrderBy(x => x.LightLocation.X).ThenBy(x => x.LightLocation.Y).ToList();
 
-      var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count;
-
-      return orderedByAngle.Flash(color, IteratorEffectMode.Cycle, waitTime: TimeSpan.FromMilliseconds(customWaitMS), transitionTimeOn: TimeSpan.FromMilliseconds(customWaitMS / 2), transitionTimeOff: TimeSpan.FromMilliseconds(customWaitMS * 2), waitTillFinished: false, cancellationToken: cancellationToken);
+      return allLightsOrdered.To2DGroup().Flash(color, IteratorEffectMode.Cycle, waitTime: waitTime, transitionTimeOn: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds / 2), transitionTimeOff: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds * 2), waitTillFinished: false, cancellationToken: cancellationToken);
 
     }
   }
