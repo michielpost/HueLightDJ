@@ -1,4 +1,5 @@
 using Q42.HueApi.ColorConverters;
+using Q42.HueApi.Streaming.Extensions;
 using Q42.HueApi.Streaming.Models;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace HueLightDJ.Effects
 					Task Start(IEnumerable<IEnumerable<EntertainmentLight>> lights,
                               Ref<TimeSpan?> waitTime,
                               RGBColor? color,
+                              IteratorEffectMode iteratorMode,
+                              IteratorEffectMode secondaryIteratorMode,
                               CancellationToken cancellationToken);
 		  }
 }

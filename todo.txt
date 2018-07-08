@@ -1,17 +1,14 @@
 Hue auto mode, zelf dingen afwisseling
-patroon en effect los van elkaar
-Lijst met groepen, kwart, half, rond, om en om
-Ook patroon kiezen? Voor naar achter?
-Lijst met effecten
-Kiezen en combinatie
 
-Hue ronddraait zoals auto update maar dan als extension method, iterator voor cirkel effect die naar angle kijkt
-groepeer alles bij elkaar, zelf afstand opgeven
+GroupEffects: secondary mode kiezen, All, Individual, Cycle etc.
 
-In plaats van een punt met radius ook een lijn doen?
+Automatisch verschil longrunning of kort op basis van IteratorMode
+
+
+Custom BPM per effect instellen
+
 
 Loopen zolang knop is ingedrukt?
-Custom BPM per effect instellen
 
 
 Effecte ideeën:
@@ -19,13 +16,3 @@ Ronddraai kleur die steeds sneller gaat (met lichte fade er achter)
 Om en om eem kleur. Laten draaien?
 Fade in, fade uit? gegroepeerd om en om?
 4 led strips die aanstaan en rond draaien als een kruis
-
-
-https://stackoverflow.com/questions/4438244/how-to-calculate-shortest-2d-distance-between-a-point-and-a-line-segment-in-all
-
-http://www.softwareandfinance.com/CSharp/Draw_Circle_Pixel.html
-
-
----
-Hue auto mode, zelf dingen afwisseling
-

@@ -1,6 +1,7 @@
 using HueLightDJ.Web.Models;
 using HueLightDJ.Web.Streaming;
 using Microsoft.AspNetCore.SignalR;
+using Q42.HueApi.Streaming.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,9 +75,9 @@ namespace HueLightDJ.Web.Hubs
 
     }
 
-    public async void StartGroupEffect(string groupName, string typeName, string colorHex)
+    public async void StartGroupEffect(string typeName, string colorHex, string groupName, string iteratorMode)
     {
-      EffectService.StartEffect(typeName, colorHex, groupName);
+      EffectService.StartEffect(typeName, colorHex, groupName, Enum.Parse<IteratorEffectMode>(iteratorMode));
       await Clients.All.SendAsync("StatusMsg", "Started group effect");
 
     }
@@ -91,6 +92,7 @@ namespace HueLightDJ.Web.Hubs
     public async Task Disconnect()
     {
       StreamingSetup.Disconnect();
+      EffectService.CancelAllEffects();
       await Clients.All.SendAsync("StatusMsg", "DISCONNECTED...");
       GetStatus();
     }

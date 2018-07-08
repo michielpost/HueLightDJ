@@ -14,9 +14,9 @@ namespace HueLightDJ.Effects.Group
 		  [HueEffect(Name = "Random colors (all different)", HasColorPicker = false)]
 		  public class RandomColorsEffect : IHueGroupEffect
   {
-					public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+					public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
 					{
-							  return layer.SetRandomColor(IteratorEffectMode.AllIndividual, waitTime, cancellationToken: cancellationToken);
+							  return layer.SetRandomColor(iteratorMode, waitTime, cancellationToken: cancellationToken);
 					}
 		  }
 }

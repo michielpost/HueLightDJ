@@ -16,7 +16,7 @@ namespace HueLightDJ.Effects.Group
   [HueEffect(Name = "Trailing Light")]
   public class TrailingLightEffect : IHueGroupEffect
   {
-    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
       {
@@ -24,7 +24,7 @@ namespace HueLightDJ.Effects.Group
         color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
       }
 
-      return layer.Flash(color, IteratorEffectMode.Cycle, waitTime: waitTime, transitionTimeOn: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds / 2), transitionTimeOff: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds * 2), waitTillFinished: false, cancellationToken: cancellationToken);
+      return layer.Flash(color, iteratorMode, waitTime: waitTime, transitionTimeOn: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds / 2), transitionTimeOff: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds * 2), waitTillFinished: false, cancellationToken: cancellationToken);
 
     }
   }

@@ -2,6 +2,7 @@ using HueLightDJ.Effects;
 using HueLightDJ.Effects.Base;
 using HueLightDJ.Web.Models;
 using Q42.HueApi.ColorConverters;
+using Q42.HueApi.Streaming.Extensions;
 using Q42.HueApi.Streaming.Models;
 using System;
 using System.Collections.Generic;
@@ -76,15 +77,22 @@ namespace HueLightDJ.Web.Streaming
         groupEffects.Add(effect);
       }
 
+      List<string> iteratorNames = new List<string>();
+      foreach(var name in Enum.GetNames(typeof(IteratorEffectMode)))
+      {
+        iteratorNames.Add(name);
+      }
+
       var vm = new EffectsVM();
       vm.BaseEffects = baseEffects;
       vm.ShortEffects = shortEffects;
       vm.GroupEffects = groupEffects;
       vm.Groups = groups.Select(x => new GroupInfoViewModel() { Name = x.Name }).ToList();
+      vm.IteratorModes = iteratorNames;
       return vm;
     }
 
-    public static void StartEffect(string typeName, string colorHex, string group = null)
+    public static void StartEffect(string typeName, string colorHex, string group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All)
     {
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
@@ -121,9 +129,11 @@ namespace HueLightDJ.Web.Streaming
 
         if(!string.IsNullOrEmpty(group))
         {
+          IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All;
+
           //get group
           var selectedGroup = GroupService.GetAll().Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
-          parametersArray = new object[] { selectedGroup, waitTime, color, cts.Token };
+          parametersArray = new object[] { selectedGroup, waitTime, color, iteratorMode, secondaryIteratorMode, cts.Token };
         }
 
         object classInstance = Activator.CreateInstance(selectedEffect, null);
@@ -183,6 +193,14 @@ namespace HueLightDJ.Web.Streaming
       }
 
       return result;
+    }
+
+    public static void CancelAllEffects()
+    {
+      foreach(var layer in layerInfo)
+      {
+        layer.Value?.CancellationTokenSource?.Cancel();
+      }
     }
   }
 }

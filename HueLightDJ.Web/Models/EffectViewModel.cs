@@ -11,6 +11,7 @@ namespace HueLightDJ.Web.Models
     public List<EffectViewModel> ShortEffects { get; set; }
     public List<EffectViewModel> GroupEffects { get; set; }
     public List<GroupInfoViewModel> Groups { get; set; }
+    public List<string> IteratorModes { get; set; }
 
   }
 
