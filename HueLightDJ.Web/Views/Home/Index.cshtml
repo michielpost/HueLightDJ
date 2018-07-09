@@ -67,6 +67,14 @@
         </li>
       </ul>
 
+      <h3>Secondary IteratorModes</h3>
+      <ul id="secondaryIteratorModes">
+        <li v-for="item in secondaryIteratorModes">
+          {{ item }}
+          <input type="radio" class="radio-button" :value="item" name="secondaryIteratorPicked" v-model="secondaryIteratorPicked">
+        </li>
+      </ul>
+
       <h3>Group Effects</h3>
       <ul id="groupEffects">
         <li v-for="item in groupEffects">
@@ -75,7 +83,7 @@
             color (random): <input type="checkbox" v-model="item.isRandom" />
             <input type="color" v-model="item.color" v-show="!item.isRandom" />
           </span>
-          <button v-on:click="startGroup(item, groupPicked, iteratorPicked)">Start</button>
+          <button v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">Start</button>
         </li>
       </ul>
 

@@ -23,7 +23,7 @@ namespace HueLightDJ.Effects.Group
 
       //var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count();
 
-      return layer.FlashQuick(color, iteratorMode, waitTime: waitTime, cancellationToken: cancellationToken);
+      return layer.FlashQuick(color, iteratorMode, secondaryIteratorMode, waitTime: waitTime, cancellationToken: cancellationToken);
     }
   }
 }

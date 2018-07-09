@@ -19,8 +19,10 @@ connection.on("effects", (effectvm) => {
           groupEffects: effectvm.groupEffects,
           groups: effectvm.groups,
           iteratorModes: effectvm.iteratorModes,
+          secondaryIteratorModes: effectvm.secondaryIteratorModes,
           groupPicked: "",
-          iteratorPicked: ""
+          iteratorPicked: "",
+          secondaryIteratorPicked: ""
         },
         methods: {
           start(effect) {
@@ -29,11 +31,11 @@ connection.on("effects", (effectvm) => {
             }
             connection.invoke("StartEffect", effect.typeName, effect.color).catch(err => console.error(err.toString()));
           },
-          startGroup(effect, groupPicked, iteratorPicked) {
+          startGroup(effect, groupPicked, iteratorPicked, secondaryIteratorPicked) {
             if (effect.isRandom) {
               effect.color = null;
             }
-            connection.invoke("StartGroupEffect", effect.typeName, effect.color, groupPicked, iteratorPicked).catch(err => console.error(err.toString()));
+            connection.invoke("StartGroupEffect", effect.typeName, effect.color, groupPicked, iteratorPicked, secondaryIteratorPicked).catch(err => console.error(err.toString()));
           }
         }
     })

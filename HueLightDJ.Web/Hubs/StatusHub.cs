@@ -75,9 +75,9 @@ namespace HueLightDJ.Web.Hubs
 
     }
 
-    public async void StartGroupEffect(string typeName, string colorHex, string groupName, string iteratorMode)
+    public async void StartGroupEffect(string typeName, string colorHex, string groupName, string iteratorMode, string secondaryIteratorMode)
     {
-      EffectService.StartEffect(typeName, colorHex, groupName, Enum.Parse<IteratorEffectMode>(iteratorMode));
+      EffectService.StartEffect(typeName, colorHex, groupName, Enum.Parse<IteratorEffectMode>(iteratorMode), Enum.Parse<IteratorEffectMode>(secondaryIteratorMode));
       await Clients.All.SendAsync("StatusMsg", "Started group effect");
 
     }

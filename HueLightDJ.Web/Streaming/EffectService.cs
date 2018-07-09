@@ -83,16 +83,25 @@ namespace HueLightDJ.Web.Streaming
         iteratorNames.Add(name);
       }
 
+      List<string> secondaryIteratorNames = new List<string>() {
+        IteratorEffectMode.All.ToString(),
+        IteratorEffectMode.AllIndividual.ToString(),
+        IteratorEffectMode.Bounce.ToString(),
+        IteratorEffectMode.Single.ToString(),
+        IteratorEffectMode.Random.ToString(),
+      };
+
       var vm = new EffectsVM();
       vm.BaseEffects = baseEffects;
       vm.ShortEffects = shortEffects;
       vm.GroupEffects = groupEffects;
       vm.Groups = groups.Select(x => new GroupInfoViewModel() { Name = x.Name }).ToList();
       vm.IteratorModes = iteratorNames;
+      vm.SecondaryIteratorModes = secondaryIteratorNames;
       return vm;
     }
 
-    public static void StartEffect(string typeName, string colorHex, string group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All)
+    public static void StartEffect(string typeName, string colorHex, string group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
@@ -129,8 +138,6 @@ namespace HueLightDJ.Web.Streaming
 
         if(!string.IsNullOrEmpty(group))
         {
-          IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All;
-
           //get group
           var selectedGroup = GroupService.GetAll().Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
           parametersArray = new object[] { selectedGroup, waitTime, color, iteratorMode, secondaryIteratorMode, cts.Token };
