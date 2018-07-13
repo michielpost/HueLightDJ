@@ -33,13 +33,13 @@ namespace HueLightDJ.Web.Hubs
 
       }
     }
-    public async Task GetEffects()
+    public void GetEffects()
     {
       var allEffects = EffectService.GetEffectViewModels();
-      await Clients.Caller.SendAsync("effects", allEffects);
+      Clients.Caller.SendAsync("effects", allEffects);
     }
 
-    public async Task GetStatus()
+    public Task GetStatus()
     {
       StatusViewModel vm = new StatusViewModel();
       vm.bpm = StreamingSetup.GetBPM();
@@ -64,27 +64,33 @@ namespace HueLightDJ.Web.Hubs
 
       //}
 
-      await Clients.All.SendAsync("Status", vm);
-
+      return Clients.All.SendAsync("Status", vm);
     }
 
-    public async void StartEffect(string typeName, string colorHex)
+    public void StartEffect(string typeName, string colorHex)
     {
       EffectService.StartEffect(typeName, colorHex);
-      await Clients.All.SendAsync("StatusMsg", "Started effect");
+      Clients.All.SendAsync("StatusMsg", $"Started group effect {typeName} {colorHex}");
 
     }
 
-    public async void StartGroupEffect(string typeName, string colorHex, string groupName, string iteratorMode, string secondaryIteratorMode)
+    public void StartGroupEffect(string typeName, string colorHex, string groupName, string iteratorMode, string secondaryIteratorMode)
     {
       EffectService.StartEffect(typeName, colorHex, groupName, Enum.Parse<IteratorEffectMode>(iteratorMode), Enum.Parse<IteratorEffectMode>(secondaryIteratorMode));
-      await Clients.All.SendAsync("StatusMsg", "Started group effect");
+      Clients.All.SendAsync("StatusMsg", $"Started group effect {typeName} {groupName} {colorHex}");
 
     }
 
     public Task IncreaseBPM(int value)
     {
       StreamingSetup.IncreaseBPM(value);
+      return GetStatus();
+
+    }
+
+    public Task SetBPM(int value)
+    {
+      StreamingSetup.SetBPM(value);
       return GetStatus();
 
     }

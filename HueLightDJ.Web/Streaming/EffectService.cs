@@ -114,7 +114,8 @@ namespace HueLightDJ.Web.Streaming
       {
         var hueEffectAtt = selectedEffect.GetCustomAttribute<HueEffectAttribute>();
 
-        var layer = GetLayer(hueEffectAtt.IsBaseEffect);
+        var isBaseLayer = hueEffectAtt.IsBaseEffect && iteratorMode != IteratorEffectMode.Single;
+        var layer = GetLayer(isBaseLayer);
 
         if (layerInfo.ContainsKey(layer))
         {

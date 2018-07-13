@@ -36,7 +36,13 @@ connection.on("effects", (effectvm) => {
               effect.color = null;
             }
             connection.invoke("StartGroupEffect", effect.typeName, effect.color, groupPicked, iteratorPicked, secondaryIteratorPicked).catch(err => console.error(err.toString()));
-          }
+          },
+          increaseBPM(inc) {
+            connection.invoke("IncreaseBPM", inc).catch(err => console.error(err.toString()));
+          },
+          setBPM(v) {
+            connection.invoke("SetBPM", v).catch(err => console.error(err.toString()));
+          },
         }
     })
 });
@@ -52,21 +58,4 @@ document.getElementById("connectButton").addEventListener("click", event => {
 document.getElementById("disconnectButton").addEventListener("click", event => {
   connection.invoke("Disconnect").catch(err => console.error(err.toString()));
   event.preventDefault();
-});
-
-document.getElementById("bpmPlusButton").addEventListener("click", event => {
-    connection.invoke("IncreaseBPM", 1).catch(err => console.error(err.toString()));
-    event.preventDefault();
-});
-document.getElementById("bpmPlusPlusButton").addEventListener("click", event => {
-    connection.invoke("IncreaseBPM", 5).catch(err => console.error(err.toString()));
-    event.preventDefault();
-});
-document.getElementById("bpmMinButton").addEventListener("click", event => {
-    connection.invoke("IncreaseBPM", -1).catch(err => console.error(err.toString()));
-    event.preventDefault();
-});
-document.getElementById("bpmMinMinButton").addEventListener("click", event => {
-    connection.invoke("IncreaseBPM", -5).catch(err => console.error(err.toString()));
-    event.preventDefault();
 });

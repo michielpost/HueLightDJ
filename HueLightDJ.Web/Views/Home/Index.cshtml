@@ -24,9 +24,13 @@
   </div>
   <div class="row">
     <div class="col-6">&nbsp;</div>
-    <div class="col-6" id="effects">
-      BPM: <button id="bpmMinMinButton">--</button> <button id="bpmMinButton">-</button> <p id="bpm"></p> <button id="bpmPlusButton">+</button> <button id="bpmPlusPlusButton">++</button>
-
+    <div class="col-6" id="effects" v-show="groups" style="display:none">
+      BPM: <button v-on:click="increaseBPM(-5)">--</button> <button v-on:click="increaseBPM(-1)">-</button> <p id="bpm"></p> <button v-on:click="increaseBPM(1)">+</button> <button v-on:click="increaseBPM(5)">++</button>
+      <br />
+      <button v-on:click="setBPM(120)">reset bpm</button>
+      <button v-on:click="setBPM(20)">slow</button>
+      <button v-on:click="setBPM(400)">quick</button>
+      <button v-on:click="setBPM(600)">super quick</button>
       <h3>Long Running</h3>
       <ul id="baseEffects">
         <li v-for="item in baseEffects">
