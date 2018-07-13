@@ -23,7 +23,7 @@
 
 <hr style="margin-bottom:20px;" />
 
-<div class="container" id="effects" v-show="groups" style="display:none;">
+<div class="container" id="effects" v-show="groups != null" style="display:none;">
   <div class="row">
     <div class="col-sm">
       BPM: <button v-on:click="increaseBPM(-5)">--</button> <button v-on:click="increaseBPM(-1)">-</button> <p id="bpm"></p> <button v-on:click="increaseBPM(1)">+</button> <button v-on:click="increaseBPM(5)">++</button>

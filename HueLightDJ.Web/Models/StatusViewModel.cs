@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Web.Models
 {
-    public class StatusViewModel
-    {
-					public string Status { get; set; }
-					public int bpm { get; set; }
-		  }
+  public class StatusViewModel
+  {
+    public string Status { get; set; }
+    public int bpm { get; set; }
+    public bool IsConnected { get; set; }
+  }
 }

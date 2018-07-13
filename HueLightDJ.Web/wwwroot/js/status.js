@@ -8,43 +8,57 @@ connection.on("StatusMsg", (message) => {
 
 connection.on("Status", (status) => {
     document.getElementById("bpm").innerHTML = status.bpm;
+
 });
 
+const example1 = new Vue({
+  el: '#effects',
+  data: {
+    baseEffects: [],
+    shortEffects: [],
+    groupEffects: [],
+    groups: null,
+    iteratorModes: [],
+    secondaryIteratorModes: [],
+    groupPicked: "",
+    iteratorPicked: "",
+    secondaryIteratorPicked: ""
+  },
+  methods: {
+    start(effect) {
+      if (effect.isRandom) {
+        effect.color = null;
+      }
+      connection.invoke("StartEffect", effect.typeName, effect.color).catch(err => console.error(err.toString()));
+    },
+    startGroup(effect, groupPicked, iteratorPicked, secondaryIteratorPicked) {
+      if (effect.isRandom) {
+        effect.color = null;
+      }
+      connection.invoke("StartGroupEffect", effect.typeName, effect.color, groupPicked, iteratorPicked, secondaryIteratorPicked).catch(err => console.error(err.toString()));
+    },
+    increaseBPM(inc) {
+      connection.invoke("IncreaseBPM", inc).catch(err => console.error(err.toString()));
+    },
+    setBPM(v) {
+      connection.invoke("SetBPM", v).catch(err => console.error(err.toString()));
+    },
+    fill(effectvm) {
+      this.baseEffects = effectvm.baseEffects;
+      this.shortEffects = effectvm.shortEffects;
+      this.groupEffects = effectvm.groupEffects;
+      this.groups = effectvm.groups;
+      this.iteratorModes = effectvm.iteratorModes;
+      this.secondaryIteratorModes = effectvm.secondaryIteratorModes;
+      this.groupPicked = "";
+      this.iteratorPicked = "";
+      this.secondaryIteratorPicked = "";
+    }
+  }
+})
+
 connection.on("effects", (effectvm) => {
-    var example1 = new Vue({
-        el: '#effects',
-        data: {
-          baseEffects: effectvm.baseEffects,
-          shortEffects: effectvm.shortEffects,
-          groupEffects: effectvm.groupEffects,
-          groups: effectvm.groups,
-          iteratorModes: effectvm.iteratorModes,
-          secondaryIteratorModes: effectvm.secondaryIteratorModes,
-          groupPicked: "",
-          iteratorPicked: "",
-          secondaryIteratorPicked: ""
-        },
-        methods: {
-          start(effect) {
-            if (effect.isRandom) {
-              effect.color = null;
-            }
-            connection.invoke("StartEffect", effect.typeName, effect.color).catch(err => console.error(err.toString()));
-          },
-          startGroup(effect, groupPicked, iteratorPicked, secondaryIteratorPicked) {
-            if (effect.isRandom) {
-              effect.color = null;
-            }
-            connection.invoke("StartGroupEffect", effect.typeName, effect.color, groupPicked, iteratorPicked, secondaryIteratorPicked).catch(err => console.error(err.toString()));
-          },
-          increaseBPM(inc) {
-            connection.invoke("IncreaseBPM", inc).catch(err => console.error(err.toString()));
-          },
-          setBPM(v) {
-            connection.invoke("SetBPM", v).catch(err => console.error(err.toString()));
-          },
-        }
-    })
+  example1.fill(effectvm);
 });
 
 connection.start()
