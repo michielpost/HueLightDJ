@@ -3,10 +3,8 @@
 }
 
 <div class="container">
-  <div class="row">&nbsp;</div>
   <div class="row">
-    <div class="col-6">&nbsp;</div>
-    <div class="col-6">
+    <div class="col-sm">
       <input type="button" id="connectButton" value="Connect" />
       <input type="button" id="disconnectButton" value="Disconnect" />
     </div>
@@ -17,20 +15,26 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-6">&nbsp;</div>
-    <div class="col-6">
+    <div class="col-sm">
       <ul id="messagesList"></ul>
     </div>
   </div>
+</div>
+
+<hr style="margin-bottom:20px;" />
+
+<div class="container" id="effects" v-show="groups" style="display:none;">
   <div class="row">
-    <div class="col-6">&nbsp;</div>
-    <div class="col-6" id="effects" v-show="groups" style="display:none">
+    <div class="col-sm">
       BPM: <button v-on:click="increaseBPM(-5)">--</button> <button v-on:click="increaseBPM(-1)">-</button> <p id="bpm"></p> <button v-on:click="increaseBPM(1)">+</button> <button v-on:click="increaseBPM(5)">++</button>
       <br />
       <button v-on:click="setBPM(120)">reset bpm</button>
       <button v-on:click="setBPM(20)">slow</button>
       <button v-on:click="setBPM(400)">quick</button>
       <button v-on:click="setBPM(600)">super quick</button>
+    </div>
+
+    <div class="col-sm">
       <h3>Long Running</h3>
       <ul id="baseEffects">
         <li v-for="item in baseEffects">
@@ -42,7 +46,9 @@
           <button v-on:click="start(item)">Start</button>
         </li>
       </ul>
+    </div>
 
+    <div class="col-sm">
       <h3>Short Effects</h3>
       <ul id="shortEffects">
         <li v-for="item in shortEffects">
@@ -55,6 +61,17 @@
         </li>
       </ul>
 
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm" style="margin-bottom:20px;">
+      <hr />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm">
       <h3>Groups</h3>
       <ul id="groups">
         <li v-for="item in groups">
@@ -63,6 +80,9 @@
         </li>
       </ul>
 
+    </div>
+    <div class="col-sm">
+
       <h3>IteratorModes</h3>
       <ul id="iteratorModes">
         <li v-for="item in iteratorModes">
@@ -70,6 +90,8 @@
           <input type="radio" class="radio-button" :value="item" name="iteratorPicked" v-model="iteratorPicked">
         </li>
       </ul>
+    </div>
+    <div class="col-sm">
 
       <h3>Secondary IteratorModes</h3>
       <ul id="secondaryIteratorModes">
@@ -78,6 +100,8 @@
           <input type="radio" class="radio-button" :value="item" name="secondaryIteratorPicked" v-model="secondaryIteratorPicked">
         </li>
       </ul>
+    </div>
+    <div class="col-sm">
 
       <h3>Group Effects</h3>
       <ul id="groupEffects">
@@ -90,8 +114,8 @@
           <button v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">Start</button>
         </li>
       </ul>
-
     </div>
+
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>

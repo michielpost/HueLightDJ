@@ -24,7 +24,9 @@ namespace HueLightDJ.Web.Streaming
       string ip = configSection.GetValue<string>("ip");
       string key = configSection.GetValue<string>("key");
       string entertainmentKey = configSection.GetValue<string>("entertainmentKey");
-      bool useSimulator = configSection.GetValue<bool>("useSimulator"); 
+      bool useSimulator = configSection.GetValue<bool>("useSimulator");
+
+      EffectService.CancelAllEffects();
 
       StreamingGroup = null;
       Layers = null;

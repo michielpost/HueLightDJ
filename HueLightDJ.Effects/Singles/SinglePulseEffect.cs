@@ -28,7 +28,7 @@ namespace HueLightDJ.Effects
 							  randomPulseEffect.Start();
 							  cancellationToken.Register(() => randomPulseEffect.Stop());
 
-							  await Task.Delay(waitTime.Value.Value);
+							  await Task.Delay(waitTime.Value.Value, cancellationToken);
 							  randomPulseEffect.Stop();
 
 							  //TODO: DOES NOT WORK YET Delete after NuGet package update with new RandomPulseEffect
