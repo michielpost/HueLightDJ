@@ -1,8 +1,4 @@
-Hue auto mode, zelf dingen afwisseling
-
-GroupEffects: secondary mode kiezen, All, Individual, Cycle etc.
-
-Automatisch verschil longrunning of kort op basis van IteratorMode
+SignalR hub aanspreken vanuit effectservice om te zien wat er start
 
 
 Custom BPM per effect instellen
@@ -16,3 +12,4 @@ Ronddraai kleur die steeds sneller gaat (met lichte fade er achter)
 Om en om eem kleur. Laten draaien?
 Fade in, fade uit? gegroepeerd om en om?
 4 led strips die aanstaan en rond draaien als een kruis
+

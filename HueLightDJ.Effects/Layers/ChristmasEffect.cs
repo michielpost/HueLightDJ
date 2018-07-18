@@ -16,7 +16,7 @@ namespace HueLightDJ.Effects
 		  {
 					public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
 					{
-							  return layer.To2DGroup().Christmas(cancellationToken: cancellationToken);
+							  return layer.To2DGroup().Christmas(cancellationToken);
 					}
 		  }
 }

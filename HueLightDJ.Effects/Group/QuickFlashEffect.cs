@@ -21,9 +21,19 @@ namespace HueLightDJ.Effects.Group
       if (!color.HasValue)
         color = new Q42.HueApi.ColorConverters.RGBColor("FFFFFF");
 
-      //var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count();
+      if(iteratorMode != IteratorEffectMode.All)
+      {
+        if(secondaryIteratorMode == IteratorEffectMode.Bounce
+          || secondaryIteratorMode == IteratorEffectMode.Random
+          || secondaryIteratorMode == IteratorEffectMode.Single)
+        {
+          var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.SelectMany(x => x).Count();
 
-      return layer.FlashQuick(color, iteratorMode, secondaryIteratorMode, waitTime: waitTime, cancellationToken: cancellationToken);
+          return layer.FlashQuick(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: TimeSpan.FromMilliseconds(customWaitMS));
+        }
+      }
+
+      return layer.FlashQuick(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: waitTime);
     }
   }
 }

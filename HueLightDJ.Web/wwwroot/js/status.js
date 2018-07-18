@@ -43,6 +43,15 @@ const example1 = new Vue({
     setBPM(v) {
       connection.invoke("SetBPM", v).catch(err => console.error(err.toString()));
     },
+    startRandom() {
+      connection.invoke("StartRandom").catch(err => console.error(err.toString()));
+    },
+    startAutoMode() {
+      connection.invoke("StartAutoMode").catch(err => console.error(err.toString()));
+    },
+    stopAutoMode() {
+      connection.invoke("StopAutoMode").catch(err => console.error(err.toString()));
+    },
     fill(effectvm) {
       this.baseEffects = effectvm.baseEffects;
       this.shortEffects = effectvm.shortEffects;

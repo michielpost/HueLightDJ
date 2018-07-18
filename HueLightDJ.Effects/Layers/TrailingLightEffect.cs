@@ -26,7 +26,7 @@ namespace HueLightDJ.Effects
 
       var allLightsOrdered = layer.OrderBy(x => x.LightLocation.X).ThenBy(x => x.LightLocation.Y).ToList();
 
-      return allLightsOrdered.To2DGroup().Flash(color, IteratorEffectMode.Cycle, waitTime: waitTime, transitionTimeOn: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds / 2), transitionTimeOff: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds * 2), waitTillFinished: false, cancellationToken: cancellationToken);
+      return allLightsOrdered.To2DGroup().Flash(cancellationToken, color, IteratorEffectMode.Cycle, waitTime: waitTime, transitionTimeOn: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds / 2), transitionTimeOff: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds * 2), waitTillFinished: false);
 
     }
   }

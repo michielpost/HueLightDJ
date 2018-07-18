@@ -18,6 +18,7 @@ namespace HueLightDJ.Web.Streaming
     private static List<TypeInfo> EffectTypes { get; set; }
     private static List<TypeInfo> GroupEffectTypes { get; set; }
     private static Dictionary<EntertainmentLayer, RunningEffectInfo> layerInfo = new Dictionary<EntertainmentLayer, RunningEffectInfo>();
+    private static CancellationTokenSource cts;
 
     public static List<TypeInfo> GetEffectTypes()
     {
@@ -101,6 +102,26 @@ namespace HueLightDJ.Web.Streaming
       return vm;
     }
 
+    public static void StartAutoMode()
+    {
+      cts?.Cancel();
+      cts = new CancellationTokenSource();
+
+      Task.Run(async () =>
+      {
+        while(!cts.IsCancellationRequested)
+        {
+          StartRandomEffect();
+          await Task.Delay(TimeSpan.FromSeconds(6));
+        }
+      }, cts.Token);
+    }
+
+    public static void StopAutoMode()
+    {
+      cts?.Cancel();
+    }
+
     public static void StartEffect(string typeName, string colorHex, string group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
       var all = GetEffectTypes();
@@ -108,7 +129,9 @@ namespace HueLightDJ.Web.Streaming
 
       var effectType = all.Where(x => x.Name == typeName).FirstOrDefault();
       var groupEffectType = allGroup.Where(x => x.Name == typeName).FirstOrDefault();
-      var selectedEffect = string.IsNullOrEmpty(group) ? effectType : groupEffectType;
+
+      bool isGroupEffect = groupEffectType != null && !string.IsNullOrEmpty(group);
+      var selectedEffect = isGroupEffect ? groupEffectType : effectType;
 
       if (selectedEffect != null)
       {
@@ -137,7 +160,7 @@ namespace HueLightDJ.Web.Streaming
         object result = null;
         object[] parametersArray = new object[] { layer, waitTime, color, cts.Token };
 
-        if(!string.IsNullOrEmpty(group))
+        if(isGroupEffect && !string.IsNullOrEmpty(group))
         {
           //get group
           var selectedGroup = GroupService.GetAll().Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
@@ -147,6 +170,37 @@ namespace HueLightDJ.Web.Streaming
         object classInstance = Activator.CreateInstance(selectedEffect, null);
         result = methodInfo.Invoke(classInstance, parametersArray);
       }
+    }
+
+    public static void StartRandomEffect()
+    {
+      var r = new Random();
+
+      var all = GetEffectTypes();
+      var allGroup = GetGroupEffectTypes();
+
+      string effect;
+      if(r.NextDouble() <= 0.7)
+        effect = allGroup.OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
+      else
+        effect = all.Where(x => x.Name != typeof(ChristmasEffect).Name).OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
+
+      var group = GroupService.GetAll().OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
+
+      var hexColor = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+      while(hexColor.R < 0.15 && hexColor.G < 0.15 && hexColor.B < 0.15)
+        hexColor = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+
+      Array values = Enum.GetValues(typeof(IteratorEffectMode));
+      var iteratorMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
+      var iteratorSecondaryMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
+
+      //Bounce and Single are no fun for random mode
+      if (iteratorMode == IteratorEffectMode.Bounce || iteratorMode == IteratorEffectMode.Single)
+        iteratorMode = IteratorEffectMode.All;
+
+      StartEffect(effect, hexColor.ToHex(), group, iteratorMode, iteratorSecondaryMode);
+
     }
 
     private static EntertainmentLayer GetLayer(bool isBaseLayer)

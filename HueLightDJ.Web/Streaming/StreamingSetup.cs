@@ -4,6 +4,7 @@ using Q42.HueApi.Streaming.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HueLightDJ.Web.Streaming
@@ -17,6 +18,7 @@ namespace HueLightDJ.Web.Streaming
     public static Ref<TimeSpan?> WaitTime { get; set; } = TimeSpan.FromMilliseconds(500);
 
     private static string _groupId;
+    private static CancellationTokenSource _cts;
 
     public static async Task<StreamingGroup> SetupAndReturnGroup()
     {
@@ -27,6 +29,9 @@ namespace HueLightDJ.Web.Streaming
       bool useSimulator = configSection.GetValue<bool>("useSimulator");
 
       EffectService.CancelAllEffects();
+      if (_cts != null)
+        _cts.Cancel();
+      _cts = new CancellationTokenSource();
 
       StreamingGroup = null;
       Layers = null;
@@ -55,7 +60,7 @@ namespace HueLightDJ.Web.Streaming
       await StreamingHueClient.Connect(group.Id, simulator: useSimulator);
 
       //Start auto updating this entertainment group
-      StreamingHueClient.AutoUpdate(stream, 50);
+      StreamingHueClient.AutoUpdate(stream, _cts.Token, 50);
 
 
       StreamingGroup = stream;
@@ -64,8 +69,8 @@ namespace HueLightDJ.Web.Streaming
       Layers = new List<EntertainmentLayer>() { baseLayer, effectLayer };
 
       //Optional: calculated effects that are placed on this layer
-      baseLayer.AutoCalculateEffectUpdate();
-      effectLayer.AutoCalculateEffectUpdate();
+      baseLayer.AutoCalculateEffectUpdate(_cts.Token);
+      effectLayer.AutoCalculateEffectUpdate(_cts.Token);
 
       return stream;
     }

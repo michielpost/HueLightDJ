@@ -32,7 +32,7 @@ namespace HueLightDJ.Effects
 							  randomPulseEffect.Stop();
 
 							  //TODO: DOES NOT WORK YET Delete after NuGet package update with new RandomPulseEffect
-							  layer.SetBrightness(0, transitionTime: TimeSpan.FromMilliseconds(0));
+							  layer.SetBrightness(cancellationToken, 0, transitionTime: TimeSpan.FromMilliseconds(0));
 					}
 		  }
 }

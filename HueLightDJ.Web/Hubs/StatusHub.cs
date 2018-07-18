@@ -95,6 +95,21 @@ namespace HueLightDJ.Web.Hubs
 
     }
 
+    public void StartRandom()
+    {
+      EffectService.StartRandomEffect();
+    }
+
+    public void StartAutoMode()
+    {
+      EffectService.StartAutoMode();
+    }
+
+    public void StopAutoMode()
+    {
+      EffectService.StopAutoMode();
+    }
+
     public async Task Disconnect()
     {
       StreamingSetup.Disconnect();
