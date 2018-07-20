@@ -197,7 +197,7 @@ namespace HueLightDJ.Web.Streaming
 
       //Bounce and Single are no fun for random mode
       if (iteratorMode == IteratorEffectMode.Bounce || iteratorMode == IteratorEffectMode.Single)
-        iteratorMode = IteratorEffectMode.All;
+        iteratorMode = IteratorEffectMode.Cycle;
 
       StartEffect(effect, hexColor.ToHex(), group, iteratorMode, iteratorSecondaryMode);
 

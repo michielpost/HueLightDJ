@@ -24,6 +24,9 @@ namespace HueLightDJ.Effects.Group
         color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
       }
 
+      if (iteratorMode == IteratorEffectMode.All)
+        iteratorMode = IteratorEffectMode.Cycle;
+
       return layer.Flash(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: waitTime, transitionTimeOn: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds / 2), transitionTimeOff: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds * 2), waitTillFinished: false);
 
     }

@@ -21,12 +21,12 @@ namespace HueLightDJ.Web.Streaming
       var quarter = new[] { layer.GetLeft().GetFront(), layer.GetLeft().GetBack(), layer.GetRight().GetBack(), layer.GetRight().GetFront() }.ToList();
       var alternating = allLightsOrdered.ChunkByGroupNumber(2);
       var alternatingFour = allLightsOrdered.ChunkByGroupNumber(4);
-      var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(0, 0)).To2DGroup();
-      var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(0, 0)).To2DGroup();
+      var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(0, 0)).ChunkByGroupNumber(3);
+      var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(0, 0)).ChunkBy(6);
 
       var result = new List<GroupModel>()
       {
-        new GroupModel("All", allLightsOrdered.To2DGroup()),
+        //new GroupModel("All", allLightsOrdered.To2DGroup()),
         new GroupModel("Left/Right", leftRight),
         new GroupModel("Front/Back", frontBack),
         new GroupModel("Quarter", quarter),
