@@ -7,6 +7,8 @@
     <div class="col-sm">
       <input type="button" id="connectButton" value="Connect" />
       <input type="button" id="disconnectButton" value="Disconnect" />
+
+
     </div>
   </div>
   <div class="row">
@@ -73,53 +75,51 @@
   <div class="row">
     <div class="col-sm" style="margin-bottom:20px;">
       <hr />
+      {{ groupPicked }}
     </div>
   </div>
 
   <div class="row">
     <div class="col-sm">
       <h3>Groups</h3>
-      <ul id="groups">
-        <li v-for="item in groups">
-          {{ item.name }}
-          <input type="radio" class="radio-button" :value="item.name" name="groupPicked" v-model="groupPicked">
-        </li>
-      </ul>
-
+      <div id="groups" class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
+        <label class="btn btn-secondary" v-for="item in groups" :class="groupPicked == item.name ? 'active': ''">
+          <input type="radio" class="radio-button" :value="item.name" name="groupPicked" v-model="groupPicked" v-model.number="groupPicked"> {{ item.name }}
+        </label>
+      </div>
     </div>
     <div class="col-sm">
 
       <h3>IteratorModes</h3>
-      <ul id="iteratorModes">
-        <li v-for="item in iteratorModes">
-          {{ item }}
-          <input type="radio" class="radio-button" :value="item" name="iteratorPicked" v-model="iteratorPicked">
-        </li>
-      </ul>
+      <div id="iteratorModes" class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
+        <label v-for="item in iteratorModes" class="btn btn-secondary" :class="iteratorPicked == item ? 'active': ''">
+          <input type="radio" class="radio-button" :value="item" name="iteratorPicked" v-model="iteratorPicked" v-model.number="iteratorPicked"> {{ item }}
+        </label>
+      </div>
     </div>
     <div class="col-sm">
 
       <h3>Secondary IteratorModes</h3>
-      <ul id="secondaryIteratorModes">
-        <li v-for="item in secondaryIteratorModes">
-          {{ item }}
-          <input type="radio" class="radio-button" :value="item" name="secondaryIteratorPicked" v-model="secondaryIteratorPicked">
-        </li>
-      </ul>
+      <div id="secondaryIteratorModes" class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
+        <label v-for="item in secondaryIteratorModes" class="btn btn-secondary" :class="secondaryIteratorPicked == item ? 'active': ''">
+          <input type="radio" class="radio-button" :value="item" name="secondaryIteratorPicked" v-model="secondaryIteratorPicked" v-model.number="secondaryIteratorPicked">  {{ item }}
+        </label>
+      </div>
     </div>
     <div class="col-sm">
 
       <h3>Group Effects</h3>
-      <ul id="groupEffects">
-        <li v-for="item in groupEffects">
-          {{ item.name }}
+      <div id="groupEffects" class="btn-group-vertical">
+        <label v-for="item in groupEffects">
           <span v-show="item.hasColorPicker">
             color (random): <input type="checkbox" v-model="item.isRandom" />
             <input type="color" v-model="item.color" v-show="!item.isRandom" />
           </span>
-          <button v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">Start</button>
-        </li>
-      </ul>
+          <button class="btn btn-dark" v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">
+            {{ item.name }}
+          </button>
+        </label>
+      </div>
     </div>
 
   </div>
