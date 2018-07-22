@@ -24,16 +24,23 @@ namespace HueLightDJ.Web.Streaming
       var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(0, 0)).ChunkByGroupNumber(3);
       var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(0, 0)).ChunkBy(6);
 
+      var leftToRight = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.X + 1) / 2) * 50));
+      var fronToBack = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.Y + 1) / 2) * 50));
+      var ring = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Distance(0,0) / 1.5) * 2));
+
       var result = new List<GroupModel>()
       {
         //new GroupModel("All", allLightsOrdered.To2DGroup()),
         new GroupModel("Left/Right", leftRight),
+        new GroupModel("Left To Right", leftToRight),
         new GroupModel("Front/Back", frontBack),
+        new GroupModel("Front To Back", fronToBack),
         new GroupModel("Quarter", quarter),
         new GroupModel("Alternating", alternating),
         new GroupModel("Alternating by 4", alternatingFour),
         new GroupModel("Distance from center", orderedByDistance),
         new GroupModel("Order by Angle from center", orderedByAngle),
+        new GroupModel("Ring", ring),
       };
      
 

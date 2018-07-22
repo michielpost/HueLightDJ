@@ -1,5 +1,10 @@
 SignalR hub aanspreken vanuit effectservice om te zien wat er start
 
+Random group, tussen helft en 2
+
+Hue: slow fade colorwheel maken
+async colorwheel?
+
 
 Custom BPM per effect instellen
 

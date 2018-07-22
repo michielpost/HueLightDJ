@@ -25,7 +25,7 @@ namespace HueLightDJ.Effects.Group
       }
 
       if (iteratorMode == IteratorEffectMode.All)
-        iteratorMode = IteratorEffectMode.Cycle;
+        iteratorMode = IteratorEffectMode.AllIndividual;
 
       return layer.Flash(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: waitTime, transitionTimeOn: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds / 2), transitionTimeOff: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds * 2), waitTillFinished: false);
 
