@@ -5,8 +5,8 @@
 <div class="container">
   <div class="row">
     <div class="col-sm">
-      <input type="button" id="connectButton" value="Connect" />
-      <input type="button" id="disconnectButton" value="Disconnect" />
+      <input type="button" id="connectButton" value="Connect" class="btn btn-dark" />
+      <input type="button" id="disconnectButton" value="Disconnect" class="btn btn-danger" />
 
 
     </div>
@@ -28,46 +28,61 @@
 <div class="container" id="effects" v-show="groups != null" style="display:none;">
   <div class="row">
     <div class="col-sm">
-      BPM: <button v-on:click="increaseBPM(-5)">--</button> <button v-on:click="increaseBPM(-1)">-</button> <p id="bpm"></p> <button v-on:click="increaseBPM(1)">+</button> <button v-on:click="increaseBPM(5)">++</button>
+      <h3>BPM</h3>
+      <div class="btn-group">
+        <button v-on:click="increaseBPM(-5)" class="btn btn-dark">--</button>
+        <button v-on:click="increaseBPM(-1)" class="btn btn-dark">-</button>
+        <p id="bpm"></p>
+        <button v-on:click="increaseBPM(1)" class="btn btn-dark">+</button>
+        <button v-on:click="increaseBPM(5)" class="btn btn-dark">++</button>
+      </div>
       <br />
-      <button v-on:click="setBPM(120)">reset bpm</button>
-      <button v-on:click="setBPM(20)">slow</button>
-      <button v-on:click="setBPM(400)">quick</button>
-      <button v-on:click="setBPM(600)">super quick</button>
+      <br />
+
+      <div class="btn-group">
+        <button v-on:click="setBPM(120)" class="btn btn-dark">reset bpm</button>
+        <button v-on:click="setBPM(20)" class="btn btn-dark">slow</button>
+        <button v-on:click="setBPM(400)" class="btn btn-dark">quick</button>
+        <button v-on:click="setBPM(600)" class="btn btn-dark">super quick</button>
+      </div>
 
       <br />
-      <button v-on:click="startRandom">random effect</button>
-      <button v-on:click="startAutoMode">start auto mode</button>
-      <button v-on:click="stopAutoMode">stop auto mode</button>
-
+      <br />
+      <div class="btn-group-vertical">
+        <button v-on:click="startRandom" class="btn btn-dark">random effect</button>
+        <button v-on:click="startAutoMode" class="btn btn-dark">start auto mode</button>
+        <button v-on:click="stopAutoMode" class="btn btn-dark">stop auto mode</button>
+      </div>
     </div>
 
     <div class="col-sm">
       <h3>Long Running</h3>
-      <ul id="baseEffects">
-        <li v-for="item in baseEffects">
-          {{ item.name }}
-          <span v-show="item.hasColorPicker">
-            <input type="checkbox" v-model="item.isRandom" />
+      <div id="baseEffects" class="btn-group-vertical">
+        <label v-for="item in baseEffects" class="btn-group">
+          <span v-show="item.hasColorPicker" class="btn btn-dark">
+            color (random): <input type="checkbox" v-model="item.isRandom" />
             <input type="color" v-model="item.color" v-show="!item.isRandom" />
           </span>
-          <button v-on:click="start(item)">Start</button>
-        </li>
-      </ul>
+          <button v-on:click="start(item)" class="btn btn-dark">
+            {{ item.name }}
+          </button>
+        </label>
+      </div>
     </div>
 
     <div class="col-sm">
       <h3>Short Effects</h3>
-      <ul id="shortEffects">
-        <li v-for="item in shortEffects">
-          {{ item.name }}
-          <span v-show="item.hasColorPicker">
+      <div id="shortEffects" class="btn-group-vertical">
+        <label v-for="item in shortEffects" class="btn-group">
+          <span v-show="item.hasColorPicker" class="btn btn-dark">
             color (random): <input type="checkbox" v-model="item.isRandom" />
             <input type="color" v-model="item.color" v-show="!item.isRandom" />
           </span>
-          <button v-on:click="start(item)">Start</button>
-        </li>
-      </ul>
+          <button v-on:click="start(item)" class="btn btn-dark">
+            {{ item.name }}
+          </button>
+        </label>
+      </div>
 
     </div>
   </div>
@@ -75,7 +90,6 @@
   <div class="row">
     <div class="col-sm" style="margin-bottom:20px;">
       <hr />
-      {{ groupPicked }}
     </div>
   </div>
 
@@ -110,12 +124,12 @@
 
       <h3>Group Effects</h3>
       <div id="groupEffects" class="btn-group-vertical">
-        <label v-for="item in groupEffects">
-          <span v-show="item.hasColorPicker">
+        <label v-for="item in groupEffects" class="btn-group">
+          <span v-show="item.hasColorPicker" class="btn btn-dark">
             color (random): <input type="checkbox" v-model="item.isRandom" />
             <input type="color" v-model="item.color" v-show="!item.isRandom" />
           </span>
-          <button class="btn btn-dark" v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">
+          <button class="btn btn-dark"  v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">
             {{ item.name }}
           </button>
         </label>
@@ -126,5 +140,4 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="~/lib/signalr/signalr.js"></script>
-<script src="~/js/effectList.js"></script>
 <script src="~/js/status.js"></script>

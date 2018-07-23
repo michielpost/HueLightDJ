@@ -5,8 +5,6 @@ Random group, tussen helft en 2
 Hue: slow fade colorwheel maken
 async colorwheel?
 
-CSS buttons stylen
-
 
 Custom BPM per effect instellen
 
