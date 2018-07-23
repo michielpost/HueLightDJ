@@ -22,8 +22,11 @@ namespace HueLightDJ.Web
 
 					public static IConfiguration Configuration { get; set; }
 
-					// This method gets called by the runtime. Use this method to add services to the container.
-					public void ConfigureServices(IServiceCollection services)
+          public static IServiceProvider ServiceProvider { get; set; }
+
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
 					{
 							  services.Configure<CookiePolicyOptions>(options =>
 							  {
@@ -42,6 +45,8 @@ namespace HueLightDJ.Web
 					// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 					public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 					{
+                ServiceProvider = app.ApplicationServices;
+
 							  if (env.IsDevelopment())
 							  {
 										app.UseDeveloperExceptionPage();

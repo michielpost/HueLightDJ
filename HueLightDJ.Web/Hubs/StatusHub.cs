@@ -70,15 +70,11 @@ namespace HueLightDJ.Web.Hubs
     public void StartEffect(string typeName, string colorHex)
     {
       EffectService.StartEffect(typeName, colorHex);
-      Clients.All.SendAsync("StatusMsg", $"Started group effect {typeName} {colorHex}");
-
     }
 
     public void StartGroupEffect(string typeName, string colorHex, string groupName, string iteratorMode, string secondaryIteratorMode)
     {
       EffectService.StartEffect(typeName, colorHex, groupName, Enum.Parse<IteratorEffectMode>(iteratorMode), Enum.Parse<IteratorEffectMode>(secondaryIteratorMode));
-      Clients.All.SendAsync("StatusMsg", $"Started group effect {typeName} {groupName} {colorHex}");
-
     }
 
     public Task IncreaseBPM(int value)
@@ -108,6 +104,11 @@ namespace HueLightDJ.Web.Hubs
     public void StopAutoMode()
     {
       EffectService.StopAutoMode();
+    }
+
+    public Task SendStatus(string msg)
+    {
+      return Clients.All.SendAsync("StatusMsg", msg);
     }
 
     public async Task Disconnect()

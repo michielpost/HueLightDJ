@@ -3,7 +3,7 @@ const connection = new signalR.HubConnectionBuilder()
     .build();
 
 connection.on("StatusMsg", (message) => {
-    document.getElementById("messagesList").innerHTML = message;
+  document.getElementById("messagesList").value = message + '\r\n' + document.getElementById("messagesList").value;
 });
 
 connection.on("Status", (status) => {

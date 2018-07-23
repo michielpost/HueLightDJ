@@ -1,6 +1,8 @@
 using HueLightDJ.Effects;
 using HueLightDJ.Effects.Base;
+using HueLightDJ.Web.Hubs;
 using HueLightDJ.Web.Models;
+using Microsoft.AspNetCore.SignalR;
 using Q42.HueApi.ColorConverters;
 using Q42.HueApi.Streaming.Extensions;
 using Q42.HueApi.Streaming.Models;
@@ -125,6 +127,9 @@ namespace HueLightDJ.Web.Streaming
 
     public static void StartEffect(string typeName, string colorHex, string group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
+
+      var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
 
@@ -170,6 +175,13 @@ namespace HueLightDJ.Web.Streaming
             selectedGroup = GroupService.GetRandomGroup();
 
           parametersArray = new object[] { selectedGroup, waitTime, color, iteratorMode, secondaryIteratorMode, cts.Token };
+
+          hub.Clients.All.SendAsync("StatusMsg", $"{DateTime.Now} | Starting: {selectedEffect.Name} {group}, {iteratorMode}-{secondaryIteratorMode} {color?.ToHex()}");
+
+        }
+        else
+        {
+          hub.Clients.All.SendAsync("StatusMsg", $"{DateTime.Now} | Starting: {selectedEffect.Name} {color?.ToHex()}");
         }
 
         object classInstance = Activator.CreateInstance(selectedEffect, null);
