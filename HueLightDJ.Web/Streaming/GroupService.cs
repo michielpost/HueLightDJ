@@ -1,6 +1,7 @@
 using HueLightDJ.Web.Models;
 using Q42.HueApi.Streaming.Effects;
 using Q42.HueApi.Streaming.Extensions;
+using Q42.HueApi.Streaming.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,13 +39,29 @@ namespace HueLightDJ.Web.Streaming
         new GroupModel("Quarter", quarter),
         new GroupModel("Alternating", alternating),
         new GroupModel("Alternating by 4", alternatingFour),
-        new GroupModel("Distance from center", orderedByDistance),
-        new GroupModel("Order by Angle from center", orderedByAngle),
+        //new GroupModel("Distance from center", orderedByDistance),
+        //new GroupModel("Order by Angle from center", orderedByAngle),
         new GroupModel("Ring", ring),
+        new GroupModel("Random", GetRandomGroup()),
       };
      
 
       return result;
+    }
+
+    public static IEnumerable<IEnumerable<EntertainmentLight>> GetRandomGroup()
+    {
+      var layer = StreamingSetup.Layers.First();
+      var orderRandom = layer.OrderBy(x => Guid.NewGuid());
+
+      var min = 2;
+      var max = layer.Count / 2;
+
+      Random r = new Random();
+      var numberOfGroups =  r.Next(min, max);
+
+      return orderRandom.ChunkBy(numberOfGroups);
+
     }
   }
 }

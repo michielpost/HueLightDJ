@@ -99,6 +99,7 @@ namespace HueLightDJ.Web.Streaming
       vm.Groups = groups.Select(x => new GroupInfoViewModel() { Name = x.Name }).ToList();
       vm.IteratorModes = iteratorNames;
       vm.SecondaryIteratorModes = secondaryIteratorNames;
+
       return vm;
     }
 
@@ -164,6 +165,10 @@ namespace HueLightDJ.Web.Streaming
         {
           //get group
           var selectedGroup = GroupService.GetAll().Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
+
+          if (selectedGroup == null)
+            selectedGroup = GroupService.GetRandomGroup();
+
           parametersArray = new object[] { selectedGroup, waitTime, color, iteratorMode, secondaryIteratorMode, cts.Token };
         }
 
