@@ -12,7 +12,7 @@ namespace HueLightDJ.Web.Streaming
   public static class StreamingSetup
   {
     public static StreamingGroup StreamingGroup { get; set; }
-    public static StreamingHueClient StreamingHueClient { get; set; }
+    public static LightDJStreamingHueClient StreamingHueClient { get; set; }
     public static List<EntertainmentLayer> Layers { get; set; }
     private static int BPM { get; set; } = 120;
     public static Ref<TimeSpan?> WaitTime { get; set; } = TimeSpan.FromMilliseconds(500);
@@ -37,7 +37,7 @@ namespace HueLightDJ.Web.Streaming
       Layers = null;
 
       //Initialize streaming client
-      StreamingHueClient = new StreamingHueClient(ip, key, entertainmentKey);
+      StreamingHueClient = new LightDJStreamingHueClient(ip, key, entertainmentKey);
 
       //Get the entertainment group
       var all = await StreamingHueClient.LocalHueClient.GetEntertainmentGroups();

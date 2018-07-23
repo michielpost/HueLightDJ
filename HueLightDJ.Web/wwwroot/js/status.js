@@ -8,7 +8,9 @@ connection.on("StatusMsg", (message) => {
 
 connection.on("Status", (status) => {
     document.getElementById("bpm").innerHTML = status.bpm;
-
+});
+connection.on("preview", (preview) => {
+  document.getElementById("preview").value = preview;
 });
 
 const example1 = new Vue({

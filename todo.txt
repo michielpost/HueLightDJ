@@ -1,4 +1,7 @@
 
+Preview maken met http://www.pixijs.com/
+
+
 Hue: slow fade colorwheel maken
 async colorwheel?
 
