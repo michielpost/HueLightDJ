@@ -10,7 +10,7 @@ connection.on("Status", (status) => {
     document.getElementById("bpm").innerHTML = status.bpm;
 });
 connection.on("preview", (preview) => {
-  document.getElementById("preview").value = preview;
+  document.getElementById("preview").value = JSON.stringify(preview);
 });
 
 const example1 = new Vue({
@@ -84,3 +84,7 @@ document.getElementById("disconnectButton").addEventListener("click", event => {
   connection.invoke("Disconnect").catch(err => console.error(err.toString()));
   event.preventDefault();
 });
+
+function setBri(value) {
+  connection.invoke("SetBri", value).catch(err => console.error(err.toString()));
+}

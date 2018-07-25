@@ -91,6 +91,12 @@ namespace HueLightDJ.Web.Hubs
 
     }
 
+    public void SetBri(double value)
+    {
+      StreamingSetup.StreamingGroup.BrightnessFilter = value;
+    }
+
+
     public void StartRandom()
     {
       EffectService.StartRandomEffect();

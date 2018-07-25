@@ -29,7 +29,7 @@
     <div class="col-sm">
       <h3>BPM</h3>
       <div class="btn-group">
-        <button v-on:click="increaseBPM(-5)" class="btn btn-dark">--</button>
+        <button v-on:click="increaseBPM(-5)" class="btn btn-dark" v-on:keyup.d="alert('hi')">--</button>
         <button v-on:click="increaseBPM(-1)" class="btn btn-dark">-</button>
         <p id="bpm"></p>
         <button v-on:click="increaseBPM(1)" class="btn btn-dark">+</button>
@@ -51,6 +51,12 @@
         <button v-on:click="startRandom" class="btn btn-dark">random effect</button>
         <button v-on:click="startAutoMode" class="btn btn-dark">start auto mode</button>
         <button v-on:click="stopAutoMode" class="btn btn-dark">stop auto mode</button>
+      </div>
+
+      <br />
+      <br />
+      <div>
+        Brightness: <input type="range" min="0" max="100" value="100" style="width:400px" oninput="setBri(Math.abs((this.value/100) - 1))" id="myRange">
       </div>
     </div>
 

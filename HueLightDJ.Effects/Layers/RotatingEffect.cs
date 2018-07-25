@@ -58,7 +58,7 @@ namespace HueLightDJ.Effects.Layers
       CurrentAngle = 90;
 
       var state = new Q42.HueApi.Streaming.Models.StreamingState();
-      state.SetBrightnes(1);
+      state.SetBrightness(1);
       state.SetRGBColor(_color);
 
       this.State = state;
