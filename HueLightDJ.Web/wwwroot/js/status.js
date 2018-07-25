@@ -11,7 +11,23 @@ connection.on("Status", (status) => {
 });
 connection.on("preview", (preview) => {
   document.getElementById("preview").value = JSON.stringify(preview);
+
+  for (var i = 0; i < preview.length; i++) {
+    var light = preview[i];
+    var color = light.state.rgbColor;
+
+    placeLight(light.id, light.lightLocation[0], light.lightLocation[1], color.r, color.g, color.b, light.state.brightness)
+  }
 });
+
+function componentToHex(c) {
+  var hex = c.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
 
 const example1 = new Vue({
   el: '#effects',

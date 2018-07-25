@@ -22,6 +22,13 @@
   </div>
 </div>
 
+<div id="pixiPreview"></div>
+<script src="~/js/pixi.min.js"></script>
+<script src="~/js/pixi-layers.js"></script>
+<script src="~/js/preview.js"></script>
+
+
+
 <hr style="margin-bottom:20px;" />
 
 <div class="container" id="effects" v-show="groups != null" style="display:none;">
@@ -135,7 +142,7 @@
             color (random): <input type="checkbox" v-model="item.isRandom" />
             <input type="color" v-model="item.color" v-show="!item.isRandom" />
           </span>
-          <button class="btn btn-dark"  v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">
+          <button class="btn btn-dark" v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">
             {{ item.name }}
           </button>
         </label>
