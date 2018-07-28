@@ -1,67 +1,91 @@
-var WIDTH = 400, HEIGHT = 400, PAD = 80;
+const previewConnection = new signalR.HubConnectionBuilder()
+  .withUrl("/previewhub")
+  .build();
 
-var app = new PIXI.Application(WIDTH, HEIGHT, { backgroundColor: 0xFFFFFF });
-document.getElementById("pixiPreview").appendChild(app.view);
+previewConnection.start()
+  .catch(err => console.error(err.toString()));
 
-//create the stage instead of container
-app.stage = new PIXI.display.Stage();
+function renderPreviewGrid(size) {
 
-var bunnyWorld = new PIXI.Container();
-app.stage.addChild(bunnyWorld);
+  var WIDTH = size;
+  var HEIGHT = WIDTH;
+  var lights = [];
+  var cellSize = WIDTH / 20;
 
-var lighting = new PIXI.display.Layer();
-lighting.on('display', function (element) {
-  element.blendMode = PIXI.BLEND_MODES.ADD;
-});
-lighting.useRenderTexture = true;
-//lighting.clearColor = [0.5, 0.5, 0.5, 1]; // ambient gray
+  var app = new PIXI.Application(WIDTH, HEIGHT, { backgroundColor: 0x191D21 });
+  document.getElementById("pixiPreview").appendChild(app.view);
 
-app.stage.addChild(lighting);
+  //create the stage instead of container
+  app.stage = new PIXI.display.Stage();
 
-var lightingSprite = new PIXI.Sprite(lighting.getRenderTexture());
-lightingSprite.blendMode = PIXI.BLEND_MODES.MULTIPLY;
+  var lightContainer = new PIXI.Container();
+  app.stage.addChild(lightContainer);
 
-app.stage.addChild(lightingSprite);
+  //placeLight(1, 0, 0, "0F0000", 0.5);
+  //placeLight(2, 0.1, 0.1, "0FF00", 1);
 
-function placeLight(id, x, y, hex, bri) {
+  previewConnection.on("preview", (preview) => {
+    for (var i = 0; i < preview.length; i++) {
+      var light = preview[i];
+      placeLight(light.id, light.x, light.y, light.hex, light.bri)
+    }
+  });
 
-  var basicText = bunnyWorld.children.find((x) => x.lightId === id)
 
-  if (basicText === undefined) {
-    basicText = new PIXI.Text(id);
+  function placeLight(id, x, y, hex, bri) {
 
-    basicText.position.set(xyToPosition(x), xyToPosition(y));
-    //bunny.anchor.set(0.5, 0.5);
+    var current = lights[id];
+    var rad = 30 * bri;
+    var xPos = xyToPosition(x);
+    var yPos = xyToPosition(y * -1)
 
-    var lightbulb = new PIXI.Graphics();
-    var rad = 50 * bri;
-    lightbulb.beginFill("0x" + hex, 1);
-    lightbulb.drawCircle(0, 0, rad);
-    lightbulb.endFill();
-    lightbulb.parentLayer = lighting;
+    if (current === undefined || current == null) {
 
-    basicText.addChild(lightbulb);
-    basicText.lightId = id;
-
-    bunnyWorld.addChild(basicText);
+      lights[id] = {
+        glow: createGlowRing(xPos, yPos),
+        label: createLightLabel(xPos, yPos, id),
+      };
+      updateGlowRing(id, hex, bri);
+      addLightToContainer(lights[id]);
+    }
+    else {
+      updateGlowRing(id, hex, bri);
+    }
   }
-  else {
-    basicText.children.splice(0, basicText.children.length);
-    var lightbulb = new PIXI.Graphics();
-    var rad = 50 * bri;
-    lightbulb.beginFill("0x" + hex, 1);
-    lightbulb.drawCircle(0, 0, rad);
-    lightbulb.endFill();
-    lightbulb.parentLayer = lighting;
 
-    basicText.addChild(lightbulb);
+
+  function addLightToContainer(light) {
+    lightContainer.addChild(light.glow);
+    lightContainer.addChild(light.label);
   }
+
+  function updateGlowRing(id, hex, bri) {
+    lights[id].glow.tint = "0x" + hex;
+    lights[id].glow.height = cellSize * 5 * bri;
+    lights[id].glow.width = cellSize * 5 * bri;
+  }
+
+  function createGlowRing(x, y) {
+    var glowRing = PIXI.Sprite.fromImage("images/glow.png");
+    glowRing.anchor.set(0.5, 0.5);
+    glowRing.height = cellSize * 5;
+    glowRing.width = cellSize * 5;
+    glowRing.position.x = x;
+    glowRing.position.y = y;
+    glowRing.blendMode = PIXI.BLEND_MODES.SCREEN;
+    return glowRing;
+  }
+
+  function createLightLabel(x, y, id) {
+    var label = new PIXI.Text(String(id), { font: "12px", fill: 0xE9ECEF });
+    label.anchor.set(0.5, 0.5);
+    label.position.x = x;
+    label.position.y = y;
+    return label;
+  }
+
+  function xyToPosition(x) {
+    return (WIDTH / 2 + x * WIDTH / 2)
+  }
+
 }
-
-function xyToPosition(x) {
-  return (WIDTH / 2 + x * WIDTH / 2)
-}
-
-//placeLight(1, 0, 0, "#0F0000", 0.5);
-//placeLight(2, 0.1, 0.1, "#0FF00", 1);
-

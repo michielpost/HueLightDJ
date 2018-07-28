@@ -64,6 +64,7 @@ namespace HueLightDJ.Web
 							  app.UseSignalR(routes =>
 							  {
 										routes.MapHub<StatusHub>("/statushub");
+										routes.MapHub<PreviewHub>("/previewhub");
 							  });
 
 

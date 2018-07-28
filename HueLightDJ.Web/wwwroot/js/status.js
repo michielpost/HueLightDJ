@@ -9,14 +9,7 @@ connection.on("StatusMsg", (message) => {
 connection.on("Status", (status) => {
     document.getElementById("bpm").innerHTML = status.bpm;
 });
-connection.on("preview", (preview) => {
-  document.getElementById("preview").value = JSON.stringify(preview);
 
-  for (var i = 0; i < preview.length; i++) {
-    var light = preview[i];
-    placeLight(light.id, light.x, light.y, light.hex, light.bri)
-  }
-});
 
 const example1 = new Vue({
   el: '#effects',

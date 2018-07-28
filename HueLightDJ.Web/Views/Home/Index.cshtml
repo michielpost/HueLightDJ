@@ -17,15 +17,11 @@
   <div class="row">
     <div class="col-sm">
       <textarea rows="3" id="messagesList" class="form-control bg-dark" style="width:100%"></textarea>
-      <textarea rows="30" id="preview" class="form-control bg-dark" style="width:100%"></textarea>
     </div>
   </div>
 </div>
 
-<div id="pixiPreview"></div>
-<script src="~/js/pixi.min.js"></script>
-<script src="~/js/pixi-layers.js"></script>
-<script src="~/js/preview.js"></script>
+
 
 
 
@@ -67,6 +63,14 @@
         <input type="range" min="0" max="100" value="100" style="width:400px" class="form-control" oninput="setBri(Math.abs((this.value/100) - 1))" id="myRange">
       </div>
     </div>
+    <div class="col-sm">
+      <div id="pixiPreview" style="border:1px solid white; width:402px;margin:5px;"></div>
+      <br />
+    </div>
+  </div>
+
+  <div class="row">
+
 
     <div class="col-sm">
       <h3>Long Running</h3>
@@ -154,3 +158,10 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/status.js"></script>
+
+<script src="~/js/pixi.min.js"></script>
+<script src="~/js/pixi-layers.js"></script>
+<script src="~/js/preview.js"></script>
+<script>
+  renderPreviewGrid(400);
+</script>

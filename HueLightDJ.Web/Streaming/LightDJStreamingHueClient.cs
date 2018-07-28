@@ -12,11 +12,11 @@ namespace HueLightDJ.Web.Streaming
 {
   public class LightDJStreamingHueClient : StreamingHueClient
   {
-    private IHubContext<StatusHub> _hub;
+    private IHubContext<PreviewHub> _hub;
 
     public LightDJStreamingHueClient(string ip, string appKey, string clientKey) : base(ip, appKey, clientKey)
     {
-      _hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      _hub = (IHubContext<PreviewHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<PreviewHub>));
     }
 
     protected override void Send(IEnumerable<IEnumerable<StreamingLight>> chunks)
