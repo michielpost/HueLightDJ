@@ -23,11 +23,11 @@ lightingSprite.blendMode = PIXI.BLEND_MODES.MULTIPLY;
 
 app.stage.addChild(lightingSprite);
 
-function placeLight(id, x, y, r, g, b, bri) {
+function placeLight(id, x, y, hex, bri) {
 
   var basicText = bunnyWorld.children.find((x) => x.lightId === id)
 
-  if (basicText == null) {
+  if (basicText === undefined) {
     basicText = new PIXI.Text(id);
 
     basicText.position.set(xyToPosition(x), xyToPosition(y));
@@ -35,7 +35,7 @@ function placeLight(id, x, y, r, g, b, bri) {
 
     var lightbulb = new PIXI.Graphics();
     var rad = 50 * bri;
-    lightbulb.beginFill((r << 16) + (g << 8) + b, 1.0, 1);
+    lightbulb.beginFill("0x" + hex, 1);
     lightbulb.drawCircle(0, 0, rad);
     lightbulb.endFill();
     lightbulb.parentLayer = lighting;
@@ -49,7 +49,7 @@ function placeLight(id, x, y, r, g, b, bri) {
     basicText.children.splice(0, basicText.children.length);
     var lightbulb = new PIXI.Graphics();
     var rad = 50 * bri;
-    lightbulb.beginFill((r << 16) + (g << 8) + b, 1.0, 1);
+    lightbulb.beginFill("0x" + hex, 1);
     lightbulb.drawCircle(0, 0, rad);
     lightbulb.endFill();
     lightbulb.parentLayer = lighting;

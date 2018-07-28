@@ -1,4 +1,5 @@
 using HueLightDJ.Web.Hubs;
+using HueLightDJ.Web.Models;
 using Microsoft.AspNetCore.SignalR;
 using Q42.HueApi.Streaming;
 using Q42.HueApi.Streaming.Models;
@@ -23,7 +24,14 @@ namespace HueLightDJ.Web.Streaming
       base.Send(chunks);
       var flatten = chunks.SelectMany(x => x);
 
-      _hub.Clients.All.SendAsync("preview", flatten);
+      _hub.Clients.All.SendAsync("preview", flatten.Select(x => new PreviewModel()
+      {
+        Id = x.Id,
+        X = x.LightLocation.X,
+        Y = x.LightLocation.Y,
+        Hex = x.State.RGBColor.ToHex(),
+        Bri = x.State.Brightness
+      }));
     }
   }
 }

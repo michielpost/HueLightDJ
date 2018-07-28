@@ -1,6 +1,8 @@
 
 Preview maken met http://www.pixijs.com/
 
+
+
 Support for keyboard bindings
 Support for drumpad? midi controller?
 
