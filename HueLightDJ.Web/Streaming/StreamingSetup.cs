@@ -1,8 +1,11 @@
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Q42.HueApi.Models.Groups;
 using Q42.HueApi.Streaming;
 using Q42.HueApi.Streaming.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,13 +23,13 @@ namespace HueLightDJ.Web.Streaming
     private static string _groupId;
     private static CancellationTokenSource _cts;
 
-    public static async Task<StreamingGroup> SetupAndReturnGroup()
+    public static async Task<StreamingGroup> SetupAndReturnGroup(bool demoMode = false)
     {
       var configSection = Startup.Configuration.GetSection("HueSetup");
       string ip = configSection.GetValue<string>("ip");
       string key = configSection.GetValue<string>("key");
       string entertainmentKey = configSection.GetValue<string>("entertainmentKey");
-      bool useSimulator = configSection.GetValue<bool>("useSimulator");
+      bool useSimulator = demoMode ? true : configSection.GetValue<bool>("useSimulator");
 
       EffectService.CancelAllEffects();
       if (_cts != null)
@@ -37,27 +40,40 @@ namespace HueLightDJ.Web.Streaming
       Layers = null;
 
       //Initialize streaming client
-      StreamingHueClient = new LightDJStreamingHueClient(ip, key, entertainmentKey);
+      StreamingHueClient = new LightDJStreamingHueClient(ip, key, entertainmentKey, demoMode);
 
       //Get the entertainment group
-      var all = await StreamingHueClient.LocalHueClient.GetEntertainmentGroups();
-      var group = all.FirstOrDefault();
-
-      if (group == null)
-        throw new Exception("No Entertainment Group found. Create one using the Q42.HueApi.UniversalWindows.Sample");
+      Dictionary<string, LightLocation> locations = null;
+      if (demoMode)
+      {
+        string demoJson = File.ReadAllText("demoLocations.json");
+        locations = JsonConvert.DeserializeObject<Dictionary<string, LightLocation>>(demoJson);
+        _groupId = "1";
+      }
       else
       {
-        Console.WriteLine($"Using Entertainment Group {group.Id}");
-        _groupId = group.Id;
+        var all = await StreamingHueClient.LocalHueClient.GetEntertainmentGroups();
+        var group = all.FirstOrDefault();
+
+        if (group == null)
+          throw new Exception("No Entertainment Group found. Create one using the Philips Hue App or the Q42.HueApi.UniversalWindows.Sample");
+        else
+        {
+          Console.WriteLine($"Using Entertainment Group {group.Id}");
+          _groupId = group.Id;
+        }
+
+        locations = group.Locations;
       }
 
       //Create a streaming group
-      var stream = new StreamingGroup(group.Locations);
+      var stream = new StreamingGroup(locations);
       stream.IsForSimulator = useSimulator;
 
 
       //Connect to the streaming group
-      await StreamingHueClient.Connect(group.Id, simulator: useSimulator);
+      if(!demoMode)
+        await StreamingHueClient.Connect(_groupId, simulator: useSimulator);
 
       //Start auto updating this entertainment group
       StreamingHueClient.AutoUpdate(stream, _cts.Token, 50);

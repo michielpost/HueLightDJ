@@ -13,15 +13,19 @@ namespace HueLightDJ.Web.Streaming
   public class LightDJStreamingHueClient : StreamingHueClient
   {
     private IHubContext<PreviewHub> _hub;
+    private bool _demoMode;
 
-    public LightDJStreamingHueClient(string ip, string appKey, string clientKey) : base(ip, appKey, clientKey)
+    public LightDJStreamingHueClient(string ip, string appKey, string clientKey, bool demoMode) : base(ip, appKey, clientKey)
     {
+      _demoMode = demoMode;
       _hub = (IHubContext<PreviewHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<PreviewHub>));
     }
 
     protected override void Send(IEnumerable<IEnumerable<StreamingLight>> chunks)
     {
-      base.Send(chunks);
+      if(!_demoMode)
+        base.Send(chunks);
+
       var flatten = chunks.SelectMany(x => x);
 
       _hub.Clients.All.SendAsync("preview", flatten.Select(x => new PreviewModel()

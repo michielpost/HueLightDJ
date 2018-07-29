@@ -278,6 +278,8 @@ namespace HueLightDJ.Web.Streaming
 
     public static void CancelAllEffects()
     {
+      StopAutoMode();
+
       foreach(var layer in layerInfo)
       {
         layer.Value?.CancellationTokenSource?.Cancel();

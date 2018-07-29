@@ -12,14 +12,16 @@ namespace HueLightDJ.Web.Hubs
   public class StatusHub : Hub
   {
 
-    public async Task Connect()
+    public async Task Connect(bool demoMode = false)
     {
       await Clients.All.SendAsync("StatusMsg", "Connecting to bridge...");
+      if(demoMode)
+        await Clients.All.SendAsync("StatusMsg", "Starting DEMO mode");
 
       try
       {
         //Connect
-        await StreamingSetup.SetupAndReturnGroup();
+        await StreamingSetup.SetupAndReturnGroup(demoMode);
         await Clients.All.SendAsync("StatusMsg", "Connected to bridge");
 
         var allEffects = EffectService.GetEffectViewModels();
@@ -27,9 +29,9 @@ namespace HueLightDJ.Web.Hubs
 
         await GetStatus();
       }
-      catch
+      catch(Exception ex)
       {
-        await Clients.All.SendAsync("StatusMsg", "Failed to connect to bridge");
+        await Clients.All.SendAsync("StatusMsg", "Failed to connect to bridge, " + ex);
 
       }
     }
@@ -119,8 +121,9 @@ namespace HueLightDJ.Web.Hubs
 
     public async Task Disconnect()
     {
-      StreamingSetup.Disconnect();
       EffectService.CancelAllEffects();
+
+      StreamingSetup.Disconnect();
       await Clients.Caller.SendAsync("effects", new EffectsVM());
       await Clients.All.SendAsync("StatusMsg", "DISCONNECTED...");
       GetStatus();
