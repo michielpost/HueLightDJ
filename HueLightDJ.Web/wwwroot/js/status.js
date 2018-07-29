@@ -24,6 +24,13 @@ const example1 = new Vue({
     iteratorPicked: "",
     secondaryIteratorPicked: ""
   },
+  computed: {
+    // a computed getter
+    composerFilled: function () {
+      // `this` points to the vm instance
+      return this.groupPicked.length > 1 && this.iteratorPicked.length > 1 && this.secondaryIteratorPicked.length > 1;
+    }
+  },
   methods: {
     start(effect) {
       if (effect.isRandom) {

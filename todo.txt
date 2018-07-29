@@ -1,5 +1,4 @@
 
-readme
 
 Support for keyboard bindings
 https://github.com/iFgR/vue-shortkey

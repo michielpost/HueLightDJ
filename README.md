@@ -27,6 +27,7 @@ TODO
 
 ## Tech
 - ASP.Net Core 2.1 backend
+- SignalR for realtime communication between frontend and backend
 - Q42.HueApi for communicating with the Hue Bridge
 - Vue.js frontend
 - PixiJS for WebGL preview window
