@@ -18,6 +18,7 @@ Hue Light DJ is meant for setups with 20+ Hue Lights. Don't use this app for you
 - Effect Composer, try out new effects by selecting a group, IteratorMode and effect
 - Brightness Slider to control overall brightness
 - DEMO mode, to test the app without a Hue Bridge
+- Keyboard Shortcuts
 
 ## Screenshots
 TODO
@@ -31,7 +32,7 @@ TODO
 - Q42.HueApi for communicating with the Hue Bridge
 - Vue.js frontend
 - PixiJS for WebGL preview window
-- 
+- Mousetrap for keyboard shortcuts
 
 ## Feature Wishlist
 - More build in effects

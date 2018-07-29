@@ -1,8 +1,5 @@
 
 
-Support for keyboard bindings
-https://github.com/iFgR/vue-shortkey
-
 set brightness event om te syncen
 
 Replay button in debug console list

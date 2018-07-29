@@ -52,7 +52,7 @@
       <br />
       <br />
       <div class="btn-group-vertical">
-        <button v-on:click="startRandom" class="btn btn-dark">random effect</button>
+        <button v-on:click="startRandom" class="btn btn-dark" title="Shortcut: R">random effect</button>
         <button v-on:click="startAutoMode" class="btn btn-dark">start auto mode</button>
         <button v-on:click="stopAutoMode" class="btn btn-dark">stop auto mode</button>
       </div>
@@ -60,8 +60,8 @@
       <br />
       <br />
       <div>
-        Brightness: <br />
-        <input type="range" min="0" max="100" value="100" style="width:400px" class="form-control" oninput="setBri(Math.abs((this.value/100) - 1))" id="myRange">
+        <span title="Shortcut: W / S">Brightness:</span> <br />
+        <input title="Shortcut: W / S" type="range" min="0" max="100" value="100" style="width:400px" class="form-control" oninput="setBri(Math.abs((this.value/100) - 1))" id="briRange">
       </div>
     </div>
     <div class="col-sm">
@@ -76,12 +76,12 @@
     <div class="col-sm">
       <h3>Long Running</h3>
       <div id="baseEffects" class="btn-group-vertical">
-        <label v-for="item in baseEffects" class="btn-group">
+        <label v-for="(item, index) in baseEffects" class="btn-group">
           <span v-show="item.hasColorPicker" class="btn btn-dark">
             color (random): <input type="checkbox" v-model="item.isRandom" />
             <input type="color" v-model="item.color" v-show="!item.isRandom" />
           </span>
-          <button v-on:click="start(item)" class="btn btn-dark">
+          <button v-on:click="start(item)" class="btn btn-dark" :title="'Shortcut: F' + (index+1)">
             {{ item.name }}
           </button>
         </label>
@@ -91,12 +91,12 @@
     <div class="col-sm">
       <h3>Short Effects</h3>
       <div id="shortEffects" class="btn-group-vertical">
-        <label v-for="item in shortEffects" class="btn-group">
+        <label v-for="(item, index) in shortEffects" class="btn-group">
           <span v-show="item.hasColorPicker" class="btn btn-dark">
             color (random): <input type="checkbox" v-model="item.isRandom" />
             <input type="color" v-model="item.color" v-show="!item.isRandom" />
           </span>
-          <button v-on:click="start(item)" class="btn btn-dark">
+          <button v-on:click="start(item)" class="btn btn-dark" :title="'Shortcut: ' + (index+1)">
             {{ item.name }}
           </button>
         </label>
@@ -158,11 +158,14 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="~/lib/signalr/signalr.js"></script>
-<script src="~/js/status.js"></script>
+<script src="~/js/mousetrap.min.js"></script>
 
 <script src="~/js/pixi.min.js"></script>
 <script src="~/js/pixi-layers.js"></script>
 <script src="~/js/preview.js"></script>
+
+<script src="~/js/status.js"></script>
+
 <script>
   renderPreviewGrid(400);
 </script>

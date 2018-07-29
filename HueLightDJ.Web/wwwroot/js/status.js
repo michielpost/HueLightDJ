@@ -97,3 +97,34 @@ document.getElementById("disconnectButton").addEventListener("click", event => {
 function setBri(value) {
   connection.invoke("SetBri", value).catch(err => console.error(err.toString()));
 }
+
+function startShortEffect(key) {
+  var index = key - 1;
+  var item = example1.shortEffects[index];
+  if (item != null)
+    example1.start(item);
+}
+function startLongEffect(key) {
+  var index = key - 1;
+  var item = example1.baseEffects[index];
+  if (item != null)
+    example1.start(item);
+}
+
+window.onhelp = function () { return false };
+Mousetrap.bind(['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12'], (e, key) => {
+  console.log(key);
+  if(e.preventDefault) {
+    e.preventDefault();
+  } else {
+    // internet explorer
+    e.returnValue = false;
+  }
+  console.log(key.substr(1));
+  startLongEffect(key.substr(1));
+});
+
+Mousetrap.bind(['1', '2', '3', '4', '5', '6', '7', '8', '9'], function (e, key) { startShortEffect(key); });
+Mousetrap.bind('w', function () { document.getElementById('briRange').value = 100; setBri(0) });
+Mousetrap.bind('s', function () { document.getElementById('briRange').value = 0; setBri(1) });
+Mousetrap.bind('r', function () { example1.startRandom(); });
