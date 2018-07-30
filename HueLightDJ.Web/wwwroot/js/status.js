@@ -9,6 +9,9 @@ connection.on("StatusMsg", (message) => {
 connection.on("Status", (status) => {
     document.getElementById("bpm").innerHTML = status.bpm;
 });
+connection.on("Bri", (value) => {
+  document.getElementById("briRange").value = 100 - (value * 100);
+});
 
 
 const example1 = new Vue({

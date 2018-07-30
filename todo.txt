@@ -1,7 +1,4 @@
 
-
-set brightness event om te syncen
-
 Replay button in debug console list
 
 Support for Akai APC Mini using Web Midi

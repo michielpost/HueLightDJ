@@ -96,6 +96,8 @@ namespace HueLightDJ.Web.Hubs
     public void SetBri(double value)
     {
       StreamingSetup.StreamingGroup.BrightnessFilter = value;
+
+      Clients.Others.SendAsync("Bri", value);
     }
 
 
