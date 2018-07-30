@@ -3,8 +3,31 @@ const connection = new signalR.HubConnectionBuilder()
     .build();
 
 connection.on("StatusMsg", (message) => {
-  document.getElementById("messagesList").innerHTML = message + '\r\n<br>' + document.getElementById("messagesList").innerHTML;
+  addLogMsg(message);
 });
+connection.on("StartingEffect", (message, log) => {
+  var color = log.rgbColor == null ? null : '\'' + log.rgbColor + '\'';
+  var replayLink = '<span onclick="connection.invoke(\'StartEffect\', \'' + log.name + '\', ' + color + ');">replay</span>';
+  if (log.effectType == "group") {
+    var replayLink = '<span onclick="connection.invoke(\'StartGroupEffect\', \'' + log.name + '\', ' + color + ', \'' + log.group + '\', \'' + log.iteratorMode + '\', \'' + log.secondaryIteratorMode + '\');">replay</span>';
+  }
+  addLogMsg(replayLink + " | " + message);
+});
+
+function addLogMsg(msg) {
+  document.getElementById("messagesList").innerHTML = js_yyyy_mm_dd_hh_mm_ss() + ' | ' + msg + '\r\n<br>' + document.getElementById("messagesList").innerHTML;
+}
+
+function js_yyyy_mm_dd_hh_mm_ss() {
+  now = new Date();
+  year = "" + now.getFullYear();
+  month = "" + (now.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
+  day = "" + now.getDate(); if (day.length == 1) { day = "0" + day; }
+  hour = "" + now.getHours(); if (hour.length == 1) { hour = "0" + hour; }
+  minute = "" + now.getMinutes(); if (minute.length == 1) { minute = "0" + minute; }
+  second = "" + now.getSeconds(); if (second.length == 1) { second = "0" + second; }
+  return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+};
 
 connection.on("Status", (status) => {
     document.getElementById("bpm").innerHTML = status.bpm;

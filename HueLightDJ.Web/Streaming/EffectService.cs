@@ -188,12 +188,20 @@ namespace HueLightDJ.Web.Streaming
 
           parametersArray = new object[] { selectedGroup, waitTime, color, iteratorMode, secondaryIteratorMode, cts.Token };
 
-          hub.Clients.All.SendAsync("StatusMsg", $"{DateTime.Now} | Starting: {selectedEffect.Name} {group}, {iteratorMode}-{secondaryIteratorMode} {color?.ToHex()}");
+          hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {group}, {iteratorMode}-{secondaryIteratorMode} {color?.ToHex()}",
+              new EffectLogMsg() { EffectType = "group",
+                Name = selectedEffect.Name,
+                RGBColor = color?.ToHex(),
+                Group = group,
+                IteratorMode = iteratorMode.ToString(),
+                SecondaryIteratorMode = secondaryIteratorMode.ToString(),
+
+              });
 
         }
         else
         {
-          hub.Clients.All.SendAsync("StatusMsg", $"{DateTime.Now} | Starting: {selectedEffect.Name} {color?.ToHex()}");
+          hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {color?.ToHex()}", new EffectLogMsg() { Name = selectedEffect.Name, RGBColor = color?.ToHex() });
         }
 
         object classInstance = Activator.CreateInstance(selectedEffect, null);

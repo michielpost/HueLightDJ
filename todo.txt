@@ -1,13 +1,13 @@
 
-Replay button in debug console list
+Hue: slow fade colorwheel maken
+async colorwheel?
 
 Support for Akai APC Mini using Web Midi
 http://community.akaipro.com/akai_professional/topics/midi-information-for-apc-mini
 https://github.com/xorus/akai-apc-mini-to-launchpad
 
 
-Hue: slow fade colorwheel maken
-async colorwheel?
+
 
 Custom BPM per effect instellen. Implicit Action voor Ref<TimeSpan>
 
