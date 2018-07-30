@@ -20,12 +20,6 @@ Hue Light DJ is meant for setups with 20+ Hue Lights. Don't use this app for you
 - DEMO mode, to test the app without a Hue Bridge
 - Keyboard Shortcuts
 
-## Screenshots
-TODO
-
-## Video
-TODO
-
 ## Tech
 - ASP.Net Core 2.1 backend
 - SignalR for realtime communication between frontend and backend
@@ -43,3 +37,9 @@ TODO
 ## Feature Wishlist
 - More build in effects
 - Support for a hardware controller using WebMidi
+
+## Screenshots
+![screenshot01](screenshot01.png)
+
+## Video
+TODO
