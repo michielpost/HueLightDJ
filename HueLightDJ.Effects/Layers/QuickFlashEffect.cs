@@ -12,13 +12,16 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Quick Flash")]
+  [HueEffect(Name = "Quick Flash", DefaultColor = "#FFFFFF")]
   public class QuickFlashEffect : IHueEffect
   {
     public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
-        color = new Q42.HueApi.ColorConverters.RGBColor("FFFFFF");
+      {
+        var r = new Random();
+        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+      }
 
       var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count;
 

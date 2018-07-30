@@ -62,6 +62,12 @@ namespace HueLightDJ.Web.Streaming
         effect.TypeName = type.Name;
         effect.HasColorPicker = hueEffectAtt.HasColorPicker;
 
+        if(!string.IsNullOrEmpty(hueEffectAtt.DefaultColor))
+        {
+          effect.Color = hueEffectAtt.DefaultColor;
+          effect.IsRandom = false;
+        }
+
         if (hueEffectAtt.IsBaseEffect)
           baseEffects.Add(effect);
         else
@@ -76,6 +82,12 @@ namespace HueLightDJ.Web.Streaming
         effect.Name = hueEffectAtt.Name;
         effect.TypeName = type.Name;
         effect.HasColorPicker = hueEffectAtt.HasColorPicker;
+
+        if (!string.IsNullOrEmpty(hueEffectAtt.DefaultColor))
+        {
+          effect.Color = hueEffectAtt.DefaultColor;
+          effect.IsRandom = false;
+        }
 
         groupEffects.Add(effect);
       }

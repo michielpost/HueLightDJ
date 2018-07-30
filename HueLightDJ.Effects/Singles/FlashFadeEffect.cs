@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Flash and fade", IsBaseEffect = false, HasColorPicker = true)]
+  [HueEffect(Name = "Flash and fade", IsBaseEffect = false, HasColorPicker = true, DefaultColor = "#FFFFFF")]
   public class FlashFadeEffect : IHueEffect
   {
     public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
@@ -21,7 +21,10 @@ namespace HueLightDJ.Effects
         return Task.CompletedTask;
 
       if (!color.HasValue)
-        color = new Q42.HueApi.ColorConverters.RGBColor("FFFFFF");
+      {
+        var r = new Random();
+        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+      }
 
       return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.All, IteratorEffectMode.All, waitTime: TimeSpan.FromMilliseconds(100), transitionTimeOn: TimeSpan.Zero, transitionTimeOff: waitTime, duration: waitTime);
     }

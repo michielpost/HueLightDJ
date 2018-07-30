@@ -12,15 +12,18 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  [HueEffect(Name = "Quick Flash on all lights")]
-		  public class QuickFlashAllEffect : IHueEffect
-		  {
-					public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
-					{
-							  if (!color.HasValue)
-										color = new Q42.HueApi.ColorConverters.RGBColor("FFFFFF");
+  [HueEffect(Name = "Quick Flash on all lights", DefaultColor = "#FFFFFF")]
+  public class QuickFlashAllEffect : IHueEffect
+  {
+    public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    {
+      if (!color.HasValue)
+      {
+        var r = new Random();
+        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+      }
 
-							  return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.All, waitTime: waitTime);
-					}
-		  }
+      return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.All, waitTime: waitTime);
+    }
+  }
 }

@@ -13,15 +13,18 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Group
 {
-  [HueEffect(Name = "Quick Flash")]
+  [HueEffect(Name = "Quick Flash", DefaultColor ="#FFFFFF")]
   public class QuickFlashEffect : IHueGroupEffect
   {
     public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
-        color = new Q42.HueApi.ColorConverters.RGBColor("FFFFFF");
+      {
+        var r = new Random();
+        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+      }
 
-      if(iteratorMode != IteratorEffectMode.All)
+      if (iteratorMode != IteratorEffectMode.All)
       {
         if(secondaryIteratorMode == IteratorEffectMode.Bounce
           || secondaryIteratorMode == IteratorEffectMode.Random
