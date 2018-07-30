@@ -20,10 +20,12 @@ namespace HueLightDJ.Effects.Group
       if (iteratorMode != IteratorEffectMode.All)
       {
         if (secondaryIteratorMode == IteratorEffectMode.Bounce
+          || secondaryIteratorMode == IteratorEffectMode.Cycle
           || secondaryIteratorMode == IteratorEffectMode.Random
+          || secondaryIteratorMode == IteratorEffectMode.RandomOrdered
           || secondaryIteratorMode == IteratorEffectMode.Single)
         {
-          var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.SelectMany(x => x).Count();
+          var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count();
 
           return layer.SetRandomColor(cancellationToken, iteratorMode, secondaryIteratorMode, TimeSpan.FromMilliseconds(customWaitMS));
         }

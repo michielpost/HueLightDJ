@@ -27,6 +27,21 @@ namespace HueLightDJ.Effects.Group
       if (iteratorMode == IteratorEffectMode.All)
         iteratorMode = IteratorEffectMode.AllIndividual;
 
+      if (iteratorMode != IteratorEffectMode.AllIndividual)
+      {
+        if (secondaryIteratorMode == IteratorEffectMode.Bounce
+          || secondaryIteratorMode == IteratorEffectMode.Cycle
+          || secondaryIteratorMode == IteratorEffectMode.Random
+          || secondaryIteratorMode == IteratorEffectMode.RandomOrdered
+          || secondaryIteratorMode == IteratorEffectMode.Single)
+        {
+          var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count();
+          var customTimeSpan = TimeSpan.FromMilliseconds(customWaitMS);
+
+          return layer.Flash(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: customTimeSpan, transitionTimeOn: TimeSpan.FromMilliseconds(customWaitMS / 2), transitionTimeOff: TimeSpan.FromMilliseconds(customWaitMS * 2), waitTillFinished: false);
+        }
+      }
+
       return layer.Flash(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: waitTime, transitionTimeOn: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds / 2), transitionTimeOff: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds * 2), waitTillFinished: false);
 
     }
