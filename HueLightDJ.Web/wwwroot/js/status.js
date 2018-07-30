@@ -3,7 +3,7 @@ const connection = new signalR.HubConnectionBuilder()
     .build();
 
 connection.on("StatusMsg", (message) => {
-  document.getElementById("messagesList").value = message + '\r\n' + document.getElementById("messagesList").value;
+  document.getElementById("messagesList").innerHTML = message + '\r\n<br>' + document.getElementById("messagesList").innerHTML;
 });
 
 connection.on("Status", (status) => {
@@ -36,16 +36,12 @@ const example1 = new Vue({
   },
   methods: {
     start(effect) {
-      if (effect.isRandom) {
-        effect.color = null;
-      }
-      connection.invoke("StartEffect", effect.typeName, effect.color).catch(err => console.error(err.toString()));
+      var color = effect.isRandom ? null: effect.color;
+      connection.invoke("StartEffect", effect.typeName, color).catch(err => console.error(err.toString()));
     },
     startGroup(effect, groupPicked, iteratorPicked, secondaryIteratorPicked) {
-      if (effect.isRandom) {
-        effect.color = null;
-      }
-      connection.invoke("StartGroupEffect", effect.typeName, effect.color, groupPicked, iteratorPicked, secondaryIteratorPicked).catch(err => console.error(err.toString()));
+      var color = effect.isRandom ? null : effect.color;
+      connection.invoke("StartGroupEffect", effect.typeName, color, groupPicked, iteratorPicked, secondaryIteratorPicked).catch(err => console.error(err.toString()));
     },
     increaseBPM(inc) {
       connection.invoke("IncreaseBPM", inc).catch(err => console.error(err.toString()));
