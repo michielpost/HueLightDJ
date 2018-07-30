@@ -34,6 +34,12 @@ TODO
 - PixiJS for WebGL preview window
 - Mousetrap for keyboard shortcuts
 
+## Build and Install Instructions
+- Make sure to have ASP.Net Core 2.1 installed to build this project
+- Get the IP, Key and EntertainmentKey for your Hue Bridge using the API (instructions can be found on the Philips Hue Dev Portal)
+- Enter the IP, Key and EntertainmentKey in appsettings.json
+- Run the HueLightDJ.Web project(dotnet run inside the HueLightDJ.Web directory) 
+
 ## Feature Wishlist
 - More build in effects
 - Support for a hardware controller using WebMidi

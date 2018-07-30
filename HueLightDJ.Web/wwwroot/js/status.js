@@ -112,7 +112,7 @@ function startLongEffect(key) {
 }
 
 window.onhelp = function () { return false };
-Mousetrap.bind(['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12'], (e, key) => {
+Mousetrap.bindGlobal(['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12'], (e, key) => {
   console.log(key);
   if(e.preventDefault) {
     e.preventDefault();
@@ -124,7 +124,7 @@ Mousetrap.bind(['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f1
   startLongEffect(key.substr(1));
 });
 
-Mousetrap.bind(['1', '2', '3', '4', '5', '6', '7', '8', '9'], function (e, key) { startShortEffect(key); });
-Mousetrap.bind('w', function () { document.getElementById('briRange').value = 100; setBri(0) });
-Mousetrap.bind('s', function () { document.getElementById('briRange').value = 0; setBri(1) });
-Mousetrap.bind('r', function () { example1.startRandom(); });
+Mousetrap.bindGlobal(['1', '2', '3', '4', '5', '6', '7', '8', '9'], function (e, key) { startShortEffect(key); });
+Mousetrap.bindGlobal('w', function () { document.getElementById('briRange').value = 100; setBri(0) });
+Mousetrap.bindGlobal('s', function () { document.getElementById('briRange').value = 0; setBri(1) });
+Mousetrap.bindGlobal('r', function () { example1.startRandom(); });
