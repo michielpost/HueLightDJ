@@ -11,7 +11,7 @@ namespace HueLightDJ.Effects
   public interface IHueGroupEffect
 		  {
 					Task Start(IEnumerable<IEnumerable<EntertainmentLight>> lights,
-                              Ref<TimeSpan?> waitTime,
+                              Func<TimeSpan> waitTime,
                               RGBColor? color,
                               IteratorEffectMode iteratorMode,
                               IteratorEffectMode secondaryIteratorMode,

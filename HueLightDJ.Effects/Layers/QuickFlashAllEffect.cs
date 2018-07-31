@@ -15,7 +15,7 @@ namespace HueLightDJ.Effects
   [HueEffect(Name = "Quick Flash on all lights", DefaultColor = "#FFFFFF")]
   public class QuickFlashAllEffect : IHueEffect
   {
-    public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
       {

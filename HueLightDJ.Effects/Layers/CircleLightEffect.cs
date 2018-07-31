@@ -16,7 +16,7 @@ namespace HueLightDJ.Effects
   [HueEffect(Name = "Circle Light")]
   public class CircleLightEffect : IHueEffect
   {
-    public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
       {
@@ -26,9 +26,11 @@ namespace HueLightDJ.Effects
 
       var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(0, 0));
 
-      var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count;
+      Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / layer.Count);
+      Func<TimeSpan> customOnTime = () => customWaitMS() / 2;
+      Func<TimeSpan> customOffTime = () => customWaitMS() * 2;
 
-      return orderedByAngle.To2DGroup().Flash(cancellationToken, color, IteratorEffectMode.Cycle, waitTime: TimeSpan.FromMilliseconds(customWaitMS), transitionTimeOn: TimeSpan.FromMilliseconds(customWaitMS / 2), transitionTimeOff: TimeSpan.FromMilliseconds(customWaitMS * 2), waitTillFinished: false);
+      return orderedByAngle.To2DGroup().Flash(cancellationToken, color, IteratorEffectMode.Cycle, waitTime: customWaitMS, transitionTimeOn: customOnTime, transitionTimeOff: customOffTime, waitTillFinished: false);
 
     }
   }

@@ -14,10 +14,9 @@ namespace HueLightDJ.Effects
 		  [HueEffect(Name = "Random Pulse from center with retrace", HasColorPicker = false)]
 		  public class RandomPulseRetraceEffect : IHueEffect
 		  {
-					public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+					public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
 					{
-							  var customWaitTimeMs = waitTime.Value.Value.TotalMilliseconds / 10;
-							  var customWaitTime = TimeSpan.FromMilliseconds(customWaitTimeMs);
+							  Func<TimeSpan> customWaitTime = () => waitTime() / 10;
 
 							  var randomPulseEffect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(waitTime: customWaitTime);
 							  layer.PlaceEffect(randomPulseEffect);

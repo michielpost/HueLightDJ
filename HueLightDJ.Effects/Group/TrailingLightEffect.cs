@@ -16,7 +16,7 @@ namespace HueLightDJ.Effects.Group
   [HueEffect(Name = "Trailing Light")]
   public class TrailingLightEffect : IHueGroupEffect
   {
-    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
+    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
       {
@@ -35,14 +35,18 @@ namespace HueLightDJ.Effects.Group
           || secondaryIteratorMode == IteratorEffectMode.RandomOrdered
           || secondaryIteratorMode == IteratorEffectMode.Single)
         {
-          var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count();
-          var customTimeSpan = TimeSpan.FromMilliseconds(customWaitMS);
+          Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count());
+          Func<TimeSpan> customOnTime = () => customWaitMS() / 2;
+          Func<TimeSpan> customOffTime = () => customWaitMS() * 2;
 
-          return layer.Flash(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: customTimeSpan, transitionTimeOn: TimeSpan.FromMilliseconds(customWaitMS / 2), transitionTimeOff: TimeSpan.FromMilliseconds(customWaitMS * 2), waitTillFinished: false);
+          return layer.Flash(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: customWaitMS, transitionTimeOn: customOnTime, transitionTimeOff: customOffTime, waitTillFinished: false);
         }
       }
 
-      return layer.Flash(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: waitTime, transitionTimeOn: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds / 2), transitionTimeOff: TimeSpan.FromMilliseconds(waitTime.Value.Value.TotalMilliseconds * 2), waitTillFinished: false);
+      Func<TimeSpan> onTime = () => waitTime() / 2;
+      Func<TimeSpan> offTime = () => waitTime() * 2;
+
+      return layer.Flash(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: waitTime, transitionTimeOn: onTime, transitionTimeOff: offTime, waitTillFinished: false);
 
     }
   }

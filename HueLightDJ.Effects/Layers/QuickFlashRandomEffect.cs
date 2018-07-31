@@ -15,7 +15,7 @@ namespace HueLightDJ.Effects
   [HueEffect(Name = "Quick Random Flash", DefaultColor = "#FFFFFF")]
   public class QuickFlashRandomEffect : IHueEffect
   {
-    public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
       {
@@ -23,9 +23,9 @@ namespace HueLightDJ.Effects
         color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
       }
 
-      var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count;
+      Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / layer.Count);
 
-      return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.Random, waitTime: TimeSpan.FromMilliseconds(customWaitMS));
+      return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.Random, waitTime: customWaitMS);
     }
   }
 }

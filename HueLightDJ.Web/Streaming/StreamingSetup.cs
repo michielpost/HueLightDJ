@@ -18,7 +18,7 @@ namespace HueLightDJ.Web.Streaming
     public static LightDJStreamingHueClient StreamingHueClient { get; set; }
     public static List<EntertainmentLayer> Layers { get; set; }
     private static int BPM { get; set; } = 120;
-    public static Ref<TimeSpan?> WaitTime { get; set; } = TimeSpan.FromMilliseconds(500);
+    public static Ref<TimeSpan> WaitTime { get; set; } = TimeSpan.FromMilliseconds(500);
 
     private static string _groupId;
     private static CancellationTokenSource _cts;
@@ -76,7 +76,7 @@ namespace HueLightDJ.Web.Streaming
         await StreamingHueClient.Connect(_groupId, simulator: useSimulator);
 
       //Start auto updating this entertainment group
-      StreamingHueClient.AutoUpdate(stream, _cts.Token, 50);
+      StreamingHueClient.AutoUpdate(stream, _cts.Token, 50, onlySendDirtyStates: true);
 
 
       StreamingGroup = stream;

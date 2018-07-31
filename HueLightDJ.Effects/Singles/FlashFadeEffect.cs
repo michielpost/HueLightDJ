@@ -14,7 +14,7 @@ namespace HueLightDJ.Effects
   [HueEffect(Name = "Flash and fade", IsBaseEffect = false, HasColorPicker = true, DefaultColor = "#FFFFFF")]
   public class FlashFadeEffect : IHueEffect
   {
-    public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       //Non repeating effects should not run on baselayer
       if (layer.IsBaseLayer)
@@ -26,7 +26,7 @@ namespace HueLightDJ.Effects
         color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
       }
 
-      return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.All, IteratorEffectMode.All, waitTime: TimeSpan.FromMilliseconds(100), transitionTimeOn: TimeSpan.Zero, transitionTimeOff: waitTime, duration: waitTime);
+      return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.All, IteratorEffectMode.All, waitTime: () => TimeSpan.FromMilliseconds(100), transitionTimeOn: () => TimeSpan.Zero, transitionTimeOff: waitTime, duration: waitTime());
     }
   }
 }

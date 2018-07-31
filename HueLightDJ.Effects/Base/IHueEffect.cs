@@ -9,7 +9,7 @@ namespace HueLightDJ.Effects
 		  public interface IHueEffect
 		  {
 					Task Start(EntertainmentLayer layer,
-                              Ref<TimeSpan?> waitTime,
+                              Func<TimeSpan> waitTime,
                               RGBColor? color,
                               CancellationToken cancellationToken);
 		  }

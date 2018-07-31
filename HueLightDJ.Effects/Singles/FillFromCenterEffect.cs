@@ -12,29 +12,28 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  [HueEffect(Name = "Fill from center", IsBaseEffect = false)]
-		  public class FillFromCenterEffect : IHueEffect
-		  {
-					public async Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
-					{
-                //Non repeating effects should not run on baselayer
-							  if (layer.IsBaseLayer)
-										return;
+  [HueEffect(Name = "Fill from center", IsBaseEffect = false)]
+  public class FillFromCenterEffect : IHueEffect
+  {
+    public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    {
+      //Non repeating effects should not run on baselayer
+      if (layer.IsBaseLayer)
+        return;
 
-							  var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(0, 0));
+      var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(0, 0));
 
-							  if (!color.HasValue)
-							  {
-										var r = new Random();
-										color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
-							  }
+      if (!color.HasValue)
+      {
+        var r = new Random();
+        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+      }
 
-							  var customWaitTimeMs = waitTime.Value.Value.TotalMilliseconds / layer.Count;
-							  var customWaitTime = TimeSpan.FromMilliseconds(customWaitTimeMs);
+      Func<TimeSpan> customWaitTime = () => waitTime() / layer.Count;
 
 
-							  await orderedByDistance.To2DGroup().SetColor(cancellationToken, color.Value, IteratorEffectMode.Single, IteratorEffectMode.All, customWaitTime);
-							  layer.SetBrightness(cancellationToken, 0, transitionTime: TimeSpan.FromMilliseconds(0));
-					}
-		  }
+      await orderedByDistance.To2DGroup().SetColor(cancellationToken, color.Value, IteratorEffectMode.Single, IteratorEffectMode.All, customWaitTime);
+      layer.SetBrightness(cancellationToken, 0, transitionTime: TimeSpan.FromMilliseconds(0));
+    }
+  }
 }

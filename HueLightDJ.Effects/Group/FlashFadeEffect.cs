@@ -16,7 +16,7 @@ namespace HueLightDJ.Effects.Group
   [HueEffect(Name = "Flash and fade")]
   public class FlashFadeEffect : IHueGroupEffect
   {
-    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
+    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
       {
@@ -32,16 +32,16 @@ namespace HueLightDJ.Effects.Group
           || secondaryIteratorMode == IteratorEffectMode.RandomOrdered
           || secondaryIteratorMode == IteratorEffectMode.Single)
         {
-          var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count();
+          Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count());
 
           return layer.FlashQuick(cancellationToken, color, iteratorMode, secondaryIteratorMode,
-            waitTime: TimeSpan.FromMilliseconds(customWaitMS),
-            transitionTimeOn: TimeSpan.Zero,
-            transitionTimeOff: TimeSpan.FromMilliseconds(customWaitMS));
+            waitTime: customWaitMS,
+            transitionTimeOn: () => TimeSpan.Zero,
+            transitionTimeOff: customWaitMS);
         }
       }
 
-      return layer.FlashQuick(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: waitTime, transitionTimeOn: TimeSpan.Zero, transitionTimeOff: waitTime);
+      return layer.FlashQuick(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: waitTime, transitionTimeOn: () => TimeSpan.Zero, transitionTimeOff: waitTime);
     }
   }
 }

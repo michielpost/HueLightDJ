@@ -16,7 +16,7 @@ namespace HueLightDJ.Effects.Group
   [HueEffect(Name = "Quick Flash", DefaultColor ="#FFFFFF")]
   public class QuickFlashEffect : IHueGroupEffect
   {
-    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
+    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
       {
@@ -32,9 +32,9 @@ namespace HueLightDJ.Effects.Group
           || secondaryIteratorMode == IteratorEffectMode.RandomOrdered
           || secondaryIteratorMode == IteratorEffectMode.Single)
         {
-          var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count();
+          Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count());
 
-          return layer.FlashQuick(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: TimeSpan.FromMilliseconds(customWaitMS));
+          return layer.FlashQuick(cancellationToken, color, iteratorMode, secondaryIteratorMode, waitTime: customWaitMS);
         }
       }
 

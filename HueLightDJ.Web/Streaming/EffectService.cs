@@ -168,7 +168,7 @@ namespace HueLightDJ.Web.Streaming
         layerInfo[layer] = new RunningEffectInfo() { Name = hueEffectAtt.Name, CancellationTokenSource = cts };
 
 
-        var waitTime = StreamingSetup.WaitTime;
+        Func<TimeSpan> waitTime = () => StreamingSetup.WaitTime;
         RGBColor? color = null;
         if (!string.IsNullOrEmpty(colorHex))
           color = new RGBColor(colorHex);

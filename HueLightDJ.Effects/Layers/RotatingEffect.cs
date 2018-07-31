@@ -13,10 +13,9 @@ namespace HueLightDJ.Effects.Layers
   [HueEffect(Name = "Rotating Effect", HasColorPicker = false)]
   public class RotatingEffect : IHueEffect
   {
-    public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
-      var customWaitTimeMs = waitTime.Value.Value.TotalMilliseconds / 10;
-      var customWaitTime = TimeSpan.FromMilliseconds(customWaitTimeMs);
+      Func<TimeSpan> customWaitTime = () => waitTime() / 10;
 
       if(!color.HasValue)
       {
@@ -38,9 +37,9 @@ namespace HueLightDJ.Effects.Layers
   {
     private CancellationToken _ct;
     private RGBColor _color;
-    private Ref<TimeSpan?> _waitTime;
+    private Func<TimeSpan> _waitTime;
 
-    public RotatingLineEffect(CancellationToken ct, RGBColor color, Ref<TimeSpan?> waitTime)
+    public RotatingLineEffect(CancellationToken ct, RGBColor color, Func<TimeSpan> waitTime)
     {
       Width = 1;
       X = 0;

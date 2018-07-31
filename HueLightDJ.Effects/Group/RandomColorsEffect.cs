@@ -15,7 +15,7 @@ namespace HueLightDJ.Effects.Group
   [HueEffect(Name = "Random colors (all different)", HasColorPicker = false)]
   public class RandomColorsEffect : IHueGroupEffect
   {
-    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Ref<TimeSpan?> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
+    public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
     {
       if (iteratorMode != IteratorEffectMode.All)
       {
@@ -25,9 +25,9 @@ namespace HueLightDJ.Effects.Group
           || secondaryIteratorMode == IteratorEffectMode.RandomOrdered
           || secondaryIteratorMode == IteratorEffectMode.Single)
         {
-          var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count();
+          Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * layer.Count()) / layer.SelectMany(x => x).Count());
 
-          return layer.SetRandomColor(cancellationToken, iteratorMode, secondaryIteratorMode, TimeSpan.FromMilliseconds(customWaitMS));
+          return layer.SetRandomColor(cancellationToken, iteratorMode, secondaryIteratorMode, customWaitMS);
         }
       }
 

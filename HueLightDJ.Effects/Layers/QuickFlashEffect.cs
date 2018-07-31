@@ -15,17 +15,16 @@ namespace HueLightDJ.Effects
   [HueEffect(Name = "Quick Flash", DefaultColor = "#FFFFFF")]
   public class QuickFlashEffect : IHueEffect
   {
-    public Task Start(EntertainmentLayer layer, Ref<TimeSpan?> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
       {
         var r = new Random();
         color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
       }
+      Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / layer.Count);
 
-      var customWaitMS = (waitTime.Value.Value.TotalMilliseconds * 2) / layer.Count;
-
-      return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.Cycle, waitTime: TimeSpan.FromMilliseconds(customWaitMS));
+      return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.Cycle, waitTime: customWaitMS);
     }
   }
 }
