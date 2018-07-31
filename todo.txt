@@ -1,15 +1,15 @@
 
 colorwheel, start en eind kleur, verschil op basis van graden/hoek
-Hue: slow fade colorwheel maken
-async colorwheel?
+
+Ronddraai kleur die steeds sneller gaat (met lichte fade er achter)
+
+Fade in, fade uit? gegroepeerd om en om?
 
 2 effecten combineren? Allebei op de helft van de groepen. Bijv: random fade color en quickflash
 
 
-Effecte ideeën:
-Ronddraai kleur die steeds sneller gaat (met lichte fade er achter)
+Testen in office:
 Om en om eem kleur. Laten draaien?
-Fade in, fade uit? gegroepeerd om en om?
 4 led strips die aanstaan en rond draaien als een kruis
 
 ------
