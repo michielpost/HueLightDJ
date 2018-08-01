@@ -181,7 +181,7 @@ namespace HueLightDJ.Web.Streaming
         if(isGroupEffect && !string.IsNullOrEmpty(group))
         {
           //get group
-          var selectedGroup = GroupService.GetAll().Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
+          var selectedGroup = GroupService.GetAll(layer).Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
 
           if (selectedGroup == null)
             selectedGroup = GroupService.GetRandomGroup();
@@ -220,7 +220,11 @@ namespace HueLightDJ.Web.Streaming
       if(r.NextDouble() <= 0.7)
         effect = allGroup.OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
       else
-        effect = all.Where(x => x.Name != typeof(ChristmasEffect).Name).OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
+        effect = all
+          .Where(x => x.Name != typeof(ChristmasEffect).Name)
+          .Where(x => x.Name != typeof(AllOffEffect).Name)
+          .Where(x => x.Name != typeof(SetColorEffect).Name)
+          .OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
 
       var group = GroupService.GetAll().OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
 

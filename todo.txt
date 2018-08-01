@@ -1,4 +1,9 @@
 
+Support for multiple bridges
+
+Short circle flash?
+
+Effecten orderen via attribuut
 
 2 effecten combineren? Allebei op de helft van de groepen. Bijv: random fade color en quickflash
 
@@ -23,6 +28,8 @@ Beat detection
 Audio library: https://github.com/filoe/cscore
 
 ---
+
+Dip to dark, maar kan niet via effect layer...
 
 Loopen zolang knop is ingedrukt?
 

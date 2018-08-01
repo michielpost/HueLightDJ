@@ -11,9 +11,10 @@ namespace HueLightDJ.Web.Streaming
 {
   public static class GroupService
   {
-    public static List<GroupModel> GetAll()
+    public static List<GroupModel> GetAll(EntertainmentLayer layer = null)
     {
-      var layer = StreamingSetup.Layers.First();
+      if (layer == null)
+        layer = StreamingSetup.Layers.First();
 
       var allLightsOrdered = layer.OrderBy(x => x.LightLocation.X).ThenBy(x => x.LightLocation.Y).ToList();
 
