@@ -28,13 +28,18 @@ namespace HueLightDJ.Effects.Layers
 
         foreach (var light in orderedLayer)
         {
-          var angle = light.LightLocation.Angle(0, 0) + 180;
-          var timeSpan = waitTime() / 360 * angle;
-          //Debug.WriteLine($"{light.Id} Angle {angle} and timespan {timeSpan.TotalMilliseconds}");
-          light.SetState(cancellationToken, randomColor, 1, timeSpan);
+          Task.Run(async () =>
+          {
+            var angle = light.LightLocation.Angle(0, 0) + 180;
+            var timeSpan = waitTime() / 360 * angle;
+            await Task.Delay(timeSpan);
+            //Debug.WriteLine($"{light.Id} Angle {angle} and timespan {timeSpan.TotalMilliseconds}");
+            light.SetState(cancellationToken, randomColor, 1, waitTime() / 2);
+          });
+    
         }
 
-        await Task.Delay(waitTime() * 1.2);
+        await Task.Delay(waitTime() * 1.1);
       }
 
     }
