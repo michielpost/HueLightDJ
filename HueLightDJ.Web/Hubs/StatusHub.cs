@@ -24,10 +24,8 @@ namespace HueLightDJ.Web.Hubs
         await StreamingSetup.SetupAndReturnGroup(demoMode);
         await Clients.All.SendAsync("StatusMsg", "Connected to bridge");
 
-        var allEffects = EffectService.GetEffectViewModels();
-        await Clients.All.SendAsync("effects", allEffects);
-
         await GetStatus();
+        GetEffects(true);
       }
       catch(Exception ex)
       {
@@ -35,38 +33,27 @@ namespace HueLightDJ.Web.Hubs
 
       }
     }
-    public void GetEffects()
-    {
-      var allEffects = EffectService.GetEffectViewModels();
-      Clients.Caller.SendAsync("effects", allEffects);
-    }
 
     public Task GetStatus()
     {
       StatusViewModel vm = new StatusViewModel();
       vm.bpm = StreamingSetup.GetBPM();
 
-      //try
-      //{
-      //	//Connect
-      //	bool isActive = await StreamingSetup.IsStreamingActive();
-      //	if (isActive)
-      //	{
-      //			  await Clients.All.SendAsync("StatusMsg", "Streaming is active");
-
-      //			  var allEffects = EffectService.GetEffectViewModels();
-      //			  await Clients.Caller.SendAsync("effects", allEffects);
-      //	}
-      //	else
-      //			  await Clients.All.SendAsync("StatusMsg", "Streaming is not active");
-      //}
-      //catch
-      //{
-      //	await Clients.All.SendAsync("StatusMsg", "Not connected to bridge.");
-
-      //}
-
       return Clients.All.SendAsync("Status", vm);
+    }
+
+    public void GetEffects(bool forAll)
+    {
+      if (StreamingSetup.Layers?.Count > 0)
+      {
+        var allEffects = EffectService.GetEffectViewModels();
+
+        if(forAll)
+          Clients.All.SendAsync("effects", allEffects);
+        else
+          Clients.Caller.SendAsync("effects", allEffects);
+
+      }
     }
 
     public void StartEffect(string typeName, string colorHex)
@@ -126,7 +113,7 @@ namespace HueLightDJ.Web.Hubs
       EffectService.CancelAllEffects();
 
       StreamingSetup.Disconnect();
-      await Clients.Caller.SendAsync("effects", new EffectsVM());
+      await Clients.All.SendAsync("effects", new EffectsVM());
       await Clients.All.SendAsync("StatusMsg", "DISCONNECTED...");
       GetStatus();
     }

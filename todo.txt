@@ -1,7 +1,10 @@
 
 toggle auto mode aan/uit, ook in info object
 
+
 Short circle flash?
+
+Meer short effects
 
 Effecten orderen via attribuut
 

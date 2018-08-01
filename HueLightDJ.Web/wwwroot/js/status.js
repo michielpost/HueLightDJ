@@ -101,6 +101,7 @@ connection.on("effects", (effectvm) => {
 
 connection.start()
     .then(() => connection.invoke("GetStatus"))
+    .then(() => connection.invoke("GetEffects"))
     .catch(err => console.error(err.toString()));
 
 document.getElementById("connectButton").addEventListener("click", event => {
