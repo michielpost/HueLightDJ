@@ -9,6 +9,6 @@ namespace HueLightDJ.Web.Models
   {
     public string Status { get; set; }
     public int bpm { get; set; }
-    public bool IsConnected { get; set; }
+    public bool IsAutoMode { get; set; }
   }
 }

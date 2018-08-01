@@ -38,6 +38,7 @@ namespace HueLightDJ.Web.Hubs
     {
       StatusViewModel vm = new StatusViewModel();
       vm.bpm = StreamingSetup.GetBPM();
+      vm.IsAutoMode = EffectService.IsAutoModeRunning();
 
       return Clients.All.SendAsync("Status", vm);
     }

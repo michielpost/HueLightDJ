@@ -4,6 +4,7 @@ using HueLightDJ.Web.Hubs;
 using HueLightDJ.Web.Models;
 using Microsoft.AspNetCore.SignalR;
 using Q42.HueApi.ColorConverters;
+using Q42.HueApi.Streaming.Effects;
 using Q42.HueApi.Streaming.Extensions;
 using Q42.HueApi.Streaming.Models;
 using System;
@@ -20,7 +21,7 @@ namespace HueLightDJ.Web.Streaming
     private static List<TypeInfo> EffectTypes { get; set; }
     private static List<TypeInfo> GroupEffectTypes { get; set; }
     private static Dictionary<EntertainmentLayer, RunningEffectInfo> layerInfo = new Dictionary<EntertainmentLayer, RunningEffectInfo>();
-    private static CancellationTokenSource cts;
+    private static CancellationTokenSource autoModeCts;
 
     public static List<TypeInfo> GetEffectTypes()
     {
@@ -119,27 +120,34 @@ namespace HueLightDJ.Web.Streaming
 
     public static void StartAutoMode()
     {
-      cts?.Cancel();
-      cts = new CancellationTokenSource();
+      autoModeCts?.Cancel();
+      autoModeCts = new CancellationTokenSource();
 
       Task.Run(async () =>
       {
-        while(!cts.IsCancellationRequested)
+        while(!autoModeCts.IsCancellationRequested)
         {
           StartRandomEffect();
           await Task.Delay(TimeSpan.FromSeconds(6));
         }
-      }, cts.Token);
+      }, autoModeCts.Token);
     }
 
     public static void StopAutoMode()
     {
-      cts?.Cancel();
+      autoModeCts?.Cancel();
+    }
+
+    public static bool IsAutoModeRunning()
+    {
+      if (autoModeCts == null || autoModeCts.IsCancellationRequested)
+        return false;
+
+      return true;
     }
 
     public static void StartEffect(string typeName, string colorHex, string group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
-
       var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
 
       var all = GetEffectTypes();
@@ -167,46 +175,67 @@ namespace HueLightDJ.Web.Streaming
         CancellationTokenSource cts = new CancellationTokenSource();
         layerInfo[layer] = new RunningEffectInfo() { Name = hueEffectAtt.Name, CancellationTokenSource = cts };
 
-
         Func<TimeSpan> waitTime = () => StreamingSetup.WaitTime;
         RGBColor? color = null;
         if (!string.IsNullOrEmpty(colorHex))
           color = new RGBColor(colorHex);
 
-        MethodInfo methodInfo = selectedEffect.GetMethod("Start");
-
-        object result = null;
-        object[] parametersArray = new object[] { layer, waitTime, color, cts.Token };
-
-        if(isGroupEffect && !string.IsNullOrEmpty(group))
+       
+        if(isGroupEffect)
         {
           //get group
           var selectedGroup = GroupService.GetAll(layer).Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
 
-          if (selectedGroup == null)
-            selectedGroup = GroupService.GetRandomGroup();
-
-          parametersArray = new object[] { selectedGroup, waitTime, color, iteratorMode, secondaryIteratorMode, cts.Token };
-
-          hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {group}, {iteratorMode}-{secondaryIteratorMode} {color?.ToHex()}",
-              new EffectLogMsg() { EffectType = "group",
-                Name = selectedEffect.Name,
-                RGBColor = color?.ToHex(),
-                Group = group,
-                IteratorMode = iteratorMode.ToString(),
-                SecondaryIteratorMode = secondaryIteratorMode.ToString(),
-
-              });
-
+          StartEffect(cts.Token, selectedEffect, selectedGroup, group, waitTime, color, iteratorMode, secondaryIteratorMode);
         }
         else
         {
-          hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {color?.ToHex()}", new EffectLogMsg() { Name = selectedEffect.Name, RGBColor = color?.ToHex() });
+          StartEffect(cts.Token, selectedEffect, layer, waitTime, color);
         }
-
-        object classInstance = Activator.CreateInstance(selectedEffect, null);
-        result = methodInfo.Invoke(classInstance, parametersArray);
+        
       }
+    }
+
+    private static void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, IEnumerable<IEnumerable<EntertainmentLight>> group, string groupName, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
+    {
+      MethodInfo methodInfo = selectedEffect.GetMethod("Start");
+
+      //get group
+      if (group == null)
+        group = GroupService.GetRandomGroup();
+
+      object[] parametersArray = new object[] { group, waitTime, color, iteratorMode, secondaryIteratorMode, ctsToken};
+
+     
+      object classInstance = Activator.CreateInstance(selectedEffect, null);
+      methodInfo.Invoke(classInstance, parametersArray);
+
+      var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {groupName}, {iteratorMode}-{secondaryIteratorMode} {color?.ToHex()}",
+          new EffectLogMsg()
+          {
+            EffectType = "group",
+            Name = selectedEffect.Name,
+            RGBColor = color?.ToHex(),
+            Group = groupName,
+            IteratorMode = iteratorMode.ToString(),
+            SecondaryIteratorMode = secondaryIteratorMode.ToString(),
+
+          });
+
+    }
+
+    private static void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color)
+    {
+      MethodInfo methodInfo = selectedEffect.GetMethod("Start");
+      object[] parametersArray = new object[] { layer, waitTime, color, ctsToken };
+
+      object classInstance = Activator.CreateInstance(selectedEffect, null);
+      methodInfo.Invoke(classInstance, parametersArray);
+
+      var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {color?.ToHex()}", new EffectLogMsg() { Name = selectedEffect.Name, RGBColor = color?.ToHex() });
+
     }
 
     public static void StartRandomEffect()
@@ -228,22 +257,67 @@ namespace HueLightDJ.Web.Streaming
 
       var group = GroupService.GetAll().OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
 
-      var hexColor = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
-      while(hexColor.R < 0.15 && hexColor.G < 0.15 && hexColor.B < 0.15)
+      GenerateRandomEffectSettings(out RGBColor hexColor, out IteratorEffectMode iteratorMode, out IteratorEffectMode iteratorSecondaryMode);
+
+      StartEffect(effect, hexColor.ToHex(), group, iteratorMode, iteratorSecondaryMode);
+
+    }
+
+    public static void StartDoubleRandomEffect()
+    {
+      Func<TimeSpan> waitTime = () => StreamingSetup.WaitTime;
+
+      Random r = new Random();
+      var allGroupEffects = GetGroupEffectTypes();
+
+      //Always run on baselayer
+      var layer = GetLayer(isBaseLayer: true);
+
+      //TODO: Tag groups that suppot multiple effects
+      var group = GroupService.GetAll(layer).OrderBy(x => Guid.NewGuid()).Where(x => x.Name == "Ring").FirstOrDefault();
+      var lightList = group.Lights.ToList();
+
+      //Get same number of effects as groups in the light list
+      var effects = allGroupEffects.OrderBy(x => Guid.NewGuid()).Take(lightList.Count).ToList();
+
+      //Cancel current
+      if (layerInfo.ContainsKey(layer))
+      {
+        //Cancel currently running job
+        layerInfo[layer].CancellationTokenSource?.Cancel();
+      }
+
+      CancellationTokenSource cts = new CancellationTokenSource();
+      layerInfo[layer] = new RunningEffectInfo() { Name = "Double random", CancellationTokenSource = cts };
+
+
+      for (int i = 0; i < lightList.Count; i++)
+      {
+        var section = lightList[i];
+        GenerateRandomEffectSettings(out RGBColor hexColor, out IteratorEffectMode iteratorMode, out IteratorEffectMode iteratorSecondaryMode);
+
+        StartEffect(cts.Token, effects[i], section.To2DGroup(), group.Name, waitTime, hexColor, iteratorMode, iteratorSecondaryMode);
+      }
+
+
+    }
+
+    private static void GenerateRandomEffectSettings(out RGBColor hexColor, out IteratorEffectMode iteratorMode, out IteratorEffectMode iteratorSecondaryMode)
+    {
+      Random r = new Random();
+      hexColor = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+      while (hexColor.R < 0.15 && hexColor.G < 0.15 && hexColor.B < 0.15)
         hexColor = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
 
       Array values = Enum.GetValues(typeof(IteratorEffectMode));
-      var iteratorMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
-      var iteratorSecondaryMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
+      iteratorMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
+      iteratorSecondaryMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
 
       //Bounce and Single are no fun for random mode
       if (iteratorMode == IteratorEffectMode.Bounce || iteratorMode == IteratorEffectMode.Single)
         iteratorMode = IteratorEffectMode.Cycle;
       else if (iteratorMode == IteratorEffectMode.RandomOrdered) //RandomOrdered only runs once
         iteratorMode = IteratorEffectMode.Random;
-
-      StartEffect(effect, hexColor.ToHex(), group, iteratorMode, iteratorSecondaryMode);
-
     }
 
     private static EntertainmentLayer GetLayer(bool isBaseLayer)
