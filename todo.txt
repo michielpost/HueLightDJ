@@ -1,5 +1,5 @@
 
-Support for multiple bridges
+toggle auto mode aan/uit, ook in info object
 
 Short circle flash?
 

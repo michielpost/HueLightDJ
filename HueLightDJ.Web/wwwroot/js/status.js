@@ -104,7 +104,7 @@ connection.start()
     .catch(err => console.error(err.toString()));
 
 document.getElementById("connectButton").addEventListener("click", event => {
-    connection.invoke("Connect").catch(err => console.error(err.toString()));
+    connection.invoke("Connect", false).catch(err => console.error(err.toString()));
     event.preventDefault();
 });
 document.getElementById("connectDemoButton").addEventListener("click", event => {

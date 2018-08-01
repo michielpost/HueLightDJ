@@ -19,6 +19,7 @@ Hue Light DJ is meant for setups with 20+ Hue Lights. Don't use this app for you
 - Brightness Slider to control overall brightness
 - DEMO mode, to test the app without a Hue Bridge
 - Keyboard Shortcuts
+- Connect to multiple Hue Bridges at the same time to control more than 50 lights 
 
 ## Tech
 - ASP.Net Core 2.1 backend
