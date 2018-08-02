@@ -37,7 +37,7 @@ namespace HueLightDJ.Web.Streaming
         new GroupModel("Left To Right", leftToRight, 2),
         new GroupModel("Front/Back", frontBack),
         new GroupModel("Front To Back", fronToBack, 2),
-        new GroupModel("Quarter", quarter, 4),
+        new GroupModel("Quarter", quarter, 2),
         new GroupModel("Alternating", alternating),
         new GroupModel("Alternating by 4", alternatingFour),
         //new GroupModel("Distance from center", orderedByDistance),
