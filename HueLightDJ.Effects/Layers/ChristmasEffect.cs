@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  [HueEffect(Name = "X-MAS", HasColorPicker = false)]
+		  [HueEffect(Order = int.MaxValue, Name = "X-MAS", HasColorPicker = false)]
 		  public class ChristmasEffect : IHueEffect
 		  {
 					public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

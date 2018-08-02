@@ -245,25 +245,24 @@ namespace HueLightDJ.Web.Streaming
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
 
-      string effect;
-      if(r.NextDouble() <= 0.7)
-        effect = allGroup.OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
+      if (r.NextDouble() <= 0.7)
+        StartRandomGroupEffect();
       else
-        effect = all
+      {
+        string effect = all
           .Where(x => x.Name != typeof(ChristmasEffect).Name)
           .Where(x => x.Name != typeof(AllOffEffect).Name)
           .Where(x => x.Name != typeof(SetColorEffect).Name)
           .OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
 
-      var group = GroupService.GetAll().OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
+        GenerateRandomEffectSettings(out RGBColor hexColor, out _, out _);
 
-      GenerateRandomEffectSettings(out RGBColor hexColor, out IteratorEffectMode iteratorMode, out IteratorEffectMode iteratorSecondaryMode);
-
-      StartEffect(effect, hexColor.ToHex(), group, iteratorMode, iteratorSecondaryMode);
+        StartEffect(effect, hexColor.ToHex());
+      }
 
     }
 
-    public static void StartDoubleRandomEffect()
+    private static void StartRandomGroupEffect(bool useMultipleEffects = true)
     {
       Func<TimeSpan> waitTime = () => StreamingSetup.WaitTime;
 
@@ -273,12 +272,17 @@ namespace HueLightDJ.Web.Streaming
       //Always run on baselayer
       var layer = GetLayer(isBaseLayer: true);
 
-      //TODO: Tag groups that suppot multiple effects
-      var group = GroupService.GetAll(layer).OrderBy(x => Guid.NewGuid()).Where(x => x.Name == "Ring").FirstOrDefault();
+      //Random group that supports multiple effects
+      var group = GroupService.GetAll(layer).OrderBy(x => Guid.NewGuid()).FirstOrDefault();
       var lightList = group.Lights.ToList();
 
+      int minEffects = Math.Min(lightList.Count, group.MaxEffects);
+
       //Get same number of effects as groups in the light list
-      var effects = allGroupEffects.OrderBy(x => Guid.NewGuid()).Take(lightList.Count).ToList();
+      var effects = allGroupEffects.OrderBy(x => Guid.NewGuid()).Take(minEffects).ToList();
+
+      //Chunk the group by the number of effects we have
+      var chunks = group.Lights.ChunkByGroupNumber(effects.Count).ToList();
 
       //Cancel current
       if (layerInfo.ContainsKey(layer))
@@ -291,12 +295,12 @@ namespace HueLightDJ.Web.Streaming
       layerInfo[layer] = new RunningEffectInfo() { Name = "Double random", CancellationTokenSource = cts };
 
 
-      for (int i = 0; i < lightList.Count; i++)
+      for (int i = 0; i < chunks.Count; i++)
       {
-        var section = lightList[i];
+        var section = chunks[i];
         GenerateRandomEffectSettings(out RGBColor hexColor, out IteratorEffectMode iteratorMode, out IteratorEffectMode iteratorSecondaryMode);
 
-        StartEffect(cts.Token, effects[i], section.To2DGroup(), group.Name, waitTime, hexColor, iteratorMode, iteratorSecondaryMode);
+        StartEffect(cts.Token, effects[i], section, group.Name, waitTime, hexColor, iteratorMode, iteratorSecondaryMode);
       }
 
 
@@ -330,7 +334,7 @@ namespace HueLightDJ.Web.Streaming
 
     private static List<TypeInfo> LoadAllEffects()
     {
-      List<TypeInfo> result = new List<TypeInfo>();
+      Dictionary<TypeInfo, HueEffectAttribute> result = new Dictionary<TypeInfo, HueEffectAttribute>();
 
       //Get all effects that implement IHueEffect
       Assembly ass = typeof(IHueEffect).Assembly;
@@ -343,12 +347,12 @@ namespace HueLightDJ.Web.Streaming
 
           if (hueEffectAtt != null)
           {
-            result.Add(ti);
+            result.Add(ti, hueEffectAtt);
           }
         }
       }
 
-      return result;
+      return result.OrderBy(x => x.Value.Order).Select(x => x.Key).ToList();
     }
 
     private static List<TypeInfo> LoadAllGroupEffects()

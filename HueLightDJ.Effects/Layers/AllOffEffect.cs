@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "All Off", HasColorPicker = false)]
+  [HueEffect(Order = int.MaxValue, Name = "All Off", HasColorPicker = false)]
   public class AllOffEffect : IHueEffect
   {
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

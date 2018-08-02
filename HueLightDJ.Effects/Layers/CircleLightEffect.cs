@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Circle Light")]
+  [HueEffect(Order = 1, Name = "Circle Light")]
   public class CircleLightEffect : IHueEffect
   {
     public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

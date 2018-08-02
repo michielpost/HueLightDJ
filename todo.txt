@@ -3,16 +3,6 @@
 toggle auto mode aan/uit, ook in info object
 
 
-Effecten orderen via attribuut
-
-2 effecten combineren? Allebei op de helft van de groepen. Bijv: random fade color en quickflash
-
- var selectedGroup = GroupService.GetAll(layer).Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
-
-      if (selectedGroup == null)
-        selectedGroup = GroupService.GetRandomGroup();
-
-
 Testen in office, oplossen via slimme groepen:
 Om en om eem kleur. Laten draaien?
 4 led strips die aanstaan en rond draaien als een kruis

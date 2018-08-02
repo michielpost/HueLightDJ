@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Quick Flash on all lights", DefaultColor = "#FFFFFF")]
+  [HueEffect(Order = 4, Name = "Quick Flash on all lights", DefaultColor = "#FFFFFF")]
   public class QuickFlashAllEffect : IHueEffect
   {
     public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

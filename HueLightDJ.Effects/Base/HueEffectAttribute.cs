@@ -6,6 +6,9 @@ namespace HueLightDJ.Effects.Base
 {
   public class HueEffectAttribute : Attribute
   {
+
+    public int Order { get; set; } = 100;
+
     public string Name { get; set; }
 
     /// <summary>

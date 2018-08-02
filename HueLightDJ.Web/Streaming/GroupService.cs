@@ -34,15 +34,15 @@ namespace HueLightDJ.Web.Streaming
       {
         //new GroupModel("All", allLightsOrdered.To2DGroup()),
         new GroupModel("Left/Right", leftRight),
-        new GroupModel("Left To Right", leftToRight),
+        new GroupModel("Left To Right", leftToRight, 2),
         new GroupModel("Front/Back", frontBack),
-        new GroupModel("Front To Back", fronToBack),
-        new GroupModel("Quarter", quarter),
+        new GroupModel("Front To Back", fronToBack, 2),
+        new GroupModel("Quarter", quarter, 4),
         new GroupModel("Alternating", alternating),
         new GroupModel("Alternating by 4", alternatingFour),
         //new GroupModel("Distance from center", orderedByDistance),
         //new GroupModel("Order by Angle from center", orderedByAngle),
-        new GroupModel("Ring", ring),
+        new GroupModel("Ring", ring, 2),
         new GroupModel("Random", GetRandomGroup()),
       };
      
