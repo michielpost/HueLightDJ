@@ -2,160 +2,165 @@
   ViewData["Title"] = "Hue Light DJ";
 }
 
-<div class="container">
-  <div class="row">
-    <div class="col-sm">
-      <input type="button" id="connectButton" value="Connect" class="btn btn-dark" />
-      <input type="button" id="connectDemoButton" value="Demo Connect" class="btn btn-dark" />
-      <input type="button" id="disconnectButton" value="Disconnect" class="btn btn-danger" />
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <hr />
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm">
-      <div id="messagesList" class="form-control bg-dark" style="width:100%;max-height:85px;overflow-y: scroll;"></div>
-    </div>
-  </div>
-</div>
+<div id="vuedj">
 
-
-
-
-
-<hr style="margin-bottom:20px;" />
-
-<div class="container" id="effects" v-show="groups != null" style="display:none;">
-  <div class="row">
-    <div class="col-sm">
-      <h3>BPM</h3>
-      <div class="btn-group">
-        <button v-on:click="increaseBPM(-5)" class="btn btn-dark" v-on:keyup.d="alert('hi')">--</button>
-        <button v-on:click="increaseBPM(-1)" class="btn btn-dark">-</button>
-        <p id="bpm"></p>
-        <button v-on:click="increaseBPM(1)" class="btn btn-dark">+</button>
-        <button v-on:click="increaseBPM(5)" class="btn btn-dark">++</button>
-      </div>
-      <br />
-      <br />
-
-      <div class="btn-group">
-        <button v-on:click="setBPM(120)" class="btn btn-dark">reset bpm</button>
-        <button v-on:click="setBPM(20)" class="btn btn-dark">slow</button>
-        <button v-on:click="setBPM(400)" class="btn btn-dark">quick</button>
-        <button v-on:click="setBPM(600)" class="btn btn-dark">super quick</button>
-      </div>
-
-      <br />
-      <br />
-      <div class="btn-group-vertical">
-        <button v-on:click="startRandom" class="btn btn-dark" title="Shortcut: R">random effect</button>
-        <button v-on:click="startAutoMode" class="btn btn-dark">start auto mode</button>
-        <button v-on:click="stopAutoMode" class="btn btn-dark">stop auto mode</button>
-      </div>
-
-      <br />
-      <br />
-      <div>
-        <span title="Shortcut: W / S / X">Brightness:</span> <br />
-        <input title="Shortcut: W / S / X" type="range" min="0" max="100" value="100" style="width:400px" class="form-control" oninput="setBri(Math.abs((this.value/100) - 1))" id="briRange">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <input type="button" id="connectButton" value="Connect" class="btn btn-dark" />
+        <input type="button" id="connectDemoButton" value="Demo Connect" class="btn btn-dark" />
+        <input type="button" id="disconnectButton" value="Disconnect" class="btn btn-danger" />
       </div>
     </div>
-    <div class="col-sm">
-      <div id="pixiPreview" style="border:1px solid white; width:402px;margin:5px;"></div>
-      <br />
+    <div class="row">
+      <div class="col-12">
+        <hr />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm">
+        <div id="messagesList" class="form-control bg-dark" style="width:100%;max-height:85px;overflow-y: scroll;"></div>
+      </div>
     </div>
   </div>
 
-  <div class="row">
 
 
-    <div class="col-sm">
-      <h3>Long Running</h3>
-      <div id="baseEffects" class="btn-group-vertical">
-        <label v-for="(item, index) in baseEffects" class="btn-group">
-          <span v-show="item.hasColorPicker" class="btn btn-dark">
-            color (random): <input type="checkbox" v-model="item.isRandom" />
-            <input type="color" v-model="item.color" v-show="!item.isRandom" />
-          </span>
-          <button v-on:click="start(item)" class="btn btn-dark" :title="'Shortcut: F' + (index+1)">
-            {{ item.name }}
-          </button>
-        </label>
-      </div>
-    </div>
 
-    <div class="col-sm">
-      <h3>Short Effects</h3>
-      <div id="shortEffects" class="btn-group-vertical">
-        <label v-for="(item, index) in shortEffects" class="btn-group">
-          <span v-show="item.hasColorPicker" class="btn btn-dark">
-            color (random): <input type="checkbox" v-model="item.isRandom" />
-            <input type="color" v-model="item.color" v-show="!item.isRandom" />
-          </span>
-          <button v-on:click="start(item)" class="btn btn-dark" :title="'Shortcut: ' + (index+1)">
-            {{ item.name }}
-          </button>
-        </label>
-      </div>
 
-    </div>
-  </div>
+  <hr style="margin-bottom:20px;" />
 
-  <div class="row">
-    <div class="col-sm" style="margin-bottom:20px;">
-      <hr />
-    </div>
-  </div>
+  <div class="container" id="effects" v-show="effects.groups != null" style="display:none;">
+    <div class="row">
+      <div class="col-sm">
+        <h3>BPM</h3>
+        <div class="btn-group">
+          <button v-on:click="increaseBPM(-5)" class="btn btn-dark" v-on:keyup.d="alert('hi')">--</button>
+          <button v-on:click="increaseBPM(-1)" class="btn btn-dark">-</button>
+          <p id="bpm">{{status.bpm}}</p>
+          <button v-on:click="increaseBPM(1)" class="btn btn-dark">+</button>
+          <button v-on:click="increaseBPM(5)" class="btn btn-dark">++</button>
+        </div>
+        <br />
+        <br />
 
-  <div class="row">
-    <div class="col-sm">
-      <h3>Groups</h3>
-      <div id="groups" class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-secondary" v-for="item in groups" :class="groupPicked == item.name ? 'active': ''">
-          <input type="radio" class="radio-button" :value="item.name" name="groupPicked" v-model="groupPicked" v-model.number="groupPicked"> {{ item.name }}
-        </label>
-      </div>
-    </div>
-    <div class="col-sm">
+        <div class="btn-group">
+          <button v-on:click="setBPM(120)" class="btn btn-dark">reset bpm</button>
+          <button v-on:click="setBPM(20)" class="btn btn-dark">slow</button>
+          <button v-on:click="setBPM(400)" class="btn btn-dark">quick</button>
+          <button v-on:click="setBPM(600)" class="btn btn-dark">super quick</button>
+        </div>
 
-      <h3>IteratorModes</h3>
-      <div id="iteratorModes" class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
-        <label v-for="item in iteratorModes" class="btn btn-secondary" :class="iteratorPicked == item ? 'active': ''">
-          <input type="radio" class="radio-button" :value="item" name="iteratorPicked" v-model="iteratorPicked" v-model.number="iteratorPicked"> {{ item }}
-        </label>
-      </div>
-    </div>
-    <div class="col-sm">
+        <br />
+        <br />
+        <div class="btn-group-vertical">
+          <button v-on:click="startRandom" class="btn btn-dark" title="Shortcut: R">random effect</button>
+          <button v-on:click="startAutoMode" v-show="status.isAutoMode == false" class="btn btn-dark">start auto mode</button>
+          <button v-on:click="stopAutoMode" v-show="status.isAutoMode == true" class="btn btn-dark">stop auto mode</button>
+        </div>
 
-      <h3>Secondary IteratorModes</h3>
-      <div id="secondaryIteratorModes" class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
-        <label v-for="item in secondaryIteratorModes" class="btn btn-secondary" :class="secondaryIteratorPicked == item ? 'active': ''">
-          <input type="radio" class="radio-button" :value="item" name="secondaryIteratorPicked" v-model="secondaryIteratorPicked" v-model.number="secondaryIteratorPicked">  {{ item }}
-        </label>
-      </div>
-    </div>
-    <div class="col-sm">
-
-      <h3>Group Effects</h3>
-      <div id="groupEffects" class="btn-group-vertical">
-        <div v-for="item in groupEffects" class="btn-group">
-          <span v-show="item.hasColorPicker" class="btn btn-dark">
-            color (random): <input type="checkbox" v-model="item.isRandom" />
-            <input type="color" v-model="item.color" v-show="!item.isRandom" />
-          </span>
-          <button class="btn btn-dark" :disabled="composerFilled == false" v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">
-            {{ item.name }}
-          </button>
+        <br />
+        <br />
+        <div>
+          <span title="Shortcut: W / S / X">Brightness:</span> <br />
+          <input title="Shortcut: W / S / X" type="range" min="0" max="100" value="100" style="width:400px" class="form-control" oninput="setBri(Math.abs((this.value/100) - 1))" id="briRange">
         </div>
       </div>
+      <div class="col-sm">
+        <div id="pixiPreview" style="border:1px solid white; width:402px;margin:5px;"></div>
+        <br />
+      </div>
     </div>
 
+    <div class="row">
+
+
+      <div class="col-sm">
+        <h3>Long Running</h3>
+        <div id="baseEffects" class="btn-group-vertical">
+          <label v-for="(item, index) in effects.baseEffects" class="btn-group">
+            <span v-show="item.hasColorPicker" class="btn btn-dark">
+              color (random): <input type="checkbox" v-model="item.isRandom" />
+              <input type="color" v-model="item.color" v-show="!item.isRandom" />
+            </span>
+            <button v-on:click="start(item)" class="btn btn-dark" :title="'Shortcut: F' + (index+1)">
+              {{ item.name }}
+            </button>
+          </label>
+        </div>
+      </div>
+
+      <div class="col-sm">
+        <h3>Short Effects</h3>
+        <div id="shortEffects" class="btn-group-vertical">
+          <label v-for="(item, index) in effects.shortEffects" class="btn-group">
+            <span v-show="item.hasColorPicker" class="btn btn-dark">
+              color (random): <input type="checkbox" v-model="item.isRandom" />
+              <input type="color" v-model="item.color" v-show="!item.isRandom" />
+            </span>
+            <button v-on:click="start(item)" class="btn btn-dark" :title="'Shortcut: ' + (index+1)">
+              {{ item.name }}
+            </button>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm" style="margin-bottom:20px;">
+        <hr />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm">
+        <h3>Groups</h3>
+        <div id="groups" class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
+          <label class="btn btn-secondary" v-for="item in effects.groups" :class="groupPicked == item.name ? 'active': ''">
+            <input type="radio" class="radio-button" :value="item.name" name="groupPicked" v-model="groupPicked" v-model.number="groupPicked"> {{ item.name }}
+          </label>
+        </div>
+      </div>
+      <div class="col-sm">
+
+        <h3>IteratorModes</h3>
+        <div id="iteratorModes" class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
+          <label v-for="item in effects.iteratorModes" class="btn btn-secondary" :class="iteratorPicked == item ? 'active': ''">
+            <input type="radio" class="radio-button" :value="item" name="iteratorPicked" v-model="iteratorPicked" v-model.number="iteratorPicked"> {{ item }}
+          </label>
+        </div>
+      </div>
+      <div class="col-sm">
+
+        <h3>Secondary IteratorModes</h3>
+        <div id="secondaryIteratorModes" class="btn-group-vertical btn-group-toggle" data-toggle="buttons">
+          <label v-for="item in effects.secondaryIteratorModes" class="btn btn-secondary" :class="secondaryIteratorPicked == item ? 'active': ''">
+            <input type="radio" class="radio-button" :value="item" name="secondaryIteratorPicked" v-model="secondaryIteratorPicked" v-model.number="secondaryIteratorPicked">  {{ item }}
+          </label>
+        </div>
+      </div>
+      <div class="col-sm">
+
+        <h3>Group Effects</h3>
+        <div id="groupEffects" class="btn-group-vertical">
+          <div v-for="item in effects.groupEffects" class="btn-group">
+            <span v-show="item.hasColorPicker" class="btn btn-dark">
+              color (random): <input type="checkbox" v-model="item.isRandom" />
+              <input type="color" v-model="item.color" v-show="!item.isRandom" />
+            </span>
+            <button class="btn btn-dark" :disabled="composerFilled == false" v-on:click="startGroup(item, groupPicked, iteratorPicked, secondaryIteratorPicked)">
+              {{ item.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="~/lib/signalr/signalr.js"></script>
 <script src="~/js/mousetrap.min.js"></script>

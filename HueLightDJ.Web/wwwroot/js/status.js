@@ -30,22 +30,27 @@ function js_yyyy_mm_dd_hh_mm_ss() {
 };
 
 connection.on("Status", (status) => {
-    document.getElementById("bpm").innerHTML = status.bpm;
+  vuedj.fillStatus(status);
 });
 connection.on("Bri", (value) => {
   document.getElementById("briRange").value = 100 - (value * 100);
 });
 
 
-const example1 = new Vue({
-  el: '#effects',
+const vuedj = new Vue({
+  el: '#vuedj',
   data: {
-    baseEffects: [],
-    shortEffects: [],
-    groupEffects: [],
-    groups: null,
-    iteratorModes: [],
-    secondaryIteratorModes: [],
+    effects: {
+      baseEffects: [],
+      shortEffects: [],
+      groupEffects: [],
+      groups: null,
+      iteratorModes: [],
+      secondaryIteratorModes: [],
+    },
+    status: {
+      isAutoMode: false
+    },
     groupPicked: "",
     iteratorPicked: "",
     secondaryIteratorPicked: ""
@@ -82,26 +87,21 @@ const example1 = new Vue({
       connection.invoke("StopAutoMode").catch(err => console.error(err.toString()));
     },
     fill(effectvm) {
-      this.baseEffects = effectvm.baseEffects;
-      this.shortEffects = effectvm.shortEffects;
-      this.groupEffects = effectvm.groupEffects;
-      this.groups = effectvm.groups;
-      this.iteratorModes = effectvm.iteratorModes;
-      this.secondaryIteratorModes = effectvm.secondaryIteratorModes;
-      this.groupPicked = "";
-      this.iteratorPicked = "";
-      this.secondaryIteratorPicked = "";
+      this.effects = effectvm;
+    },
+    fillStatus(status) {
+      this.status = status;
     }
   }
 })
 
 connection.on("effects", (effectvm) => {
-  example1.fill(effectvm);
+  vuedj.fill(effectvm);
 });
 
 connection.start()
     .then(() => connection.invoke("GetStatus"))
-    .then(() => connection.invoke("GetEffects"))
+    .then(() => connection.invoke("GetEffects", false))
     .catch(err => console.error(err.toString()));
 
 document.getElementById("connectButton").addEventListener("click", event => {
@@ -123,15 +123,15 @@ function setBri(value) {
 
 function startShortEffect(key) {
   var index = key - 1;
-  var item = example1.shortEffects[index];
+  var item = vuedj.effects.shortEffects[index];
   if (item != null)
-    example1.start(item);
+    vuedj.start(item);
 }
 function startLongEffect(key) {
   var index = key - 1;
-  var item = example1.baseEffects[index];
+  var item = vuedj.effects.baseEffects[index];
   if (item != null)
-    example1.start(item);
+    vuedj.start(item);
 }
 
 window.onhelp = function () { return false };
@@ -151,4 +151,4 @@ Mousetrap.bindGlobal(['1', '2', '3', '4', '5', '6', '7', '8', '9'], function (e,
 Mousetrap.bindGlobal('w', function () { document.getElementById('briRange').value = 100; setBri(0) });
 Mousetrap.bindGlobal('s', function () { document.getElementById('briRange').value = 50; setBri(0.5) });
 Mousetrap.bindGlobal('x', function () { document.getElementById('briRange').value = 0; setBri(1) });
-Mousetrap.bindGlobal('r', function () { example1.startRandom(); });
+Mousetrap.bindGlobal('r', function () { vuedj.startRandom(); });

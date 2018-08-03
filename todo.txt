@@ -1,8 +1,4 @@
 
-
-toggle auto mode aan/uit, ook in info object
-
-
 Testen in office, oplossen via slimme groepen:
 Om en om eem kleur. Laten draaien?
 4 led strips die aanstaan en rond draaien als een kruis

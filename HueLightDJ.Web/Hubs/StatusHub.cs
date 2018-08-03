@@ -97,11 +97,13 @@ namespace HueLightDJ.Web.Hubs
     public void StartAutoMode()
     {
       EffectService.StartAutoMode();
+      GetStatus();
     }
 
     public void StopAutoMode()
     {
       EffectService.StopAutoMode();
+      GetStatus();
     }
 
     public Task SendStatus(string msg)
