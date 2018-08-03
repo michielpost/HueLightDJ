@@ -45,6 +45,11 @@ namespace HueLightDJ.Web.Streaming
         new GroupModel("Ring", ring, 2),
         new GroupModel("Random", GetRandomGroup()),
       };
+
+      if (Startup.Configuration["GroupConfig"] == "Office")
+      {
+        //TODO: Add groups for Office location
+      }
      
 
       return result;
