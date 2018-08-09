@@ -20,25 +20,23 @@ namespace HueLightDJ.Web.Streaming
     public static List<EntertainmentLayer> Layers { get; set; }
     private static int BPM { get; set; } = 120;
     public static Ref<TimeSpan> WaitTime { get; set; } = TimeSpan.FromMilliseconds(500);
+    public static GroupConfiguration CurrentConnection { get; set; }
 
     private static string _groupId;
     private static CancellationTokenSource _cts;
 
-    public static async Task<List<StreamingGroup>> SetupAndReturnGroup(bool demoMode = false)
+    public static async Task<List<StreamingGroup>> SetupAndReturnGroup(string groupName)
     {
-      var configSection = Startup.Configuration.GetSection("HueSetup").Get<List<ConnectionConfiguration>>();
-      bool useSimulator = demoMode ? true : configSection.First().UseSimulator;
+      var configSection = GetGroupConfigurations();
+      var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
+      bool demoMode = currentGroup.Name == "DEMO";
+      bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
 
-      EffectService.CancelAllEffects();
-      if (_cts != null)
-        _cts.Cancel();
+      //Disconnect any current connections
+      Disconnect();
       _cts = new CancellationTokenSource();
 
-      Layers = null;
-      StreamingHueClients.Clear();
-      StreamingGroups.Clear();
-
-      foreach (var bridgeConfig in configSection)
+      foreach (var bridgeConfig in currentGroup.Connections)
       {
         //Initialize streaming client
         var client = new LightDJStreamingHueClient(bridgeConfig.Ip, bridgeConfig.Key, bridgeConfig.EntertainmentKey, demoMode);
@@ -88,12 +86,18 @@ namespace HueLightDJ.Web.Streaming
       var effectLayer = GetNewLayer(isBaseLayer: false);
 
       Layers = new List<EntertainmentLayer>() { baseLayer, effectLayer };
+      CurrentConnection = currentGroup;
 
       //Optional: calculated effects that are placed on this layer
       baseLayer.AutoCalculateEffectUpdate(_cts.Token);
       effectLayer.AutoCalculateEffectUpdate(_cts.Token);
 
       return StreamingGroups;
+    }
+
+    public static List<GroupConfiguration> GetGroupConfigurations()
+    {
+      return Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
     }
 
     public static void SetBrightnessFilter(double value)
@@ -121,6 +125,16 @@ namespace HueLightDJ.Web.Streaming
       {
         client.LocalHueClient.SetStreamingAsync(_groupId, active: false);
       }
+
+      EffectService.CancelAllEffects();
+      if (_cts != null)
+        _cts.Cancel();
+
+      Layers = null;
+      StreamingHueClients.Clear();
+      StreamingGroups.Clear();
+      CurrentConnection = null;
+     
     }
 
     public async static Task<bool> IsStreamingActive()

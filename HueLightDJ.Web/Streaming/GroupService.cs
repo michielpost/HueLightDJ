@@ -46,9 +46,9 @@ namespace HueLightDJ.Web.Streaming
         new GroupModel("Random", GetRandomGroup()),
       };
 
-      if (Startup.Configuration["GroupConfig"] == "Office")
+      if (StreamingSetup.CurrentConnection.Name == "Bar")
       {
-        //TODO: Add groups for Office location
+        //TODO: Add groups for Bar location
       }
      
 

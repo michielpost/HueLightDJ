@@ -1,3 +1,4 @@
+@model List<GroupConfiguration>
 @{
   ViewData["Title"] = "Hue Light DJ";
 }
@@ -7,8 +8,10 @@
   <div class="container">
     <div class="row">
       <div class="col-sm">
-        <input type="button" id="connectButton" value="Connect" class="btn btn-dark" />
-        <input type="button" id="connectDemoButton" value="Demo Connect" class="btn btn-dark" />
+        @foreach (var group in Model)
+        {
+          <input type="button" value="Connect @group.Name" v-show="effects.groups == null" onclick="connection.invoke('Connect', '@group.Name')" class="btn btn-dark" />
+        }
         <input type="button" id="disconnectButton" value="Disconnect" class="btn btn-danger" />
       </div>
     </div>

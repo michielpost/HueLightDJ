@@ -12,16 +12,14 @@ namespace HueLightDJ.Web.Hubs
   public class StatusHub : Hub
   {
 
-    public async Task Connect(bool demoMode = false)
+    public async Task Connect(string groupName)
     {
-      await Clients.All.SendAsync("StatusMsg", "Connecting to bridge...");
-      if(demoMode)
-        await Clients.All.SendAsync("StatusMsg", "Starting DEMO mode");
+      await Clients.All.SendAsync("StatusMsg", $"Connecting to bridge for group {groupName}...");
 
       try
       {
         //Connect
-        await StreamingSetup.SetupAndReturnGroup(demoMode);
+        await StreamingSetup.SetupAndReturnGroup(groupName);
         await Clients.All.SendAsync("StatusMsg", "Connected to bridge");
 
         await GetStatus();
@@ -29,7 +27,7 @@ namespace HueLightDJ.Web.Hubs
       }
       catch(Exception ex)
       {
-        await Clients.All.SendAsync("StatusMsg", "Failed to connect to bridge, " + ex);
+        await Clients.All.SendAsync("StatusMsg", $"Failed to connect to bridge for group {groupName}, " + ex);
 
       }
     }

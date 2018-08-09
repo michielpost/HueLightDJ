@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using HueLightDJ.Web.Models;
+using HueLightDJ.Web.Streaming;
 
 namespace HueLightDJ.Web.Controllers
 {
@@ -12,7 +13,8 @@ namespace HueLightDJ.Web.Controllers
   {
     public IActionResult Index()
     {
-      return View();
+      var config = StreamingSetup.GetGroupConfigurations();
+      return View(config);
     }
 
     [Route("Preview")]
