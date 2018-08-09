@@ -7,6 +7,8 @@ Hue Light DJ using Hue Entertainment API
 This web app connects to a Philips Hue Bridge over the local network. It uses the Hue Entertainment API to update the lights almost instantly.
 Hue Light DJ is meant for setups with 20+ Hue Lights. Don't use this app for your personal setup with less than 5 lights. Things might get interesting with 10 lights, you can try it out. There is also a DEMO mode build in so you see how it would look like on a 20+ light setup.
 
+NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) supports max 10 lights in an Entertainment Group. To get this to work with more than 10 lights, you need to have 1 bridge for every 10 lights. 
+
 ## Features
 - Comes with a lot of build in effects
 - BPM input to specify speed of effects
@@ -19,7 +21,7 @@ Hue Light DJ is meant for setups with 20+ Hue Lights. Don't use this app for you
 - Brightness Slider to control overall brightness
 - DEMO mode, to test the app without a Hue Bridge
 - Keyboard Shortcuts
-- Connect to multiple Hue Bridges at the same time to control more than 50 lights 
+- Connect to multiple Hue Bridges at the same time to control more than 10 lights 
 
 ## Tech
 - ASP.Net Core 2.1 backend
