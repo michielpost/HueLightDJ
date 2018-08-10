@@ -18,10 +18,7 @@ namespace HueLightDJ.Effects.Layers
       Func<TimeSpan> customWaitTime = () => waitTime() / 10;
 
       if(!color.HasValue)
-      {
-        var r = new Random();
-        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
-      }
+        color = RGBColor.Random();
 
       var rotatingEffect = new RotatingLineEffect(cancellationToken, color.Value, customWaitTime);
       layer.PlaceEffect(rotatingEffect);

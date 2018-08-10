@@ -19,10 +19,7 @@ namespace HueLightDJ.Effects.Group
     public Task Start(IEnumerable<IEnumerable<EntertainmentLight>> layer, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode, IteratorEffectMode secondaryIteratorMode, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
-      {
-        var r = new Random();
-        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
-      }
+        color = RGBColor.Random();
 
       if (iteratorMode != IteratorEffectMode.All)
       {

@@ -15,12 +15,11 @@ namespace HueLightDJ.Effects.Layers
   [HueEffect(Order = 2, Name = "Colorloop Effect", HasColorPicker = false)]
   public class ColorloopEffect : IHueEffect
   {
-    public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
-
       Func<TimeSpan> customWaitTime = () => waitTime();
 
-      layer.To2DGroup().SetRandomColor(cancellationToken, IteratorEffectMode.All, IteratorEffectMode.All, waitTime, waitTime, null);
+      return layer.To2DGroup().SetRandomColor(cancellationToken, IteratorEffectMode.All, IteratorEffectMode.All, waitTime, waitTime, null);
     }
   }
 }

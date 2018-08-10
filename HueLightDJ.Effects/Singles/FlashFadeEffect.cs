@@ -21,10 +21,7 @@ namespace HueLightDJ.Effects
         return Task.CompletedTask;
 
       if (!color.HasValue)
-      {
-        var r = new Random();
-        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
-      }
+        color = RGBColor.Random();
 
       return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.All, IteratorEffectMode.All, waitTime: () => TimeSpan.FromMilliseconds(100), transitionTimeOn: () => TimeSpan.Zero, transitionTimeOff: waitTime, duration: waitTime());
     }

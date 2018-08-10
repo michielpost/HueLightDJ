@@ -18,10 +18,7 @@ namespace HueLightDJ.Effects
     public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
-      {
-        var r = new Random();
-        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
-      }
+        color = RGBColor.Random();
 
       Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / layer.Count);
 

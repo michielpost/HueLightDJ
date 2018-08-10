@@ -309,9 +309,9 @@ namespace HueLightDJ.Web.Streaming
     private static void GenerateRandomEffectSettings(out RGBColor hexColor, out IteratorEffectMode iteratorMode, out IteratorEffectMode iteratorSecondaryMode)
     {
       Random r = new Random();
-      hexColor = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+      hexColor = RGBColor.Random(r);
       while (hexColor.R < 0.15 && hexColor.G < 0.15 && hexColor.B < 0.15)
-        hexColor = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+        hexColor = RGBColor.Random(r);
 
       Array values = Enum.GetValues(typeof(IteratorEffectMode));
       iteratorMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));

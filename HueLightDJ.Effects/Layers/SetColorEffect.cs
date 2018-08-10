@@ -18,10 +18,7 @@ namespace HueLightDJ.Effects
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       if (!color.HasValue)
-      {
-        var r = new Random();
-        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
-      }
+        color = RGBColor.Random();
 
       layer.SetState(cancellationToken, color, 1, waitTime(), false);
 

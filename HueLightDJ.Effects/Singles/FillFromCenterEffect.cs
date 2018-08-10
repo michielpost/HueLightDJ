@@ -24,10 +24,7 @@ namespace HueLightDJ.Effects
       var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(0, 0));
 
       if (!color.HasValue)
-      {
-        var r = new Random();
-        color = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
-      }
+        color = RGBColor.Random();
 
       Func<TimeSpan> customWaitTime = () => waitTime() / layer.Count;
 

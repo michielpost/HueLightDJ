@@ -1,5 +1,8 @@
 
-Multitouch API to active effects on location based on touch
+Multitouch API to active effects on location based on touch:
+https://pixijs.io/examples/#/demos/interactivity.js
+
+Op touch point een random touch event
 
 Interactive API using Mobile Sensors, X / Y effect 
 

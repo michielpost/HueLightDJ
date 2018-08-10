@@ -24,7 +24,7 @@ namespace HueLightDJ.Effects.Layers
 
       while (!cancellationToken.IsCancellationRequested)
       {
-        var randomColor = new RGBColor(r.NextDouble(), r.NextDouble(), r.NextDouble());
+        var randomColor = RGBColor.Random(r);
 
         foreach (var light in orderedLayer)
         {
