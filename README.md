@@ -33,7 +33,7 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 
 ## Build and Install Instructions
 - Make sure to have ASP.Net Core 2.1 installed to build this project
-- Get the IP, Key and EntertainmentKey for your Hue Bridge using the API (instructions can be found on the Philips Hue Dev Portal)
+- Get the IP, Key and EntertainmentKey for your Hue Bridge using the API or the included /Setup page (run the project and navigate to /setup)
 - Enter the IP, Key and EntertainmentKey in appsettings.json
 - Run the HueLightDJ.Web project(dotnet run inside the HueLightDJ.Web directory) 
 

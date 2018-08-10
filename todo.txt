@@ -1,6 +1,7 @@
-Setup page to get entertainment key
 
+Multitouch API to active effects on location based on touch
 
+Interactive API using Mobile Sensors, X / Y effect 
 
 -----
 Testen in office, oplossen via slimme groepen:
