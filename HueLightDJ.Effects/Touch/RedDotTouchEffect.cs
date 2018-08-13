@@ -23,7 +23,7 @@ namespace HueLightDJ.Effects.Touch
 
       return Task.Run(async () =>
       {
-        await Task.Delay(TimeSpan.FromSeconds(1));
+        await Task.Delay(waitTime());
         effect.Stop();
       });
     }

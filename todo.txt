@@ -3,6 +3,8 @@ pijltjestoetsrn om area Dark te maken
 
 Interactive API using Mobile Sensors, X / Y effect 
 
+preview tonen als led strips
+
 -----
 Testen in office, oplossen via slimme groepen:
 Om en om eem kleur. Laten draaien?

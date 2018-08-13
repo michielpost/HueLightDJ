@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Touch
 {
-  [HueEffect(Name = "Ripple Touch Touch", IsBaseEffect = false, HasColorPicker = false)]
+  [HueEffect(Name = "Ripple Touch", IsBaseEffect = false, HasColorPicker = false)]
   class RippleTouchEffect : IHueTouchEffect
   {
     public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken, double x, double y)
@@ -20,6 +20,7 @@ namespace HueLightDJ.Effects.Touch
       Q42.HueApi.Streaming.Effects.RandomPulseEffect effect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(false, customWaitTime);
       effect.X = x;
       effect.Y = y;
+      effect.AutoRepeat = false;
       layer.PlaceEffect(effect);
       effect.Start();
 

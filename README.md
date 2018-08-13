@@ -18,6 +18,7 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - Build in groups like front/back, left/right
 - Random group, creates a new random group every time
 - Effect Composer, try out new effects by selecting a group, IteratorMode and effect
+- Touch effect, click or touch the preview area to start an effect from that position
 - Brightness Slider to control overall brightness
 - DEMO mode, to test the app without a Hue Bridge
 - Keyboard Shortcuts
