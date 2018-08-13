@@ -17,5 +17,10 @@ namespace HueLightDJ.Web.Hubs
 
     }
 
+    public async Task Touch(double x, double y)
+    {
+      EffectService.StartRandomTouchEffect(x, y);
+    }
+
   }
 }

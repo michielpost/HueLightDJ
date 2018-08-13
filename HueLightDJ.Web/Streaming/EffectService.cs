@@ -20,6 +20,7 @@ namespace HueLightDJ.Web.Streaming
   {
     private static List<TypeInfo> EffectTypes { get; set; }
     private static List<TypeInfo> GroupEffectTypes { get; set; }
+    private static List<TypeInfo> TouchEffectTypes { get; set; }
     private static Dictionary<EntertainmentLayer, RunningEffectInfo> layerInfo = new Dictionary<EntertainmentLayer, RunningEffectInfo>();
     private static CancellationTokenSource autoModeCts;
 
@@ -27,7 +28,7 @@ namespace HueLightDJ.Web.Streaming
     {
       if (EffectTypes == null)
       {
-        var all = LoadAllEffects();
+        var all = LoadAllEffects<IHueEffect>();
         EffectTypes = all;
       }
 
@@ -38,11 +39,22 @@ namespace HueLightDJ.Web.Streaming
     {
       if (GroupEffectTypes == null)
       {
-        var all = LoadAllGroupEffects();
+        var all = LoadAllEffects<IHueGroupEffect>();
         GroupEffectTypes = all;
       }
 
       return GroupEffectTypes;
+    }
+
+    public static List<TypeInfo> GetTouchEffectTypes()
+    {
+      if (TouchEffectTypes == null)
+      {
+        var all = LoadAllEffects<IHueTouchEffect>();
+        TouchEffectTypes = all;
+      }
+
+      return TouchEffectTypes;
     }
 
     public static EffectsVM GetEffectViewModels()
@@ -225,6 +237,18 @@ namespace HueLightDJ.Web.Streaming
 
     }
 
+    private static void StartTouchEffect(CancellationToken ctsToken, TypeInfo selectedEffect, Func<TimeSpan> waitTime, RGBColor? color, double x, double y)
+    {
+      MethodInfo methodInfo = selectedEffect.GetMethod("Start");
+
+      var layer = GetLayer(isBaseLayer: false);
+
+      object[] parametersArray = new object[] { layer, waitTime, color, ctsToken, x, y };
+
+      object classInstance = Activator.CreateInstance(selectedEffect, null);
+      methodInfo.Invoke(classInstance, parametersArray);
+    }
+
     private static void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color)
     {
       MethodInfo methodInfo = selectedEffect.GetMethod("Start");
@@ -332,16 +356,16 @@ namespace HueLightDJ.Web.Streaming
       return StreamingSetup.Layers.Last();
     }
 
-    private static List<TypeInfo> LoadAllEffects()
+    private static List<TypeInfo> LoadAllEffects<T>()
     {
       Dictionary<TypeInfo, HueEffectAttribute> result = new Dictionary<TypeInfo, HueEffectAttribute>();
 
       //Get all effects that implement IHueEffect
-      Assembly ass = typeof(IHueEffect).Assembly;
+      Assembly ass = typeof(T).Assembly;
 
       foreach (TypeInfo ti in ass.DefinedTypes)
       {
-        if (ti.ImplementedInterfaces.Contains(typeof(IHueEffect)))
+        if (ti.ImplementedInterfaces.Contains(typeof(T)))
         {
           var hueEffectAtt = ti.GetCustomAttribute<HueEffectAttribute>();
 
@@ -355,29 +379,6 @@ namespace HueLightDJ.Web.Streaming
       return result.OrderBy(x => x.Value.Order).Select(x => x.Key).ToList();
     }
 
-    private static List<TypeInfo> LoadAllGroupEffects()
-    {
-      List<TypeInfo> result = new List<TypeInfo>();
-
-      //Get all effects that implement IHueGroupEffect
-      Assembly ass = typeof(IHueGroupEffect).Assembly;
-
-      foreach (TypeInfo ti in ass.DefinedTypes)
-      {
-        if (ti.ImplementedInterfaces.Contains(typeof(IHueGroupEffect)))
-        {
-          var hueEffectAtt = ti.GetCustomAttribute<HueEffectAttribute>();
-
-          if (hueEffectAtt != null)
-          {
-            result.Add(ti);
-          }
-        }
-      }
-
-      return result;
-    }
-
     public static void CancelAllEffects()
     {
       StopAutoMode();
@@ -386,6 +387,17 @@ namespace HueLightDJ.Web.Streaming
       {
         layer.Value?.CancellationTokenSource?.Cancel();
       }
+    }
+
+    public static void StartRandomTouchEffect(double x, double y)
+    {
+      var effectLayer = GetLayer(isBaseLayer: false);
+
+      var randomTouch = GetTouchEffectTypes().OrderBy(_ => Guid.NewGuid()).FirstOrDefault();
+
+      Func<TimeSpan> waitTime = () => StreamingSetup.WaitTime;
+
+      StartTouchEffect(CancellationToken.None, randomTouch, waitTime, null, x, y);
     }
   }
 }

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Q42.HueApi" Version="3.7.0" />
-    <PackageReference Include="Q42.HueApi.Entertainment" Version="1.5.2" />
+    <PackageReference Include="Q42.HueApi.Entertainment" Version="1.5.4" />
   </ItemGroup>
 
 </Project>

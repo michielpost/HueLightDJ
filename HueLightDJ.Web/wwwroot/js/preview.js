@@ -21,6 +21,8 @@ function renderPreviewGrid(size) {
   var lightContainer = new PIXI.Container();
   app.stage.addChild(lightContainer);
 
+  app.renderer.plugins.interaction.on('pointerdown', touch); 
+
   //placeLight(1, 0, 0, "0F0000", 0.5);
   //placeLight(2, 0.1, 0.1, "0FF00", 1);
 
@@ -31,6 +33,11 @@ function renderPreviewGrid(size) {
     }
   });
 
+  function touch(event) {
+    var pos = event.data.getLocalPosition(app.stage);
+    console.log(pos.x + ' / ' + pos.y + ' is ' + positionToXY(pos.x) + ' / ' + positionToXY(WIDTH - pos.y) + ' is ' + xyToPosition(positionToXY(pos.x)) + ' / ' + xyToPosition(positionToXY(WIDTH - pos.y)))
+    previewConnection.invoke("touch", positionToXY(pos.x), positionToXY(WIDTH - pos.y)).catch(err => console.error(err.toString()));
+  }
 
   function placeLight(id, x, y, hex, bri) {
 
@@ -86,6 +93,10 @@ function renderPreviewGrid(size) {
 
   function xyToPosition(x) {
     return (WIDTH / 2 + x * WIDTH / 2)
+  }
+
+  function positionToXY(x) {
+    return (x / (WIDTH / 2) - 1)
   }
 
 }
