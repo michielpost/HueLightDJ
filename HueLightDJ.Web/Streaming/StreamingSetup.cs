@@ -83,12 +83,12 @@ namespace HueLightDJ.Web.Streaming
     {
       var configSection = GetGroupConfigurations();
 
-      var config = configSection.SelectMany(x => x.Connections).Where(x => x.Ip == light.Id && x.GroupId == light.GroupId).FirstOrDefault();
+      var config = configSection.SelectMany(x => x.Connections).Where(x => x.Ip == light.Bridge).FirstOrDefault();
       if (config != null)
       {
         var client = new LocalHueClient(config.Ip, config.Key);
-        var command = new LightCommand();
-        command.Alert = Alert.Multiple;
+        var command = new LightCommand().TurnOn();
+        command.Alert = Alert.Once;
         await client.SendCommandAsync(command, new List<string> { light.Id });
       }
     }

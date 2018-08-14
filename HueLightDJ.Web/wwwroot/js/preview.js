@@ -132,7 +132,7 @@ function renderPreviewGrid(size, allowEdit) {
 
       lights[bridgeIp][id] = {
         glow: createGlowRing(xPos, yPos),
-        label: createLightLabel(xPos, yPos, id),
+        label: createLightLabel(xPos, yPos, id, bridgeIp),
         groupId: groupId
       };
       updateGlowRing(bridgeIp, id, hex, bri);
@@ -175,11 +175,14 @@ function renderPreviewGrid(size, allowEdit) {
     return glowRing;
   }
 
-  function createLightLabel(x, y, id) {
+  function createLightLabel(x, y, id, bridgeIp) {
     var label = new PIXI.Text(String(id), { font: "12px", fill: 0xE9ECEF });
     label.anchor.set(0.5, 0.5);
     label.position.x = x;
     label.position.y = y;
+    label.lightId = id;
+    label.bridgeIp = bridgeIp;
+
     return label;
   }
 
@@ -192,8 +195,7 @@ function renderPreviewGrid(size, allowEdit) {
   }
 
   function onDragStart(event) {
-    console.log(this);
-    //previewConnection.invoke("Locate", result).catch(err => console.error(err.toString()));
+    previewConnection.invoke("Locate", { id: this.lightId, bridge: this.bridgeIp }).catch(err => console.error(err.toString()));
 
     // store a reference to the data
     // the reason for this is because of multitouch
