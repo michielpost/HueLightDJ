@@ -24,14 +24,11 @@ namespace HueLightDJ.Effects
 
       var randomPulseEffect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(fadeToZero: false, waitTime: customWaitTime);
       layer.PlaceEffect(randomPulseEffect);
+      randomPulseEffect.AutoRepeat = false;
       randomPulseEffect.Start();
-      cancellationToken.Register(() => randomPulseEffect.Stop());
 
-      await Task.Delay(waitTime(), cancellationToken);
+      await Task.Delay(waitTime() * 4, cancellationToken);
       randomPulseEffect.Stop();
-
-      //TODO: DOES NOT WORK YET Delete after NuGet package update with new RandomPulseEffect
-      layer.SetBrightness(cancellationToken, 0, transitionTime: TimeSpan.FromMilliseconds(0));
     }
   }
 }

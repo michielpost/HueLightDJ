@@ -18,6 +18,8 @@ function renderPreviewGrid(size, allowEdit) {
   //create the stage instead of container
   app.stage = new PIXI.display.Stage();
 
+  addGridLines(app.stage, allowEdit);
+
   var lightContainer = new PIXI.Container();
   app.stage.addChild(lightContainer);
 
@@ -42,6 +44,40 @@ function renderPreviewGrid(size, allowEdit) {
         placeLight(light.id, light.x, light.y, light.hex, light.bri)
       }
     });
+  }
+
+  function addGridLines(stage, drawGrid) {
+
+    var graphics = new PIXI.Graphics();
+    var stepSize = cellSize * 2;
+
+    // set a fill and line style
+    graphics.lineStyle(1, 0xffffff, 1);
+
+    // draw a shape
+    graphics.moveTo(1, 0);
+    graphics.lineTo(0, WIDTH);
+
+    graphics.moveTo(0, 1);
+    graphics.lineTo(WIDTH, 0);
+
+    if (drawGrid) {
+      for (var i = stepSize; i <= WIDTH; i = i + stepSize) {
+        graphics.moveTo(i, 0);
+        graphics.lineTo(i, WIDTH);
+
+        graphics.moveTo(0, i);
+        graphics.lineTo(WIDTH, i);
+      }
+    }
+
+    graphics.moveTo(WIDTH-1, 0);
+    graphics.lineTo(WIDTH - 1, WIDTH);
+
+    graphics.moveTo(0, WIDTH - 1);
+    graphics.lineTo(WIDTH, WIDTH - 1);
+
+    app.stage.addChild(graphics);
   }
 
   function saveLocations() {
