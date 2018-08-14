@@ -72,7 +72,7 @@ function renderPreviewGrid(size, allowEdit) {
     }
 
     graphics.moveTo(WIDTH-1, 0);
-    graphics.lineTo(WIDTH - 1, WIDTH);
+    graphics.lineTo(WIDTH, WIDTH);
 
     graphics.moveTo(0, WIDTH - 1);
     graphics.lineTo(WIDTH, WIDTH - 1);
