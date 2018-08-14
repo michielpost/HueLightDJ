@@ -7,6 +7,7 @@ namespace HueLightDJ.Web.Models
 {
     public class PreviewModel
     {
+    public string Bridge { get; set; }
     public byte Id { get; set; }
     public double X { get; set; }
     public double Y { get; set; }

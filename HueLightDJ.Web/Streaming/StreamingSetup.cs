@@ -26,6 +26,8 @@ namespace HueLightDJ.Web.Streaming
 
     public static GroupConfiguration CurrentConnection { get; set; }
 
+   
+
     private static string _groupId;
     private static CancellationTokenSource _cts;
 
@@ -74,6 +76,20 @@ namespace HueLightDJ.Web.Streaming
           var bridgeLocations = group.ToDictionary(x => x.Id, l => new LightLocation() { l.X, l.Y, 0 });
           await client.UpdateGroupLocationsAsync(groupId, bridgeLocations);
         }
+      }
+    }
+
+    public static async Task AlertLight(MultiBridgeLightLocation light)
+    {
+      var configSection = GetGroupConfigurations();
+
+      var config = configSection.SelectMany(x => x.Connections).Where(x => x.Ip == light.Id && x.GroupId == light.GroupId).FirstOrDefault();
+      if (config != null)
+      {
+        var client = new LocalHueClient(config.Ip, config.Key);
+        var command = new LightCommand();
+        command.Alert = Alert.Multiple;
+        await client.SendCommandAsync(command, new List<string> { light.Id });
       }
     }
 

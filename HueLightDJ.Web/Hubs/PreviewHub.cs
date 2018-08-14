@@ -33,5 +33,10 @@ namespace HueLightDJ.Web.Hubs
       return StreamingSetup.SetLocations(locations);
     }
 
+    public Task Locate(MultiBridgeLightLocation light)
+    {
+      return StreamingSetup.AlertLight(light);
+    }
+
   }
 }

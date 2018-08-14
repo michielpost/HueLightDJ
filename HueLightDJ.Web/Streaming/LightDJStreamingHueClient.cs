@@ -14,9 +14,11 @@ namespace HueLightDJ.Web.Streaming
   {
     private IHubContext<PreviewHub> _hub;
     private bool _demoMode;
+    private string _bridgeIp;
 
     public LightDJStreamingHueClient(string ip, string appKey, string clientKey, bool demoMode) : base(ip, appKey, clientKey)
     {
+      _bridgeIp = ip;
       _demoMode = demoMode;
       _hub = (IHubContext<PreviewHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<PreviewHub>));
     }
@@ -30,6 +32,7 @@ namespace HueLightDJ.Web.Streaming
 
       _hub.Clients.All.SendAsync("preview", flatten.Select(x => new PreviewModel()
       {
+        Bridge = _bridgeIp,
         Id = x.Id,
         X = x.LightLocation.X,
         Y = x.LightLocation.Y,

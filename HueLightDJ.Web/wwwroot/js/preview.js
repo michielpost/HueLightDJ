@@ -28,7 +28,7 @@ function renderPreviewGrid(size, allowEdit) {
     previewConnection.on("newLocations", (preview) => {
       for (var i = 0; i < preview.length; i++) {
         var light = preview[i];
-        placeLight(light.id, light.x, light.y, light.hex, light.bri, light.bridge, light.groupId)
+        placeLight(light.bridge, light.id, light.x, light.y, light.hex, light.bri, light.groupId)
       }
     });
   }
@@ -41,7 +41,7 @@ function renderPreviewGrid(size, allowEdit) {
     previewConnection.on("preview", (preview) => {
       for (var i = 0; i < preview.length; i++) {
         var light = preview[i];
-        placeLight(light.id, light.x, light.y, light.hex, light.bri)
+        placeLight(light.bridge, light.id, light.x, light.y, light.hex, light.bri)
       }
     });
   }
@@ -82,19 +82,22 @@ function renderPreviewGrid(size, allowEdit) {
 
   function saveLocations() {
     var result = [];
-    for (var i = 0; i < lights.length; i++) {
-      var l = lights[i];
-      if (l != undefined && l != null) {
-        var pos = getXYPosition(l.label);
-        result.push({
-          Id: i,
-          Bridge: l.bridgeIp,
-          GroupId: l.groupId,
-          X: pos.x,
-          Y: pos.y
-        });
+    for (const [key, value] of Object.entries(lights)) {
+      for (var i = 0; i < value.length; i++) {
+        var l = value[i];
+        if (l != undefined && l != null) {
+          var pos = getXYPosition(l.label);
+          result.push({
+            Id: i,
+            Bridge: key,
+            GroupId: l.groupId,
+            X: pos.x,
+            Y: pos.y
+          });
+        }
       }
     }
+  
 
     previewConnection.invoke("SetLocations", result).catch(err => console.error(err.toString()));
 
@@ -113,26 +116,30 @@ function renderPreviewGrid(size, allowEdit) {
     return xypos;
   }
 
-  function placeLight(id, x, y, hex, bri, bridgeIp, groupId) {
-
-    var current = lights[id];
+  function placeLight(bridgeIp, id, x, y, hex, bri, groupId) {
+    var bridgeArray = lights[bridgeIp];
     var rad = 30 * bri;
     var xPos = xyToPosition(x);
     var yPos = xyToPosition(y * -1)
 
+    if (bridgeArray === undefined || bridgeArray == null) {
+      lights[bridgeIp] = [];
+    }
+
+    var current = lights[bridgeIp][id];
+
     if (current === undefined || current == null) {
 
-      lights[id] = {
+      lights[bridgeIp][id] = {
         glow: createGlowRing(xPos, yPos),
         label: createLightLabel(xPos, yPos, id),
-        bridgeIp: bridgeIp,
         groupId: groupId
       };
-      updateGlowRing(id, hex, bri);
-      addLightToContainer(lights[id]);
+      updateGlowRing(bridgeIp, id, hex, bri);
+      addLightToContainer(lights[bridgeIp][id]);
     }
     else {
-      updateGlowRing(id, hex, bri);
+      updateGlowRing(bridgeIp, id, hex, bri);
     }
   }
 
@@ -151,10 +158,10 @@ function renderPreviewGrid(size, allowEdit) {
     }
   }
 
-  function updateGlowRing(id, hex, bri) {
-    lights[id].glow.tint = "0x" + hex;
-    lights[id].glow.height = cellSize * 5 * bri;
-    lights[id].glow.width = cellSize * 5 * bri;
+  function updateGlowRing(bridgeIp, id, hex, bri) {
+    lights[bridgeIp][id].glow.tint = "0x" + hex;
+    lights[bridgeIp][id].glow.height = cellSize * 5 * bri;
+    lights[bridgeIp][id].glow.width = cellSize * 5 * bri;
   }
 
   function createGlowRing(x, y) {
@@ -185,6 +192,9 @@ function renderPreviewGrid(size, allowEdit) {
   }
 
   function onDragStart(event) {
+    console.log(this);
+    //previewConnection.invoke("Locate", result).catch(err => console.error(err.toString()));
+
     // store a reference to the data
     // the reason for this is because of multitouch
     // we want to track the movement of this particular touch
