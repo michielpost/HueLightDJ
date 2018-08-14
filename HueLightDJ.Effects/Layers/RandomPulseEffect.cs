@@ -11,20 +11,24 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  [HueEffect(Name = "Random Pulse from center", HasColorPicker = false)]
-		  public class RandomPulseEffect : IHueEffect
-		  {
-					public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
-					{
-							  Func<TimeSpan> customWaitTime = () => waitTime() / 10;
+  [HueEffect(Name = "Random Pulse from center", HasColorPicker = false)]
+  public class RandomPulseEffect : IHueEffect
+  {
+    public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
+    {
+      Func<TimeSpan> customWaitTime = () => waitTime() / 10;
 
-							  var randomPulseEffect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(fadeToZero: false, waitTime: customWaitTime);
-							  layer.PlaceEffect(randomPulseEffect);
-							  randomPulseEffect.Start();
+      var randomPulseEffect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(fadeToZero: false, waitTime: customWaitTime);
+      layer.PlaceEffect(randomPulseEffect);
+      randomPulseEffect.Start();
 
-							  cancellationToken.Register(() => randomPulseEffect.Stop());
+      cancellationToken.Register(() =>
+      {
+        randomPulseEffect.Stop();
+        layer.Effects.Remove(randomPulseEffect);
+      });
 
-							  return Task.CompletedTask;
-					}
-		  }
+      return Task.CompletedTask;
+    }
+  }
 }

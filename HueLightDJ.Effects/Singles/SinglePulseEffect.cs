@@ -23,11 +23,21 @@ namespace HueLightDJ.Effects
       Func<TimeSpan> customWaitTime = () => waitTime() / 10;
 
       var randomPulseEffect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(fadeToZero: false, waitTime: customWaitTime);
+
+      cancellationToken.Register(() => {
+        try
+        {
+          randomPulseEffect.Stop();
+        }
+        catch { }
+        layer.Effects.Remove(randomPulseEffect);
+      });
+
       layer.PlaceEffect(randomPulseEffect);
       randomPulseEffect.AutoRepeat = false;
       randomPulseEffect.Start();
 
-      await Task.Delay(waitTime() * 4, cancellationToken);
+      await Task.Delay(waitTime() * 2, cancellationToken);
       randomPulseEffect.Stop();
     }
   }

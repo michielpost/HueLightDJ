@@ -38,6 +38,9 @@ namespace HueLightDJ.Web.Streaming
 
       var locations = new List<MultiBridgeLightLocation>();
 
+      if (currentGroup == null)
+        return locations;
+
       foreach (var bridgeConfig in currentGroup.Connections)
       {
         var localClient = new LocalHueClient(bridgeConfig.Ip, bridgeConfig.Key);
@@ -113,7 +116,7 @@ namespace HueLightDJ.Web.Streaming
         Dictionary<string, LightLocation> locations = null;
         if (demoMode)
         {
-          string demoJson = await File.ReadAllTextAsync($"demoLocations{bridgeConfig.GroupId}.json");
+          string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
           locations = JsonConvert.DeserializeObject<Dictionary<string, LightLocation>>(demoJson);
           _groupId = bridgeConfig.GroupId;
         }

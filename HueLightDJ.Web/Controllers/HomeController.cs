@@ -8,6 +8,7 @@ using HueLightDJ.Web.Models;
 using HueLightDJ.Web.Streaming;
 using Q42.HueApi;
 using Q42.HueApi.Models.Bridge;
+using Q42.HueApi.Models.Groups;
 
 namespace HueLightDJ.Web.Controllers
 {
@@ -43,6 +44,17 @@ namespace HueLightDJ.Web.Controllers
     {
       var config = StreamingSetup.GetGroupConfigurations();
       return View(config);
+    }
+
+    [HttpGet]
+    [Route("export/{groupName}")]
+    public async Task<List<Dictionary<string, LightLocation>>> ExportJson([FromRoute]string groupName)
+    {
+      var locations = await StreamingSetup.GetLocationsAsync(groupName);
+
+      return locations.GroupBy(x => x.Bridge)
+        .Select(x => x.ToDictionary(l => l.Id, loc => new LightLocation() { loc.X, loc.Y, 0 })).ToList();
+
     }
 
     [HttpPost]

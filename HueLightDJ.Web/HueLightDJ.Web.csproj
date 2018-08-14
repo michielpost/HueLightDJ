@@ -20,10 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="demoLocations2.json">
+    <Content Update="demoLocations2_1.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="demoLocations1.json">
+    <Content Update="demoLocations1_1.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Views\Home\Configure.cshtml">
