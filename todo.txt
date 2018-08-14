@@ -1,5 +1,7 @@
 
-pijltjestoetsrn om area Dark te maken
+Light location grid op configure page
+
+pijltjestoetsen om area Dark te maken
 
 Interactive API using Mobile Sensors, X / Y effect 
 

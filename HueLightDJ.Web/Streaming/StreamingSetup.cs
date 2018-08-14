@@ -1,6 +1,7 @@
 using HueLightDJ.Web.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Q42.HueApi;
 using Q42.HueApi.Models.Groups;
 using Q42.HueApi.Streaming;
 using Q42.HueApi.Streaming.Models;
@@ -20,12 +21,63 @@ namespace HueLightDJ.Web.Streaming
     public static List<EntertainmentLayer> Layers { get; set; }
     private static int BPM { get; set; } = 120;
     public static Ref<TimeSpan> WaitTime { get; set; } = TimeSpan.FromMilliseconds(500);
+
+    
+
     public static GroupConfiguration CurrentConnection { get; set; }
 
     private static string _groupId;
     private static CancellationTokenSource _cts;
 
-    public static async Task<List<StreamingGroup>> SetupAndReturnGroup(string groupName)
+    public static async Task<List<MultiBridgeLightLocation>> GetLocationsAsync(string groupName)
+    {
+      var configSection = GetGroupConfigurations();
+      var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
+
+      var locations = new List<MultiBridgeLightLocation>();
+
+      foreach (var bridgeConfig in currentGroup.Connections)
+      {
+        var localClient = new LocalHueClient(bridgeConfig.Ip, bridgeConfig.Key);
+        var group = await localClient.GetGroupAsync(bridgeConfig.GroupId);
+
+        if (group.Type != GroupType.Entertainment)
+          continue;
+
+        locations.AddRange(group.Locations.Select(x => new MultiBridgeLightLocation()
+        {
+          Bridge = bridgeConfig.Ip,
+          GroupId = bridgeConfig.GroupId,
+          Id = x.Key,
+          X = x.Value.X,
+          Y = x.Value.Y
+        }));
+      }
+
+      return locations;
+    }
+
+    public static async Task SetLocations(List<MultiBridgeLightLocation> locations)
+    {
+      var configSection = GetGroupConfigurations();
+
+      var grouped = locations.GroupBy(x => x.Bridge);
+
+      foreach(var group in grouped)
+      {
+        var ip = group.Key;
+        var groupId = group.First().GroupId;
+        var config = configSection.SelectMany(x => x.Connections).Where(x => x.Ip == ip && x.GroupId == groupId).FirstOrDefault();
+        if(config != null)
+        {
+          var client = new LocalHueClient(config.Ip, config.Key);
+          var bridgeLocations = group.ToDictionary(x => x.Id, l => new LightLocation() { l.X, l.Y, 0 });
+          await client.UpdateGroupLocationsAsync(groupId, bridgeLocations);
+        }
+      }
+    }
+
+    public static async Task<List<StreamingGroup>> SetupAndReturnGroupAsync(string groupName)
     {
       var configSection = GetGroupConfigurations();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();

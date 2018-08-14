@@ -23,6 +23,7 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - DEMO mode, to test the app without a Hue Bridge
 - Keyboard Shortcuts
 - Connect to multiple Hue Bridges at the same time to control more than 10 lights 
+- Multi Bridge light location configuration using the /Configure page
 
 ## Tech
 - ASP.Net Core 2.1 backend

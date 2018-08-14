@@ -37,6 +37,14 @@ namespace HueLightDJ.Web.Controllers
       return View(ips);
     }
 
+    [HttpGet]
+    [Route("Configure")]
+    public IActionResult Configure()
+    {
+      var config = StreamingSetup.GetGroupConfigurations();
+      return View(config);
+    }
+
     [HttpPost]
     [Route("Register")]
     public async Task<ConnectionConfiguration> Register([FromForm]string ip)

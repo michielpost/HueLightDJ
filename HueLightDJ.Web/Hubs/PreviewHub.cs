@@ -22,5 +22,16 @@ namespace HueLightDJ.Web.Hubs
       EffectService.StartRandomTouchEffect(x, y);
     }
 
+    public async Task GetLocations(string groupName)
+    {
+      var locations = await StreamingSetup.GetLocationsAsync(groupName);
+      Clients.Caller.SendAsync("newLocations", locations);
+    }
+
+    public Task SetLocations(List<MultiBridgeLightLocation> locations)
+    {
+      return StreamingSetup.SetLocations(locations);
+    }
+
   }
 }

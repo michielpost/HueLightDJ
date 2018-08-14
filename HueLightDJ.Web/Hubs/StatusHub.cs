@@ -19,7 +19,7 @@ namespace HueLightDJ.Web.Hubs
       try
       {
         //Connect
-        await StreamingSetup.SetupAndReturnGroup(groupName);
+        await StreamingSetup.SetupAndReturnGroupAsync(groupName);
         await Clients.All.SendAsync("StatusMsg", "Connected to bridge");
 
         await GetStatus();

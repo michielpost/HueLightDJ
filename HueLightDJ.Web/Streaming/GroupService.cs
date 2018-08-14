@@ -63,6 +63,9 @@ namespace HueLightDJ.Web.Streaming
       var min = 2;
       var max = layer.Count / 2;
 
+      if (max < min)
+        max = min;
+
       Random r = new Random();
       var numberOfGroups =  r.Next(min, max);
 
