@@ -24,6 +24,11 @@ namespace HueLightDJ.Effects.Group
       if (iteratorMode == IteratorEffectMode.All)
         iteratorMode = IteratorEffectMode.AllIndividual;
 
+      //This is no fun, no action, change it to cycle
+      if (iteratorMode == IteratorEffectMode.AllIndividual
+        && (secondaryIteratorMode == IteratorEffectMode.All || secondaryIteratorMode == IteratorEffectMode.AllIndividual))
+        secondaryIteratorMode = IteratorEffectMode.Cycle;
+
       if (iteratorMode != IteratorEffectMode.AllIndividual)
       {
         if (secondaryIteratorMode == IteratorEffectMode.Bounce

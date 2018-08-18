@@ -271,7 +271,7 @@ namespace HueLightDJ.Web.Streaming
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
 
-      if (r.NextDouble() <= 0.7)
+      if (r.NextDouble() <= 0.6)
         StartRandomGroupEffect();
       else
       {
