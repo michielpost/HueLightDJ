@@ -24,10 +24,9 @@ namespace HueLightDJ.Effects
       if (!color.HasValue)
         color = RGBColor.Random();
 
-      Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / layer.Count);
-
-
       var groupCount = layer.Count / 3;
+
+      Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds) / groupCount);
 
       return layer.OrderBy(x => Guid.NewGuid()).ChunkByGroupNumber(groupCount).FlashQuick(cancellationToken, color, IteratorEffectMode.AllIndividual, IteratorEffectMode.RandomOrdered, waitTime: customWaitMS, duration: waitTime());
     }

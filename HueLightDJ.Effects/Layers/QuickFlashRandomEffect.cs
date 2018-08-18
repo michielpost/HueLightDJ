@@ -6,6 +6,7 @@ using Q42.HueApi.Streaming.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,9 +21,11 @@ namespace HueLightDJ.Effects
       if (!color.HasValue)
         color = RGBColor.Random();
 
-      Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / layer.Count);
+      var groupCount = layer.Count / 3;
 
-      return layer.To2DGroup().FlashQuick(cancellationToken, color, IteratorEffectMode.Random, waitTime: customWaitMS);
+      Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / groupCount);
+
+      return layer.OrderBy(x => Guid.NewGuid()).ChunkByGroupNumber(groupCount).FlashQuick(cancellationToken, color, IteratorEffectMode.Random, waitTime: customWaitMS);
     }
   }
 }

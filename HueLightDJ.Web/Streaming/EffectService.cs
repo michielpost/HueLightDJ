@@ -140,7 +140,9 @@ namespace HueLightDJ.Web.Streaming
         while(!autoModeCts.IsCancellationRequested)
         {
           StartRandomEffect();
-          await Task.Delay(TimeSpan.FromSeconds(6));
+
+          var secondsToWait = StreamingSetup.WaitTime.Value.TotalSeconds > 1 ? 18 : 6; //low bpm? play effect longer
+          await Task.Delay(TimeSpan.FromSeconds(secondsToWait));
         }
       }, autoModeCts.Token);
     }
