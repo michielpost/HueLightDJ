@@ -11,6 +11,8 @@ Om en om eem kleur. Laten draaien?
 4 led strips die aanstaan en rond draaien als een kruis
 2 effecten combineren op een groep, zie DoubleRandom
 
+MultiEffectGroups maken: lange strips en centrale korte kop / 1-head and n-tails
+
 ------
 
 Support for Akai APC Mini using Web Midi

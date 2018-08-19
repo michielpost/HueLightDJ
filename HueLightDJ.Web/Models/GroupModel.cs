@@ -1,3 +1,4 @@
+using Q42.HueApi.Streaming.Extensions;
 using Q42.HueApi.Streaming.Models;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace HueLightDJ.Web.Models
   public class GroupModel
   {
     public string Name { get; set; }
-    public IEnumerable<IEnumerable<EntertainmentLight>> Lights { get; set; }
+    public List<IEnumerable<IEnumerable<EntertainmentLight>>> Lights { get; set; } = new List<IEnumerable<IEnumerable<EntertainmentLight>>>();
 
     /// <summary>
     /// Indicates the maximum number of effects this group can handle on the same time.
@@ -17,12 +18,12 @@ namespace HueLightDJ.Web.Models
     /// This is based on your own judgement. How is this group split up? What looks good?
     /// Change it and test it.
     /// </summary>
-    public int MaxEffects { get; set; } = 1;
+    public int MaxEffects => Lights.Count;
 
     public GroupModel(string name, IEnumerable<IEnumerable<EntertainmentLight>> lights)
     {
       Name = name;
-      Lights = lights;
+      Lights.Add(lights);
     }
 
     /// <summary>
@@ -35,8 +36,18 @@ namespace HueLightDJ.Web.Models
     public GroupModel(string name, IEnumerable<IEnumerable<EntertainmentLight>> lights, int maxEffects)
     {
       Name = name;
-      Lights = lights;
-      MaxEffects = maxEffects;
+      Lights = lights.ChunkByGroupNumber(maxEffects).ToList();
+    }
+
+    /// <summary>
+    /// Multi effect constructor
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="multiEffectLights"></param>
+    public GroupModel(string name, IEnumerable<IEnumerable<IEnumerable<EntertainmentLight>>> multiEffectLights)
+    {
+      Name = name;
+      Lights = multiEffectLights.ToList();
     }
 
   }

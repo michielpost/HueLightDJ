@@ -200,7 +200,7 @@ namespace HueLightDJ.Web.Streaming
           //get group
           var selectedGroup = GroupService.GetAll(layer).Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
 
-          StartEffect(cts.Token, selectedEffect, selectedGroup, group, waitTime, color, iteratorMode, secondaryIteratorMode);
+          StartEffect(cts.Token, selectedEffect, selectedGroup.SelectMany(x => x), group, waitTime, color, iteratorMode, secondaryIteratorMode);
         }
         else
         {
@@ -300,15 +300,9 @@ namespace HueLightDJ.Web.Streaming
 
       //Random group that supports multiple effects
       var group = GroupService.GetAll(layer).OrderBy(x => Guid.NewGuid()).FirstOrDefault();
-      var lightList = group.Lights.ToList();
-
-      int minEffects = Math.Min(lightList.Count, group.MaxEffects);
 
       //Get same number of effects as groups in the light list
-      var effects = allGroupEffects.OrderBy(x => Guid.NewGuid()).Take(minEffects).ToList();
-
-      //Chunk the group by the number of effects we have
-      var chunks = group.Lights.ChunkByGroupNumber(effects.Count).ToList();
+      var effects = allGroupEffects.OrderBy(x => Guid.NewGuid()).Take(group.MaxEffects).ToList();
 
       //Cancel current
       if (layerInfo.ContainsKey(layer))
@@ -321,9 +315,9 @@ namespace HueLightDJ.Web.Streaming
       layerInfo[layer] = new RunningEffectInfo() { Name = "Double random", CancellationTokenSource = cts };
 
 
-      for (int i = 0; i < chunks.Count; i++)
+      for (int i = 0; i < group.Lights.Count; i++)
       {
-        var section = chunks[i];
+        var section = group.Lights[i];
         GenerateRandomEffectSettings(out RGBColor hexColor, out IteratorEffectMode iteratorMode, out IteratorEffectMode iteratorSecondaryMode);
 
         StartEffect(cts.Token, effects[i], section, group.Name, waitTime, hexColor, iteratorMode, iteratorSecondaryMode);
