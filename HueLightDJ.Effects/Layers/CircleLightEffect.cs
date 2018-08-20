@@ -21,7 +21,8 @@ namespace HueLightDJ.Effects
       if (!color.HasValue)
         color = RGBColor.Random();
 
-      var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(0, 0));
+      var center = EffectSettings.LocationCenter;
+      var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(center.X, center.Y));
 
       Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / layer.Count);
       Func<TimeSpan> customOnTime = () => customWaitMS() / 2;

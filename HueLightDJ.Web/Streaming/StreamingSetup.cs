@@ -1,3 +1,4 @@
+using HueLightDJ.Effects;
 using HueLightDJ.Web.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -158,6 +159,7 @@ namespace HueLightDJ.Web.Streaming
 
       Layers = new List<EntertainmentLayer>() { baseLayer, effectLayer };
       CurrentConnection = currentGroup;
+      EffectSettings.LocationCenter = currentGroup.LocationCenter ?? new LightLocation() { 0,0,0};
 
       //Optional: calculated effects that are placed on this layer
       baseLayer.AutoCalculateEffectUpdate(_cts.Token);

@@ -20,7 +20,8 @@ namespace HueLightDJ.Effects.Layers
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       var r = new Random();
-      var orderedLayer = layer.OrderByDescending(x => x.LightLocation.Angle(0, 0));
+      var center = EffectSettings.LocationCenter;
+      var orderedLayer = layer.OrderByDescending(x => x.LightLocation.Angle(center.X, center.Y));
 
       while (!cancellationToken.IsCancellationRequested)
       {
@@ -30,7 +31,7 @@ namespace HueLightDJ.Effects.Layers
         {
           Task.Run(async () =>
           {
-            var angle = light.LightLocation.Angle(0, 0).Move360(90);
+            var angle = light.LightLocation.Angle(center.X, center.Y).Move360(90);
             var timeSpan = waitTime() / 360 * angle;
             await Task.Delay(timeSpan);
             //Debug.WriteLine($"{light.Id} Angle {angle} and timespan {timeSpan.TotalMilliseconds}");

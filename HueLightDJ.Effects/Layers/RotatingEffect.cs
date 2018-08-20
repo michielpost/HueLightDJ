@@ -20,8 +20,10 @@ namespace HueLightDJ.Effects.Layers
       if(!color.HasValue)
         color = RGBColor.Random();
 
+      var center = EffectSettings.LocationCenter;
       var rotatingEffect = new RotatingLineEffect(cancellationToken, color.Value, customWaitTime);
-      layer.PlaceEffect(rotatingEffect);
+      rotatingEffect.X = center.X;
+      rotatingEffect.Y = center.Y; layer.PlaceEffect(rotatingEffect);
       rotatingEffect.Start();
 
       cancellationToken.Register(() => {

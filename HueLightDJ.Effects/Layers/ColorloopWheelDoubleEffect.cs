@@ -20,8 +20,9 @@ namespace HueLightDJ.Effects.Layers
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       var r = new Random();
-      var orderedLeftLayer = layer.OrderByDescending(x => x.LightLocation.Angle(0, 0)).GetLeft();
-      var ordereRightLayer = layer.OrderByDescending(x => x.LightLocation.Angle(0, 0)).GetRight();
+      var center = EffectSettings.LocationCenter;
+      var orderedLeftLayer = layer.OrderByDescending(x => x.LightLocation.Angle(center.X, center.Y)).GetLeft();
+      var ordereRightLayer = layer.OrderByDescending(x => x.LightLocation.Angle(center.X, center.Y)).GetRight();
       var toDark = r.NextDouble() >= 0.5;
 
       while (!cancellationToken.IsCancellationRequested)
@@ -33,7 +34,7 @@ namespace HueLightDJ.Effects.Layers
         {
           Task.Run(async () =>
           {
-            var angle = light.LightLocation.Angle(0, 0).Move360(91);
+            var angle = light.LightLocation.Angle(center.X, center.Y).Move360(91);
             var timeSpan = waitTime() / 360 * angle;
             await Task.Delay(timeSpan);
             //Debug.WriteLine($"{light.Id} Angle {angle} and timespan {timeSpan.TotalMilliseconds}");
@@ -55,7 +56,7 @@ namespace HueLightDJ.Effects.Layers
         {
           Task.Run(async () =>
           {
-            var angle = Math.Abs(light.LightLocation.Angle(0, 0).Move360(271) - 180);
+            var angle = Math.Abs(light.LightLocation.Angle(center.X, center.Y).Move360(271) - 180);
             var timeSpan = waitTime() / 360 * angle;
             await Task.Delay(timeSpan);
             //Debug.WriteLine($"{light.Id} Angle {angle} and timespan {timeSpan.TotalMilliseconds}");

@@ -1,3 +1,4 @@
+using HueLightDJ.Effects;
 using HueLightDJ.Web.Models;
 using Q42.HueApi.Streaming.Effects;
 using Q42.HueApi.Streaming.Extensions;
@@ -16,6 +17,8 @@ namespace HueLightDJ.Web.Streaming
       if (layer == null)
         layer = StreamingSetup.Layers.First();
 
+      var center = EffectSettings.LocationCenter;
+
       var allLightsOrdered = layer.OrderBy(x => x.LightLocation.X).ThenBy(x => x.LightLocation.Y).ToList();
 
       var leftRight = new[] { allLightsOrdered.GetLeft(), allLightsOrdered.GetRight() }.ToList();
@@ -23,12 +26,12 @@ namespace HueLightDJ.Web.Streaming
       var quarter = new[] { layer.GetLeft().GetFront(), layer.GetLeft().GetBack(), layer.GetRight().GetBack(), layer.GetRight().GetFront() }.ToList();
       var alternating = allLightsOrdered.ChunkByGroupNumber(2);
       var alternatingFour = allLightsOrdered.ChunkByGroupNumber(4);
-      var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(0, 0)).ChunkByGroupNumber(3);
-      var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(0, 0)).ChunkBy(6);
+      var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(center.X, center.Y)).ChunkByGroupNumber(3);
+      var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(center.X, center.Y)).ChunkBy(6);
 
       var leftToRight = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.X + 1) / 2) * 50));
       var fronToBack = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.Y + 1) / 2) * 50));
-      var ring = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Distance(0,0) / 1.5) * 2));
+      var ring = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Distance(center.X, center.Y) / 1.5) * 2));
 
       var result = new List<GroupModel>()
       {

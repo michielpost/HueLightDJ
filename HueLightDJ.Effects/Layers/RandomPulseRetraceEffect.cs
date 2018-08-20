@@ -18,7 +18,10 @@ namespace HueLightDJ.Effects
     {
       Func<TimeSpan> customWaitTime = () => waitTime() / 10;
 
+      var center = EffectSettings.LocationCenter;
       var randomPulseEffect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(waitTime: customWaitTime);
+      randomPulseEffect.X = center.X;
+      randomPulseEffect.Y = center.Y;
       layer.PlaceEffect(randomPulseEffect);
       randomPulseEffect.Start();
 

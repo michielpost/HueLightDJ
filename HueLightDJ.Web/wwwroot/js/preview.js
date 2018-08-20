@@ -106,6 +106,10 @@ function renderPreviewGrid(size, allowEdit) {
   function touch(event) {
     var pos = event.data.getLocalPosition(app.stage);
     previewConnection.invoke("touch", positionToXY(pos.x), positionToXY(WIDTH - pos.y)).catch(err => console.error(err.toString()));
+
+    if (window.console) {
+      console.log('Pointer at: ' + positionToXY(pos.x) + ',' + positionToXY(WIDTH - pos.y));
+    }
   }
 
   function getXYPosition(obj) {
