@@ -28,6 +28,7 @@ namespace HueLightDJ.Effects.Touch
       {
         await Task.Delay(waitTime() * 2);
         effect.Stop();
+        await Task.Delay(TimeSpan.FromSeconds(1));
         layer.Effects.Remove(effect);
       });
     }

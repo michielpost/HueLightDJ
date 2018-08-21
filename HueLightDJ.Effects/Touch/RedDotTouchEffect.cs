@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Touch
 {
-  [HueEffect(Name = "Red Dot Touch", IsBaseEffect = false, HasColorPicker = false)]
+  //Boring example, do not use
+  //[HueEffect(Name = "Red Dot Touch", IsBaseEffect = false, HasColorPicker = false)]
   class RedDotTouchEffect : IHueTouchEffect
   {
     public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken, double x, double y)

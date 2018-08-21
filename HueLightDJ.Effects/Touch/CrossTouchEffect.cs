@@ -40,7 +40,7 @@ namespace HueLightDJ.Effects.Touch
         await Task.Delay(customWaitTime() * 15);
         hline.Stop();
         vline.Stop();
-
+        await Task.Delay(TimeSpan.FromSeconds(1));
         layer.Effects.Remove(hline);
         layer.Effects.Remove(vline);
       });
