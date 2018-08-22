@@ -320,6 +320,13 @@ namespace HueLightDJ.Web.Streaming
         var section = group.Lights[i];
         GenerateRandomEffectSettings(out RGBColor hexColor, out IteratorEffectMode iteratorMode, out IteratorEffectMode iteratorSecondaryMode);
 
+        if(group.Lights.Count == 1 && effects[i] == typeof(RandomColorsEffect) && iteratorSecondaryMode != IteratorEffectMode.All)
+        {
+          //Random colors on all individual is boring, start another effect!
+          StartRandomEffect();
+          break;
+        }
+
         StartEffect(cts.Token, effects[i], section, group.Name, waitTime, hexColor, iteratorMode, iteratorSecondaryMode);
       }
 

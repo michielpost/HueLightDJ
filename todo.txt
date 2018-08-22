@@ -7,6 +7,7 @@ preview tonen als led strips
 
 -----
 Testen in office, oplossen via slimme groepen:
+V vorm, open en dicht klappen, rest ook een kleur ipv donker?
 Om en om eem kleur. Laten draaien?
 4 led strips die aanstaan en rond draaien als een kruis
 2 effecten combineren op een groep, zie DoubleRandom
