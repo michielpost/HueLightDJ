@@ -4,7 +4,6 @@ using HueLightDJ.Web.Hubs;
 using HueLightDJ.Web.Models;
 using Microsoft.AspNetCore.SignalR;
 using Q42.HueApi.ColorConverters;
-using Q42.HueApi.Streaming.Effects;
 using Q42.HueApi.Streaming.Extensions;
 using Q42.HueApi.Streaming.Models;
 using System;
@@ -320,7 +319,10 @@ namespace HueLightDJ.Web.Streaming
         var section = group.Lights[i];
         GenerateRandomEffectSettings(out RGBColor hexColor, out IteratorEffectMode iteratorMode, out IteratorEffectMode iteratorSecondaryMode);
 
-        if(group.Lights.Count == 1 && effects[i] == typeof(RandomColorsEffect) && iteratorSecondaryMode != IteratorEffectMode.All)
+        if(group.Lights.Count == 1
+          && iteratorSecondaryMode != IteratorEffectMode.All
+          && (effects[i] == typeof(HueLightDJ.Effects.Group.RandomColorsEffect) || effects[i] == typeof(HueLightDJ.Effects.Group.RandomColorloopEffect))
+          )
         {
           //Random colors on all individual is boring, start another effect!
           StartRandomEffect();
