@@ -3,6 +3,8 @@ using HueLightDJ.Web.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Q42.HueApi;
+using Q42.HueApi.ColorConverters;
+using Q42.HueApi.ColorConverters.Original;
 using Q42.HueApi.Models.Groups;
 using Q42.HueApi.Streaming;
 using Q42.HueApi.Streaming.Models;
@@ -87,13 +89,23 @@ namespace HueLightDJ.Web.Streaming
     {
       var configSection = GetGroupConfigurations();
 
-      var config = configSection.SelectMany(x => x.Connections).Where(x => x.Ip == light.Bridge).FirstOrDefault();
+      var config = configSection.Where(x => x.Connections.Any(c => c.Ip == light.Bridge)).FirstOrDefault();
       if (config != null)
       {
-        var client = new LocalHueClient(config.Ip, config.Key);
-        var command = new LightCommand().TurnOn();
-        command.Alert = Alert.Once;
-        await client.SendCommandAsync(command, new List<string> { light.Id });
+        foreach (var conn in config.Connections)
+        {
+          var client = new LocalHueClient(conn.Ip, conn.Key);
+          var allCommand = new LightCommand().TurnOn().SetColor(new RGBColor("0000FF")); //All blue
+          await client.SendGroupCommandAsync(allCommand, conn.GroupId);
+
+          //Only selected light red
+          if (conn.Ip == light.Bridge)
+          {
+            var alertCommand = new LightCommand().TurnOn().SetColor(new RGBColor("FF0000")); ;
+            alertCommand.Alert = Alert.Once;
+            await client.SendCommandAsync(alertCommand, new List<string> { light.Id });
+          }
+        }
       }
     }
 
