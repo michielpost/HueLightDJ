@@ -12,23 +12,25 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Random color range", HasColorPicker = false)]
+  [HueEffect(Name = "Random color range", HasColorPicker = true)]
   public class RandomColorRangeEffect : IHueEffect
   {
+    public bool UseTransition { get; set; } = true;
+
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       Random r = new Random();
       while(!cancellationToken.IsCancellationRequested)
       {
-        color = RGBColor.Random();
-        var hsb = color.Value.GetHSB();
+        var nextcolor = color ?? RGBColor.Random();
+        var hsb = nextcolor.GetHSB();
 
         foreach(var light in layer)
         {
           var addHue = r.Next(-6000, 6000);
           var addBri = r.Next(-100, 100);
           var randomHsb = new HSB(hsb.Hue + addHue, hsb.Saturation, WrapValue(255, hsb.Brightness + addBri));
-          light.SetState(cancellationToken, randomHsb.GetRGB(), 1);
+          light.SetState(cancellationToken, randomHsb.GetRGB(), 1, UseTransition ? waitTime() / 2 : TimeSpan.Zero);
         }
         await Task.Delay(waitTime());
       }
