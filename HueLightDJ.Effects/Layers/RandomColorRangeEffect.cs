@@ -25,12 +25,24 @@ namespace HueLightDJ.Effects
 
         foreach(var light in layer)
         {
-          var add = r.Next(-6000, 6000);
-          var randomHsb = new HSB(hsb.Hue + add, 255, 255);
+          var addHue = r.Next(-6000, 6000);
+          var addBri = r.Next(-100, 100);
+          var randomHsb = new HSB(hsb.Hue + addHue, hsb.Saturation, WrapValue(255, hsb.Brightness + addBri));
           light.SetState(cancellationToken, randomHsb.GetRGB(), 1);
         }
         await Task.Delay(waitTime());
       }
+    }
+
+    private int WrapValue(int max, int value)
+    {
+      var result = ((value % max) + max) % max;
+
+      //At least 50, to avoid dark/off lights
+      if (result < 50)
+        result += 50;
+
+      return result;
     }
   }
 }
