@@ -18,10 +18,7 @@ namespace HueLightDJ.Effects.Layers
   {
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
-      HSB hsb = new HSB();
-      hsb.Hue = 0;
-      hsb.Brightness = 255;
-      hsb.Saturation = 255;
+      HSB hsb = new HSB(0, 255, 255);
 
       while (!cancellationToken.IsCancellationRequested)
       {

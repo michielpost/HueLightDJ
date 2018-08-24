@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Q42.HueApi" Version="3.7.0" />
+    <PackageReference Include="Q42.HueApi" Version="3.7.1" />
+    <PackageReference Include="Q42.HueApi.ColorConverters" Version="3.7.0" />
     <PackageReference Include="Q42.HueApi.Entertainment" Version="1.5.6" />
   </ItemGroup>
 
