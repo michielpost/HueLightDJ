@@ -65,7 +65,10 @@ namespace HueLightDJ.Web.Controllers
       var result = await hueClient.RegisterAsync("HueLightDJ", "Web", generateClientKey: true);
 
       var allLights = await hueClient.GetLightsAsync();
-      var newGroup = await hueClient.CreateGroupAsync(allLights.Take(10).Select(x => x.Id), "Hue Light DJ group", Q42.HueApi.Models.Groups.RoomClass.Other, Q42.HueApi.Models.Groups.GroupType.Entertainment);
+      string groupId = "GroupId";
+
+      if(allLights.Any())
+        groupId = await hueClient.CreateGroupAsync(allLights.Take(10).Select(x => x.Id), "Hue Light DJ group", Q42.HueApi.Models.Groups.RoomClass.Other, Q42.HueApi.Models.Groups.GroupType.Entertainment);
 
       var connection = new ConnectionConfiguration()
       {
@@ -73,7 +76,7 @@ namespace HueLightDJ.Web.Controllers
         UseSimulator = false,
         Key = result.Username,
         EntertainmentKey = result.StreamingClientKey,
-        GroupId = newGroup
+        GroupId = groupId
       };
 
       return connection;

@@ -62,12 +62,29 @@ function renderPreviewGrid(size, allowEdit) {
     graphics.lineTo(WIDTH, 0);
 
     if (drawGrid) {
+      var middle = WIDTH / 2;
+
+      graphics.moveTo(0, 0);
+      graphics.lineTo(WIDTH, WIDTH);
+      graphics.moveTo(0, WIDTH);
+      graphics.lineTo(WIDTH, 0);
+
       for (var i = stepSize; i <= WIDTH; i = i + stepSize) {
         graphics.moveTo(i, 0);
         graphics.lineTo(i, WIDTH);
 
+        graphics.moveTo(middle, middle);
+        graphics.lineTo(i, WIDTH);
+        graphics.moveTo(middle, middle);
+        graphics.lineTo(i, 0);
+
         graphics.moveTo(0, i);
         graphics.lineTo(WIDTH, i);
+
+        graphics.moveTo(middle, middle);
+        graphics.lineTo(WIDTH, i);
+        graphics.moveTo(middle, middle);
+        graphics.lineTo(0, i);
       }
     }
 
@@ -180,7 +197,11 @@ function renderPreviewGrid(size, allowEdit) {
   }
 
   function createLightLabel(x, y, id, bridgeIp) {
-    var label = new PIXI.Text(String(id), { font: "12px", fill: 0xE9ECEF });
+    var textColor = 0xE9ECEF;
+    if (allowEdit)
+      textColor = 0xFF0000;
+
+    var label = new PIXI.Text(String(id), { font: "12px", fill: textColor });
     label.anchor.set(0.5, 0.5);
     label.position.x = x;
     label.position.y = y;

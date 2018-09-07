@@ -1,4 +1,19 @@
 
+Cue Effects. 1 cue is 1 state (op 1 of n lampen).
+lampen zonder state automatisch uit
+fade in en fade uit tijd van states instelbaar (altijd als percentage van de bpm/waittime)
+group cue, combineren met iterator (yield return iterator...)
+lijst opbouwen en dan counter bijhouden en juiste item uit lijst uitvoeren
+1 cue item kan ook een complex effect zijn (zoals bijv rainbow)
+cue item kan ook andere cue effecten aanroepen (yield return)
+Cue effect kan lijst van states hebben.
+bpm waittime bepaalt snelheid, wanneer naar de volgende?
+Automatisch doorheen loopen, of via keyboard handmatig (bijv met spatiebalk next cue)
+
+effect: sinus op alles starten (individuele sinus, of ramp omhoog, of ramp down, bump, random, flat high) en via phase kan je ze gelijk laten lopen of apart
+https://youtu.be/js4B4mTsyYM?t=2m48s
+--
+
 pijltjestoetsen om area Dark te maken
 
 Interactive API using Mobile Sensors, X / Y effect 

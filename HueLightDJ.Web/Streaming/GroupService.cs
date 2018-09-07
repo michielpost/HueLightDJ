@@ -32,6 +32,7 @@ namespace HueLightDJ.Web.Streaming
       var leftToRight = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.X + 1) / 2) * 50));
       var fronToBack = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.Y + 1) / 2) * 50));
       var ring = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Distance(center.X, center.Y) / 1.5) * 2));
+      var tentacles = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Angle(center.X, center.Y) / 3.6 / 3))).OrderBy(x => x.Key);
 
       var result = new List<GroupModel>()
       {
@@ -46,6 +47,7 @@ namespace HueLightDJ.Web.Streaming
         //new GroupModel("Distance from center", orderedByDistance),
         //new GroupModel("Order by Angle from center", orderedByAngle),
         new GroupModel("Ring", ring, 2),
+        new GroupModel("Tentacles", tentacles),
         new GroupModel("Random", GetRandomGroup()),
       };
 
