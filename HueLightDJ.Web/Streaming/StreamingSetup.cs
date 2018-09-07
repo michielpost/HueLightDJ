@@ -113,7 +113,7 @@ namespace HueLightDJ.Web.Streaming
     {
       var configSection = GetGroupConfigurations();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
-      bool demoMode = currentGroup.Name == "DEMO";
+      bool demoMode = currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
       bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
 
       //Disconnect any current connections
@@ -159,7 +159,7 @@ namespace HueLightDJ.Web.Streaming
           await client.Connect(_groupId, simulator: useSimulator);
 
         //Start auto updating this entertainment group
-        client.AutoUpdate(stream, _cts.Token, 50, onlySendDirtyStates: true);
+        client.AutoUpdate(stream, _cts.Token, 50, onlySendDirtyStates: false);
 
         StreamingHueClients.Add(client);
         StreamingGroups.Add(stream);

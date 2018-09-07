@@ -51,7 +51,7 @@ namespace HueLightDJ.Web.Streaming
         new GroupModel("Random", GetRandomGroup()),
       };
 
-      if (StreamingSetup.CurrentConnection.Name == "Ster")
+      if (StreamingSetup.CurrentConnection.Name == "Ster" || StreamingSetup.CurrentConnection.Name == "DEMO Ster")
       {
         result.Add(new GroupModel("Tentacles (alternating 2)", tentacles.ChunkByGroupNumber(2).Select(x => x.SelectMany(l => l))));
         result.Add(new GroupModel("Tentacles (alternating 3)", tentacles.ChunkByGroupNumber(3).Select(x => x.SelectMany(l => l))));
