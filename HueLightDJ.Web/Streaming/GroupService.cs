@@ -51,11 +51,12 @@ namespace HueLightDJ.Web.Streaming
         new GroupModel("Random", GetRandomGroup()),
       };
 
-      if (StreamingSetup.CurrentConnection.Name == "Bar")
+      if (StreamingSetup.CurrentConnection.Name == "Ster")
       {
-        //TODO: Add groups for Bar location
+        result.Add(new GroupModel("Tentacles (alternating 2)", tentacles.ChunkByGroupNumber(2).Select(x => x.SelectMany(l => l))));
+        result.Add(new GroupModel("Tentacles (alternating 3)", tentacles.ChunkByGroupNumber(3).Select(x => x.SelectMany(l => l))));
+        result.Add(new GroupModel("Tentacles (alternating 4)", tentacles.ChunkByGroupNumber(4).Select(x => x.SelectMany(l => l))));
       }
-     
 
       return result;
     }
