@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Layers
 {
-  [HueEffect(Order = 3, Name = "Rainbow Wheel Effect", HasColorPicker = false)]
+  [HueEffect(Order = 3, Name = "Rainbow Wheel Effect", Group = "Rotating", HasColorPicker = false)]
   public class RainbowWheelEffect : IHueEffect
   {
 

@@ -62,7 +62,7 @@ namespace HueLightDJ.Web.Streaming
       var groupEffectsTypes = GetGroupEffectTypes();
       var groups = GroupService.GetAll();
 
-      List<EffectViewModel> baseEffects = new List<EffectViewModel>();
+      Dictionary<string, List<EffectViewModel>> baseEffects = new Dictionary<string, List<EffectViewModel>>();
       List<EffectViewModel> shortEffects = new List<EffectViewModel>();
       List<EffectViewModel> groupEffects = new List<EffectViewModel>();
       foreach (var type in all)
@@ -81,7 +81,12 @@ namespace HueLightDJ.Web.Streaming
         }
 
         if (hueEffectAtt.IsBaseEffect)
-          baseEffects.Add(effect);
+        {
+          if (!baseEffects.ContainsKey(hueEffectAtt.Group))
+            baseEffects.Add(hueEffectAtt.Group, new List<EffectViewModel>());
+
+          baseEffects[hueEffectAtt.Group].Add(effect);
+        }
         else
           shortEffects.Add(effect);
       }

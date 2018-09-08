@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Layers
 {
-  [HueEffect(Name = "Rotating Effect", HasColorPicker = false)]
+  [HueEffect(Name = "Rotating Effect", Group = "Rotating", HasColorPicker = false)]
   public class RotatingEffect : IHueEffect
   {
     public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

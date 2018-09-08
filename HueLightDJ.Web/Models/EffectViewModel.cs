@@ -7,7 +7,7 @@ namespace HueLightDJ.Web.Models
 {
   public class EffectsVM
   {
-    public List<EffectViewModel> BaseEffects { get; set; }
+    public Dictionary<string, List<EffectViewModel>> BaseEffects { get; set; }
     public List<EffectViewModel> ShortEffects { get; set; }
     public List<EffectViewModel> GroupEffects { get; set; }
     public List<GroupInfoViewModel> Groups { get; set; }

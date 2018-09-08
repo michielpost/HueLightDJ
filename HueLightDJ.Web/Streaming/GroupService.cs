@@ -29,8 +29,8 @@ namespace HueLightDJ.Web.Streaming
       var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(center.X, center.Y)).ChunkByGroupNumber(3);
       var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(center.X, center.Y)).ChunkBy(6);
 
-      var leftToRight = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.X + 1) / 2) * 50));
-      var fronToBack = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.Y + 1) / 2) * 50));
+      var leftToRight = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.X + 1) / 2) * 50)).OrderBy(x => x.Key);
+      var fronToBack = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.Y + 1) / 2) * 50)).OrderBy(x => x.Key);
       var ring = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Distance(center.X, center.Y) / 1.5) * 2));
       var tentacles = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Angle(center.X, center.Y) / 3.6 / 3))).OrderBy(x => x.Key);
 
@@ -53,9 +53,9 @@ namespace HueLightDJ.Web.Streaming
 
       if (StreamingSetup.CurrentConnection.Name == "Ster" || StreamingSetup.CurrentConnection.Name == "DEMO Ster")
       {
-        result.Add(new GroupModel("Tentacles (alternating 2)", tentacles.ChunkByGroupNumber(2).Select(x => x.SelectMany(l => l))));
-        result.Add(new GroupModel("Tentacles (alternating 3)", tentacles.ChunkByGroupNumber(3).Select(x => x.SelectMany(l => l))));
-        result.Add(new GroupModel("Tentacles (alternating 4)", tentacles.ChunkByGroupNumber(4).Select(x => x.SelectMany(l => l))));
+        result.Add(new GroupModel("Tentacles (alternating 2)", tentacles.ChunkByGroupNumber(2).Select(x => x.SelectMany(l => l)), 2));
+        result.Add(new GroupModel("Tentacles (alternating 3)", tentacles.ChunkByGroupNumber(3).Select(x => x.SelectMany(l => l)), 3));
+        result.Add(new GroupModel("Tentacles (alternating 4)", tentacles.ChunkByGroupNumber(4).Select(x => x.SelectMany(l => l)), 4));
       }
 
       return result;
