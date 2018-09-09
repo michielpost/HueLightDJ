@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Order = 6, Name = "Quick Back to Front Flash", DefaultColor = "#FFFFFF")]
+  [HueEffect(Order = 6, Name = "Quick Back to Front Flash", Group = "Flash", DefaultColor = "#FFFFFF")]
   public class QuickFlashFrontBackEffect : IHueEffect
   {
     public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

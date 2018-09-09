@@ -31,9 +31,13 @@ namespace HueLightDJ.Effects.Layers
       var center = EffectSettings.LocationCenter;
       var orderedLayer = layer.OrderByDescending(x => x.LightLocation.Angle(center.X, center.Y));
 
+      var hsbMax = 65535;
+      var hsb = r.Next(hsbMax);
       for (int i = 0; i < Chunks; i++)
       {
-        _colors.Add(RGBColor.Random());
+        var hsbColor = new HSB(hsb, 255, 255);
+        _colors.Add(hsbColor.GetRGB());
+        hsb += (hsbMax / 4);
       }
 
       while (!cancellationToken.IsCancellationRequested)
@@ -41,16 +45,11 @@ namespace HueLightDJ.Effects.Layers
 
         foreach (var light in orderedLayer)
         {
-          Task.Run(() =>
-          {
-            var angle = light.LightLocation.Angle(center.X, center.Y).Move360(StartRotation);
-            double normalAngle = WrapValue(360, (int)angle);
+          var angle = light.LightLocation.Angle(center.X, center.Y).Move360(StartRotation);
+          double normalAngle = WrapValue(360, (int)angle);
 
-            int arrayIndex = (int)(normalAngle / 361 * Chunks);
-            light.SetState(cancellationToken, _colors[arrayIndex], 1);
-
-          });
-    
+          int arrayIndex = (int)(normalAngle / 361 * Chunks);
+          light.SetState(cancellationToken, _colors[arrayIndex], 1);
         }
 
         StartRotation += AddRotation;
