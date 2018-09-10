@@ -39,6 +39,13 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - Enter the IP, Key and EntertainmentKey in appsettings.json
 - Run the HueLightDJ.Web project(dotnet run inside the HueLightDJ.Web directory) 
 
+## Docker
+```
+docker pull michielpost/huelightdj
+docker run -d -p 8080:80 michielpost/huelightdj
+```
+HueLightDJ is now available on port 8080
+
 ## Feature Wishlist
 - More build in effects
 - Support for a hardware controller using WebMidi
