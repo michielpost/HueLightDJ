@@ -44,7 +44,9 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - Support for a hardware controller using WebMidi
 
 ## Screenshots
-![screenshot01](screenshot01.png)
+![Main](screenshots/screenshot01_main.png)
+![Setup](screenshots/screenshot02_setup.png)
+![Multi Bridge Location Editor](screenshots/screenshot03_location_editor.png)
 
 ## Video
 TODO
