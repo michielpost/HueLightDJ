@@ -37,7 +37,7 @@ namespace HueLightDJ.Effects.Layers
       {
         var hsbColor = new HSB(hsb, 255, 255);
         _colors.Add(hsbColor.GetRGB());
-        hsb += (hsbMax / 4);
+        hsb += (hsbMax / Chunks);
       }
 
       while (!cancellationToken.IsCancellationRequested)
