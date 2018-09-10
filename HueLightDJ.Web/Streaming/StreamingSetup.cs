@@ -6,6 +6,7 @@ using Q42.HueApi;
 using Q42.HueApi.ColorConverters;
 using Q42.HueApi.ColorConverters.Original;
 using Q42.HueApi.Interfaces;
+using Q42.HueApi.Models.Bridge;
 using Q42.HueApi.Models.Groups;
 using Q42.HueApi.Streaming;
 using Q42.HueApi.Streaming.Models;
@@ -183,8 +184,13 @@ namespace HueLightDJ.Web.Streaming
 
     public async static Task<List<GroupConfiguration>> GetGroupConfigurationsAsync()
     {
-      IBridgeLocator bridgeLocator = new HttpBridgeLocator();
-      var bridges = await bridgeLocator.LocateBridgesAsync(TimeSpan.FromSeconds(2));
+      IEnumerable<LocatedBridge> bridges = null;
+      try
+      {
+        IBridgeLocator bridgeLocator = new HttpBridgeLocator();
+        bridges = await bridgeLocator.LocateBridgesAsync(TimeSpan.FromSeconds(2));
+      }
+      catch { }
 
       var allConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
 
