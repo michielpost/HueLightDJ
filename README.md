@@ -40,6 +40,7 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - Run the HueLightDJ.Web project(dotnet run inside the HueLightDJ.Web directory) 
 
 ## Docker
+https://hub.docker.com/r/michielpost/huelightdj/
 ```
 docker pull michielpost/huelightdj
 docker run -d -p 8080:80 michielpost/huelightdj
