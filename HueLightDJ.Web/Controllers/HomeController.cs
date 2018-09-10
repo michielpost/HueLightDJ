@@ -57,6 +57,13 @@ namespace HueLightDJ.Web.Controllers
 
     }
 
+    [HttpGet]
+    [Route("fullexport/{groupName}")]
+    public Task<List<MultiBridgeLightLocation>> FullExportJson([FromRoute]string groupName)
+    {
+      return StreamingSetup.GetLocationsAsync(groupName);
+    }
+
     [HttpPost]
     [Route("Register")]
     public async Task<ConnectionConfiguration> Register([FromForm]string ip)
