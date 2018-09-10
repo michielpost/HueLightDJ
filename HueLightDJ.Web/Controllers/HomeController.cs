@@ -15,9 +15,9 @@ namespace HueLightDJ.Web.Controllers
   public class HomeController : Controller
   {
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-      var config = StreamingSetup.GetGroupConfigurations();
+      var config = await StreamingSetup.GetGroupConfigurationsAsync();
       return View(config);
     }
 
@@ -40,9 +40,9 @@ namespace HueLightDJ.Web.Controllers
 
     [HttpGet]
     [Route("Configure")]
-    public IActionResult Configure()
+    public async Task<IActionResult> Configure()
     {
-      var config = StreamingSetup.GetGroupConfigurations();
+      var config = await StreamingSetup.GetGroupConfigurationsAsync();
       return View(config);
     }
 

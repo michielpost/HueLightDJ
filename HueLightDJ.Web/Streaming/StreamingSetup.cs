@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Q42.HueApi;
 using Q42.HueApi.ColorConverters;
 using Q42.HueApi.ColorConverters.Original;
+using Q42.HueApi.Interfaces;
 using Q42.HueApi.Models.Groups;
 using Q42.HueApi.Streaming;
 using Q42.HueApi.Streaming.Models;
@@ -36,7 +37,7 @@ namespace HueLightDJ.Web.Streaming
 
     public static async Task<List<MultiBridgeLightLocation>> GetLocationsAsync(string groupName)
     {
-      var configSection = GetGroupConfigurations();
+      var configSection = await GetGroupConfigurationsAsync();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
 
       var locations = new List<MultiBridgeLightLocation>();
@@ -67,7 +68,7 @@ namespace HueLightDJ.Web.Streaming
 
     public static async Task SetLocations(List<MultiBridgeLightLocation> locations)
     {
-      var configSection = GetGroupConfigurations();
+      var configSection = await GetGroupConfigurationsAsync();
 
       var grouped = locations.GroupBy(x => x.Bridge);
 
@@ -87,7 +88,7 @@ namespace HueLightDJ.Web.Streaming
 
     public static async Task AlertLight(MultiBridgeLightLocation light)
     {
-      var configSection = GetGroupConfigurations();
+      var configSection = await GetGroupConfigurationsAsync();
 
       var config = configSection.Where(x => x.Connections.Any(c => c.Ip == light.Bridge)).FirstOrDefault();
       if (config != null)
@@ -111,7 +112,7 @@ namespace HueLightDJ.Web.Streaming
 
     public static async Task<List<StreamingGroup>> SetupAndReturnGroupAsync(string groupName)
     {
-      var configSection = GetGroupConfigurations();
+      var configSection = await GetGroupConfigurationsAsync();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
       bool demoMode = currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
       bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
@@ -180,9 +181,22 @@ namespace HueLightDJ.Web.Streaming
       return StreamingGroups;
     }
 
-    public static List<GroupConfiguration> GetGroupConfigurations()
+    public async static Task<List<GroupConfiguration>> GetGroupConfigurationsAsync()
     {
-      return Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
+      IBridgeLocator bridgeLocator = new HttpBridgeLocator();
+      var bridges = await bridgeLocator.LocateBridgesAsync(TimeSpan.FromSeconds(2));
+
+      var allConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
+
+      if (bridges == null || !bridges.Any())
+        return allConfig;
+      else
+      {
+        return allConfig.Where(x =>
+        x.Connections.Select(c => c.Ip).Intersect(bridges.Select(b => b.IpAddress)).Any()
+        || x.IsAlwaysVisible
+        ).ToList();
+      }
     }
 
     public static void SetBrightnessFilter(double value)
