@@ -19,7 +19,7 @@ namespace HueLightDJ.Effects.Layers
   public class RainbowBottomTopEffect : IHueEffect
   {
 
-    protected virtual int Steps  => (int)(65535 * 0.85);
+    protected virtual int Steps  => (int)(HSB.HueMaxValue * 0.85);
     protected virtual int StartStep { get; set; } = 0;
     protected virtual bool DipToBlack { get; set; } = true;
 

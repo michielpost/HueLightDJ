@@ -31,13 +31,12 @@ namespace HueLightDJ.Effects.Layers
       var center = EffectSettings.LocationCenter;
       var orderedLayer = layer.OrderByDescending(x => x.LightLocation.Angle(center.X, center.Y));
 
-      var hsbMax = 65535;
-      var hsb = r.Next(hsbMax);
+      var hsb = r.Next(HSB.HueMaxValue);
       for (int i = 0; i < Chunks; i++)
       {
         var hsbColor = new HSB(hsb, 255, 255);
         _colors.Add(hsbColor.GetRGB());
-        hsb += (hsbMax / Chunks);
+        hsb += (HSB.HueMaxValue / Chunks);
       }
 
       while (!cancellationToken.IsCancellationRequested)

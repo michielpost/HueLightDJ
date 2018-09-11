@@ -27,7 +27,7 @@ namespace HueLightDJ.Effects.Layers
         await Task.Delay(waitTime() / 10);
         hsb.Hue += 100;
 
-        if (hsb.Hue >= 65535)
+        if (hsb.Hue >= HSB.HueMaxValue)
           hsb.Hue = 0;
       }
 

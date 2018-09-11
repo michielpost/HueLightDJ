@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.1916590" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" />
-    <PackageReference Include="Q42.HueApi" Version="3.7.1" />
-    <PackageReference Include="Q42.HueApi.ColorConverters" Version="3.7.0" />
-    <PackageReference Include="Q42.HueApi.Entertainment" Version="1.5.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.1985401" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" />
+    <PackageReference Include="Q42.HueApi" Version="3.7.2" />
+    <PackageReference Include="Q42.HueApi.ColorConverters" Version="3.7.1" />
+    <PackageReference Include="Q42.HueApi.Entertainment" Version="1.5.7" />
   </ItemGroup>
 
   <ItemGroup>
