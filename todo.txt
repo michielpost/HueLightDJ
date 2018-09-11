@@ -10,6 +10,8 @@ Cue effect kan lijst van states hebben.
 bpm waittime bepaalt snelheid, wanneer naar de volgende?
 Automatisch doorheen loopen, of via keyboard handmatig (bijv met spatiebalk next cue)
 
+Schedule kunnen maken. Start effect X na 10 sec, Y na 30 sec etc
+
 effect: sinus op alles starten (individuele sinus, of ramp omhoog, of ramp down, bump, random, flat high) en via phase kan je ze gelijk laten lopen of apart
 https://youtu.be/js4B4mTsyYM?t=2m48s
 --

@@ -122,51 +122,14 @@ namespace HueLightDJ.Web.Streaming
       Disconnect();
       _cts = new CancellationTokenSource();
 
+      ///List<Task> connectTasks = new List<Task>();
       foreach (var bridgeConfig in currentGroup.Connections)
       {
-        //Initialize streaming client
-        var client = new LightDJStreamingHueClient(bridgeConfig.Ip, bridgeConfig.Key, bridgeConfig.EntertainmentKey, demoMode);
+        await Connect(demoMode, useSimulator, bridgeConfig);
 
-        //Get the entertainment group
-        Dictionary<string, LightLocation> locations = null;
-        if (demoMode)
-        {
-          string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
-          locations = JsonConvert.DeserializeObject<Dictionary<string, LightLocation>>(demoJson);
-          _groupId = bridgeConfig.GroupId;
-        }
-        else
-        {
-          var all = await client.LocalHueClient.GetEntertainmentGroups();
-          var group = all.Where(x => x.Id == bridgeConfig.GroupId).FirstOrDefault();
-
-          if (group == null)
-            throw new Exception($"No Entertainment Group found with id {bridgeConfig.GroupId}. Create one using the Philips Hue App or the Q42.HueApi.UniversalWindows.Sample");
-          else
-          {
-            Console.WriteLine($"Using Entertainment Group {group.Id}");
-            _groupId = group.Id;
-          }
-
-          locations = group.Locations;
-        }
-
-        //Create a streaming group
-        var stream = new StreamingGroup(locations);
-        stream.IsForSimulator = useSimulator;
-
-
-        //Connect to the streaming group
-        if (!demoMode)
-          await client.Connect(_groupId, simulator: useSimulator);
-
-        //Start auto updating this entertainment group
-        client.AutoUpdate(stream, _cts.Token, 50, onlySendDirtyStates: false);
-
-        StreamingHueClients.Add(client);
-        StreamingGroups.Add(stream);
-       
       }
+      //TODO TEST: Connect in parallel and wait for all tasks to finish
+      //await Task.WhenAll(connectTasks);
 
       var baseLayer = GetNewLayer(isBaseLayer: true);
       var effectLayer = GetNewLayer(isBaseLayer: false);
@@ -180,6 +143,51 @@ namespace HueLightDJ.Web.Streaming
       effectLayer.AutoCalculateEffectUpdate(_cts.Token);
 
       return StreamingGroups;
+    }
+
+    private static async Task Connect(bool demoMode, bool useSimulator, ConnectionConfiguration bridgeConfig)
+    {
+      //Initialize streaming client
+      var client = new LightDJStreamingHueClient(bridgeConfig.Ip, bridgeConfig.Key, bridgeConfig.EntertainmentKey, demoMode);
+
+      //Get the entertainment group
+      Dictionary<string, LightLocation> locations = null;
+      if (demoMode)
+      {
+        string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
+        locations = JsonConvert.DeserializeObject<Dictionary<string, LightLocation>>(demoJson);
+        _groupId = bridgeConfig.GroupId;
+      }
+      else
+      {
+        var all = await client.LocalHueClient.GetEntertainmentGroups();
+        var group = all.Where(x => x.Id == bridgeConfig.GroupId).FirstOrDefault();
+
+        if (group == null)
+          throw new Exception($"No Entertainment Group found with id {bridgeConfig.GroupId}. Create one using the Philips Hue App or the Q42.HueApi.UniversalWindows.Sample");
+        else
+        {
+          Console.WriteLine($"Using Entertainment Group {group.Id}");
+          _groupId = group.Id;
+        }
+
+        locations = group.Locations;
+      }
+
+      //Create a streaming group
+      var stream = new StreamingGroup(locations);
+      stream.IsForSimulator = useSimulator;
+
+
+      //Connect to the streaming group
+      if (!demoMode)
+        await client.Connect(_groupId, simulator: useSimulator);
+
+      //Start auto updating this entertainment group
+      client.AutoUpdate(stream, _cts.Token, 50, onlySendDirtyStates: false);
+
+      StreamingHueClients.Add(client);
+      StreamingGroups.Add(stream);
     }
 
     public async static Task<List<GroupConfiguration>> GetGroupConfigurationsAsync()
