@@ -1,5 +1,7 @@
 using HueLightDJ.Effects;
+using HueLightDJ.Web.Hubs;
 using HueLightDJ.Web.Models;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Q42.HueApi;
@@ -122,14 +124,14 @@ namespace HueLightDJ.Web.Streaming
       Disconnect();
       _cts = new CancellationTokenSource();
 
-      ///List<Task> connectTasks = new List<Task>();
+      List<Task> connectTasks = new List<Task>();
       foreach (var bridgeConfig in currentGroup.Connections)
       {
-        await Connect(demoMode, useSimulator, bridgeConfig);
+        connectTasks.Add(Connect(demoMode, useSimulator, bridgeConfig));
 
       }
-      //TODO TEST: Connect in parallel and wait for all tasks to finish
-      //await Task.WhenAll(connectTasks);
+      //Connect in parallel and wait for all tasks to finish
+      await Task.WhenAll(connectTasks);
 
       var baseLayer = GetNewLayer(isBaseLayer: true);
       var effectLayer = GetNewLayer(isBaseLayer: false);
@@ -147,47 +149,64 @@ namespace HueLightDJ.Web.Streaming
 
     private static async Task Connect(bool demoMode, bool useSimulator, ConnectionConfiguration bridgeConfig)
     {
-      //Initialize streaming client
-      var client = new LightDJStreamingHueClient(bridgeConfig.Ip, bridgeConfig.Key, bridgeConfig.EntertainmentKey, demoMode);
+      var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      hub.Clients.All.SendAsync("StatusMsg", $"Connecting to bridge {bridgeConfig.Ip}");
 
-      //Get the entertainment group
-      Dictionary<string, LightLocation> locations = null;
-      if (demoMode)
+      try
       {
-        string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
-        locations = JsonConvert.DeserializeObject<Dictionary<string, LightLocation>>(demoJson);
-        _groupId = bridgeConfig.GroupId;
-      }
-      else
-      {
-        var all = await client.LocalHueClient.GetEntertainmentGroups();
-        var group = all.Where(x => x.Id == bridgeConfig.GroupId).FirstOrDefault();
+        //Initialize streaming client
+        var client = new LightDJStreamingHueClient(bridgeConfig.Ip, bridgeConfig.Key, bridgeConfig.EntertainmentKey, demoMode);
 
-        if (group == null)
-          throw new Exception($"No Entertainment Group found with id {bridgeConfig.GroupId}. Create one using the Philips Hue App or the Q42.HueApi.UniversalWindows.Sample");
+        //Get the entertainment group
+        Dictionary<string, LightLocation> locations = null;
+        if (demoMode)
+        {
+          string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
+          locations = JsonConvert.DeserializeObject<Dictionary<string, LightLocation>>(demoJson);
+          _groupId = bridgeConfig.GroupId;
+        }
         else
         {
-          Console.WriteLine($"Using Entertainment Group {group.Id}");
-          _groupId = group.Id;
+          var all = await client.LocalHueClient.GetEntertainmentGroups();
+          var group = all.Where(x => x.Id == bridgeConfig.GroupId).FirstOrDefault();
+
+          if (group == null)
+            throw new Exception($"No Entertainment Group found with id {bridgeConfig.GroupId}. Create one using the Philips Hue App or the Q42.HueApi.UniversalWindows.Sample");
+          else
+          {
+            hub.Clients.All.SendAsync("StatusMsg", $"Using Entertainment Group {group.Id} for bridge {bridgeConfig.Ip}");
+            Console.WriteLine($"Using Entertainment Group {group.Id}");
+            _groupId = group.Id;
+          }
+
+          locations = group.Locations;
         }
 
-        locations = group.Locations;
+        //Create a streaming group
+        var stream = new StreamingGroup(locations);
+        stream.IsForSimulator = useSimulator;
+
+
+        //Connect to the streaming group
+        if (!demoMode)
+          await client.Connect(_groupId, simulator: useSimulator);
+
+        //Start auto updating this entertainment group
+        client.AutoUpdate(stream, _cts.Token, 50, onlySendDirtyStates: false);
+
+        StreamingHueClients.Add(client);
+        StreamingGroups.Add(stream);
+
+        await hub.Clients.All.SendAsync("StatusMsg", $"Succesfully connected to bridge {bridgeConfig.Ip}");
+
+      }
+      catch (Exception ex)
+      {
+        await hub.Clients.All.SendAsync("StatusMsg", $"Failed to connect to bridge {bridgeConfig.Ip}, exception: " + ex);
+
+        throw;
       }
 
-      //Create a streaming group
-      var stream = new StreamingGroup(locations);
-      stream.IsForSimulator = useSimulator;
-
-
-      //Connect to the streaming group
-      if (!demoMode)
-        await client.Connect(_groupId, simulator: useSimulator);
-
-      //Start auto updating this entertainment group
-      client.AutoUpdate(stream, _cts.Token, 50, onlySendDirtyStates: false);
-
-      StreamingHueClients.Add(client);
-      StreamingGroups.Add(stream);
     }
 
     public async static Task<List<GroupConfiguration>> GetGroupConfigurationsAsync()
