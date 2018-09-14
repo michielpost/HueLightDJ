@@ -253,14 +253,20 @@ namespace HueLightDJ.Web.Streaming
 
     public static void Disconnect()
     {
+      if (_cts != null)
+        _cts.Cancel();
+
       foreach (var client in StreamingHueClients)
       {
-        client.LocalHueClient.SetStreamingAsync(_groupId, active: false);
+        try
+        {
+          client.LocalHueClient.SetStreamingAsync(_groupId, active: false);
+          client.Close();
+        }
+        catch { }
       }
 
       EffectService.CancelAllEffects();
-      if (_cts != null)
-        _cts.Cancel();
 
       Layers = null;
       StreamingHueClients.Clear();

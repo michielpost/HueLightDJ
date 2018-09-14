@@ -12,7 +12,10 @@
         {
           <input type="button" value="Connect @group.Name" v-show="effects.groups == null" onclick="connection.invoke('Connect', '@group.Name')" class="btn btn-dark" />
         }
-        <input type="button" id="disconnectButton" value="Disconnect" class="btn btn-danger" />
+        @if (ViewBag.IsAdmin)
+        {
+          <input type="button" id="disconnectButton" value="Disconnect" class="btn btn-danger" />
+        }
       </div>
     </div>
     <div class="row">
