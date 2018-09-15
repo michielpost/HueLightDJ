@@ -9,6 +9,8 @@ Hue Light DJ is meant for setups with 20+ Hue Lights. Don't use this app for you
 
 NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) supports max 10 lights in an Entertainment Group. To get this to work with more than 10 lights, you need to have 1 bridge for every 10 lights. 
 
+[![Hue Light DJ with 32 Hue LED strips](screenshots/vimeo_preview.png)](https://vimeo.com/290011309)
+
 ## Features
 - Comes with a lot of build in effects
 - BPM input to specify speed of effects
@@ -55,6 +57,3 @@ HueLightDJ is now available on port 8080
 ![Main](screenshots/screenshot01_main.png)
 ![Setup](screenshots/screenshot02_setup.png)
 ![Multi Bridge Location Editor](screenshots/screenshot03_location_editor.png)
-
-## Video
-TODO
