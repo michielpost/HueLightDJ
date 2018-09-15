@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Layers
 {
-  [HueEffect(Order = 3, Name = "Rainbow Bottom Top Effect", HasColorPicker = false)]
+  [HueEffect(Order = 3, Name = "Rainbow Bottom Top Effect", Group = "Party", HasColorPicker = false)]
   public class RainbowBottomTopEffect : IHueEffect
   {
 

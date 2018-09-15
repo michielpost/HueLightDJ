@@ -21,7 +21,9 @@ namespace HueLightDJ.Web.Streaming
     private static List<TypeInfo> GroupEffectTypes { get; set; }
     private static List<TypeInfo> TouchEffectTypes { get; set; }
     private static Dictionary<EntertainmentLayer, RunningEffectInfo> layerInfo = new Dictionary<EntertainmentLayer, RunningEffectInfo>();
+
     private static CancellationTokenSource autoModeCts;
+    public static bool AutoModeHasRandomEffects = true;
 
     public static List<TypeInfo> GetEffectTypes()
     {
@@ -151,7 +153,7 @@ namespace HueLightDJ.Web.Streaming
       {
         while(!autoModeCts.IsCancellationRequested)
         {
-          StartRandomEffect();
+          StartRandomEffect(AutoModeHasRandomEffects);
 
           var secondsToWait = StreamingSetup.WaitTime.Value.TotalSeconds > 1 ? 18 : 6; //low bpm? play effect longer
           await Task.Delay(TimeSpan.FromSeconds(secondsToWait));
@@ -276,14 +278,16 @@ namespace HueLightDJ.Web.Streaming
 
     }
 
-    public static void StartRandomEffect()
+    public static void StartRandomEffect(bool withRandomEffects = true)
     {
       var r = new Random();
 
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
 
-      if (r.NextDouble() <= 0.6)
+
+
+      if (r.NextDouble() <= (withRandomEffects ? 0.6 : 0))
         StartRandomGroupEffect();
       else
       {

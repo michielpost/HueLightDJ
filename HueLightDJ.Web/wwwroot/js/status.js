@@ -88,6 +88,9 @@ const vuedj = new Vue({
     stopAutoMode() {
       connection.invoke("StopAutoMode").catch(err => console.error(err.toString()));
     },
+    toggleAutoRandomMode() {
+      connection.invoke("ToggleAutoRandomMode").catch(err => console.error(err.toString()));
+    },
     stopEffects() {
       connection.invoke("StopEffects").catch(err => console.error(err.toString()));
     },

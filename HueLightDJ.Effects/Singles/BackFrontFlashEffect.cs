@@ -26,12 +26,9 @@ namespace HueLightDJ.Effects
 
       Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / layer.Count);
 
-      var fronToBack = layer.GroupBy(x => (int)(((x.LightLocation.Y + 1) / 2) * 50)).Reverse();
+      var fronToBack = layer.GroupBy(x => (int)(((x.LightLocation.Y + 1) / 2) * 50)).OrderBy(x => x.Key).Reverse();
 
-      fronToBack.FlashQuick(cancellationToken, color, IteratorEffectMode.Bounce, IteratorEffectMode.RandomOrdered, waitTime: customWaitMS, duration: waitTime());
-      fronToBack.FlashQuick(cancellationToken, color, IteratorEffectMode.Bounce, IteratorEffectMode.RandomOrdered, waitTime: customWaitMS, duration: waitTime());
-
-      return Task.CompletedTask;
+      return fronToBack.FlashQuick(cancellationToken, color, IteratorEffectMode.Single, IteratorEffectMode.RandomOrdered, waitTime: customWaitMS, duration: waitTime());
     }
   }
 }

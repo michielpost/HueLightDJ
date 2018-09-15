@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Skipping Effect", HasColorPicker = false, Order = 1)]
+  [HueEffect(Name = "Skipping Effect", Group = "Party", HasColorPicker = false, Order = 1)]
   public class SkippingEffect : IHueEffect
   {
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

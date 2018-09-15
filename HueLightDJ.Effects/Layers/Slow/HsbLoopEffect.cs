@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Layers
 {
-  [HueEffect(Order = 2, Name = "HSB Loop Effect", HasColorPicker = false)]
+  [HueEffect(Order = 2, Name = "HSB Loop Effect", Group = "Slow", HasColorPicker = false)]
   public class HsbLoopEffect : IHueEffect
   {
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Random color range", HasColorPicker = true)]
+  [HueEffect(Name = "Random color range", Group = "Slow", HasColorPicker = true)]
   public class RandomColorRangeEffect : IHueEffect
   {
     public bool UseTransition { get; set; } = true;

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Random Pulse top bottom", HasColorPicker = false)]
+  [HueEffect(Name = "Random Pulse top bottom", Group = "Party", HasColorPicker = false)]
   public class RandomPulseTopBottomEffect : IHueEffect
   {
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

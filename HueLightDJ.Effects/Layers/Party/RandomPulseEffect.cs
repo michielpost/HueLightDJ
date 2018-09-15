@@ -11,15 +11,15 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Name = "Random Pulse from center with retrace", HasColorPicker = false)]
-  public class RandomPulseRetraceEffect : IHueEffect
+  [HueEffect(Name = "Random Pulse from center", Group = "Party", HasColorPicker = false)]
+  public class RandomPulseEffect : IHueEffect
   {
     public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       Func<TimeSpan> customWaitTime = () => waitTime() / 10;
-
       var center = EffectSettings.LocationCenter;
-      var randomPulseEffect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(waitTime: customWaitTime);
+
+      var randomPulseEffect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(fadeToZero: false, waitTime: customWaitTime);
       randomPulseEffect.X = center.X;
       randomPulseEffect.Y = center.Y;
       layer.PlaceEffect(randomPulseEffect);

@@ -38,6 +38,7 @@ namespace HueLightDJ.Web.Hubs
       StatusViewModel vm = new StatusViewModel();
       vm.bpm = StreamingSetup.GetBPM();
       vm.IsAutoMode = EffectService.IsAutoModeRunning();
+      vm.AutoModeHasRandomEffects = EffectService.AutoModeHasRandomEffects;
       vm.ShowDisconnect = !(StreamingSetup.CurrentConnection?.HideDisconnect ?? false);
       vm.GroupNames = configs.Select(x => x.Name).ToList();
 
@@ -106,6 +107,12 @@ namespace HueLightDJ.Web.Hubs
     public Task StopAutoMode()
     {
       EffectService.StopAutoMode();
+      return GetStatus();
+    }
+
+    public Task ToggleAutoRandomMode()
+    {
+      EffectService.AutoModeHasRandomEffects = !EffectService.AutoModeHasRandomEffects;
       return GetStatus();
     }
 

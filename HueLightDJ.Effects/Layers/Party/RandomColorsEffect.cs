@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  [HueEffect(Order = int.MaxValue, Name = "X-MAS", HasColorPicker = false)]
-		  public class ChristmasEffect : IHueEffect
+		  [HueEffect(Name = "Random colors (all different)", Group = "Party", HasColorPicker = false)]
+		  public class RandomColorsEffect : IHueEffect
 		  {
 					public Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
 					{
-							  return layer.To2DGroup().Christmas(cancellationToken);
+							  return layer.To2DGroup().SetRandomColor(cancellationToken, IteratorEffectMode.AllIndividual, IteratorEffectMode.All, waitTime);
 					}
 		  }
 }

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Layers
 {
-  [HueEffect(Order = 3, Name = "Colorloop Double Wheel Effect", HasColorPicker = false)]
+  [HueEffect(Order = 3, Name = "Colorloop Double Wheel Effect", Group = "Party", HasColorPicker = false)]
   public class ColorloopWheelDoubleEffect : IHueEffect
   {
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)

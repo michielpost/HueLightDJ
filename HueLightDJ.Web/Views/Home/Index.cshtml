@@ -7,7 +7,10 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-sm" v-show="status.groupNames != null">
+      <div class="col-sm" v-show="status.groupNames == null">
+        <h3>Loading...</h3>
+      </div>
+      <div class="col-sm" v-show="status.groupNames != null" style="display:none">
           <input v-for="(item, index) in status.groupNames" :key="index" type="button" :value="'Connect ' + item" v-show="effects.groups == null" v-on:click="connect(item)" class="btn btn-dark" />
         @if (ViewBag.IsAdmin)
         {
@@ -19,17 +22,17 @@
         }
       </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <hr />
+      <div class="row">
+        <div class="col-12">
+          <hr />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm">
+          <div id="messagesList" class="form-control bg-dark" style="width:100%;max-height:85px;overflow-y: scroll;"></div>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm">
-        <div id="messagesList" class="form-control bg-dark" style="width:100%;max-height:85px;overflow-y: scroll;"></div>
-      </div>
-    </div>
-  </div>
 
 
 
@@ -62,8 +65,15 @@
         <br />
         <div class="btn-group-vertical">
           <button v-on:click="startRandom" class="btn btn-dark" title="Shortcut: R">random effect</button>
-          <button v-on:click="startAutoMode" v-show="status.isAutoMode == false" class="btn btn-dark">start auto mode</button>
-          <button v-on:click="stopAutoMode" v-show="status.isAutoMode == true" class="btn btn-dark">stop auto mode</button>
+
+          <div class="btn-group">
+            <button v-on:click="startAutoMode" v-show="status.isAutoMode == false" class="btn btn-dark">start auto mode</button>
+            <button v-on:click="stopAutoMode" v-show="status.isAutoMode == true" class="btn btn-dark">stop auto mode</button>
+
+            <button v-on:click="toggleAutoRandomMode" v-show="status.isAutoMode == true && status.autoModeHasRandomEffects == false" class="btn btn-dark">generate random groups and effects</button>
+            <button v-on:click="toggleAutoRandomMode" v-show="status.isAutoMode == true && status.autoModeHasRandomEffects == true" class="btn btn-dark">only predefined effects</button>
+
+          </div>
           <button v-on:click="stopEffects" class="btn btn-dark">stop all effects</button>
         </div>
 

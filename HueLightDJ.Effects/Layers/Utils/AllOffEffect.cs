@@ -12,19 +12,16 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-  [HueEffect(Order = int.MaxValue, Name = "Set Color", HasColorPicker = true)]
-  public class SetColorEffect : IHueEffect
+  [HueEffect(Order = int.MaxValue, Name = "All Off", Group = "Utils", HasColorPicker = false)]
+  public class AllOffEffect : IHueEffect
   {
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
-      if (!color.HasValue)
-        color = RGBColor.Random();
+      layer.SetBrightness(cancellationToken, 0, waitTime(), false);
 
-      layer.SetState(cancellationToken, color, 1, waitTime(), false);
-
-      //Wait for other events to finish and set state again
+      //Wait for other events to finish and set brightness again
       await Task.Delay(waitTime(), cancellationToken);
-      layer.SetState(cancellationToken, color, 1, waitTime(), false);
+      layer.SetBrightness(cancellationToken, 0, waitTime(), false);
     }
   }
 }
