@@ -22,8 +22,8 @@ namespace HueLightDJ.Web.Hubs
         await StreamingSetup.SetupAndReturnGroupAsync(groupName);
         await Clients.All.SendAsync("StatusMsg", "Connected to bridge");
 
+        await GetEffects(true);
         await GetStatus();
-        GetEffects(true);
       }
       catch(Exception ex)
       {
@@ -32,27 +32,32 @@ namespace HueLightDJ.Web.Hubs
       }
     }
 
-    public Task GetStatus()
+    public async Task GetStatus()
     {
+      var configs = await StreamingSetup.GetGroupConfigurationsAsync();
       StatusViewModel vm = new StatusViewModel();
       vm.bpm = StreamingSetup.GetBPM();
       vm.IsAutoMode = EffectService.IsAutoModeRunning();
+      vm.ShowDisconnect = !(StreamingSetup.CurrentConnection?.HideDisconnect ?? false);
+      vm.GroupNames = configs.Select(x => x.Name).ToList();
 
-      return Clients.All.SendAsync("Status", vm);
+      Clients.All.SendAsync("Status", vm);
     }
 
-    public void GetEffects(bool forAll)
+    public Task GetEffects(bool forAll)
     {
       if (StreamingSetup.Layers?.Count > 0)
       {
         var allEffects = EffectService.GetEffectViewModels();
 
         if(forAll)
-          Clients.All.SendAsync("effects", allEffects);
+          return Clients.All.SendAsync("effects", allEffects);
         else
-          Clients.Caller.SendAsync("effects", allEffects);
+          return Clients.Caller.SendAsync("effects", allEffects);
 
       }
+
+      return Task.CompletedTask;
     }
 
     public void StartEffect(string typeName, string colorHex)
@@ -92,16 +97,23 @@ namespace HueLightDJ.Web.Hubs
       EffectService.StartRandomEffect();
     }
 
-    public void StartAutoMode()
+    public Task StartAutoMode()
     {
       EffectService.StartAutoMode();
-      GetStatus();
+      return GetStatus();
     }
 
-    public void StopAutoMode()
+    public Task StopAutoMode()
     {
       EffectService.StopAutoMode();
-      GetStatus();
+      return GetStatus();
+    }
+
+    public Task StopEffects()
+    {
+      EffectService.StopAutoMode();
+      EffectService.StopEffects();
+      return GetStatus();
     }
 
     public Task SendStatus(string msg)
@@ -116,7 +128,7 @@ namespace HueLightDJ.Web.Hubs
       StreamingSetup.Disconnect();
       await Clients.All.SendAsync("effects", new EffectsVM());
       await Clients.All.SendAsync("StatusMsg", "DISCONNECTED...");
-      GetStatus();
+      await GetStatus();
     }
   }
 }

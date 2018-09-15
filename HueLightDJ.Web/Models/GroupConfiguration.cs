@@ -12,5 +12,6 @@ namespace HueLightDJ.Web.Models
     public List<ConnectionConfiguration> Connections { get; set; }
     public LightLocation LocationCenter { get; set; }
     public bool IsAlwaysVisible { get; set; }
+    public bool HideDisconnect { get; set; }
   }
 }

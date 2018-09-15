@@ -17,9 +17,8 @@ namespace HueLightDJ.Web.Controllers
     [HttpGet]
     public async Task<IActionResult> Index(bool isAdmin)
     {
-      var config = await StreamingSetup.GetGroupConfigurationsAsync();
       ViewBag.IsAdmin = isAdmin;
-      return View(config);
+      return View();
     }
 
     [HttpGet]

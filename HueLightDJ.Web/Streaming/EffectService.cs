@@ -134,6 +134,14 @@ namespace HueLightDJ.Web.Streaming
       return vm;
     }
 
+    public static void StopEffects()
+    {
+      foreach(var layer in layerInfo)
+      {
+        layer.Value?.CancellationTokenSource?.Cancel();
+      }
+    }
+
     public static void StartAutoMode()
     {
       autoModeCts?.Cancel();

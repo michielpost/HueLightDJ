@@ -10,5 +10,7 @@ namespace HueLightDJ.Web.Models
     public string Status { get; set; }
     public int bpm { get; set; }
     public bool IsAutoMode { get; set; }
+    public bool ShowDisconnect { get; internal set; }
+    public List<string> GroupNames { get; internal set; }
   }
 }

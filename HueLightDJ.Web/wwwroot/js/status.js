@@ -49,7 +49,9 @@ const vuedj = new Vue({
       secondaryIteratorModes: [],
     },
     status: {
-      isAutoMode: false
+      isAutoMode: false,
+      showDisconnect: false,
+      groupNames: null
     },
     groupPicked: "",
     iteratorPicked: "",
@@ -86,6 +88,15 @@ const vuedj = new Vue({
     stopAutoMode() {
       connection.invoke("StopAutoMode").catch(err => console.error(err.toString()));
     },
+    stopEffects() {
+      connection.invoke("StopEffects").catch(err => console.error(err.toString()));
+    },
+    connect(name) {
+      connection.invoke('Connect', name);
+    },
+    disconnect() {
+      connection.invoke("Disconnect").catch(err => console.error(err.toString()));
+    },
     fill(effectvm) {
       this.effects = effectvm;
     },
@@ -103,11 +114,6 @@ connection.start()
     .then(() => connection.invoke("GetStatus"))
     .then(() => connection.invoke("GetEffects", false))
     .catch(err => console.error(err.toString()));
-
-document.getElementById("disconnectButton").addEventListener("click", event => {
-  connection.invoke("Disconnect").catch(err => console.error(err.toString()));
-  event.preventDefault();
-});
 
 function setBri(value) {
   connection.invoke("SetBri", value).catch(err => console.error(err.toString()));
@@ -144,3 +150,4 @@ Mousetrap.bindGlobal('w', function () { document.getElementById('briRange').valu
 Mousetrap.bindGlobal('s', function () { document.getElementById('briRange').value = 50; setBri(0.5) });
 Mousetrap.bindGlobal('x', function () { document.getElementById('briRange').value = 0; setBri(1) });
 Mousetrap.bindGlobal('r', function () { vuedj.startRandom(); });
+Mousetrap.bindGlobal('x', function () { vuedj.stopEffects(); });
