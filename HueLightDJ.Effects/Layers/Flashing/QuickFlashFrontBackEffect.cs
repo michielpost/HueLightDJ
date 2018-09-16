@@ -21,7 +21,7 @@ namespace HueLightDJ.Effects
       if (!color.HasValue)
         color = RGBColor.Random();
 
-      Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 2) / layer.Count);
+      Func<TimeSpan> customWaitMS = () => TimeSpan.FromMilliseconds((waitTime().TotalMilliseconds * 4) / layer.Count);
 
       var fronToBack = layer.GroupBy(x => (int)(((x.LightLocation.Y + 1) / 2) * 50)).OrderBy(x => x.Key);
 
