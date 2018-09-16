@@ -15,12 +15,12 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Layers
 {
-  [HueEffect(Order = 3, Name = "Random Bottom Top Effect", Group = "Party", HasColorPicker = false)]
-  public class RandomBottomTopEffect : IHueEffect
+  [HueEffect(Order = 3, Name = "Single Row Bottom Top Effect", Group = "Party", HasColorPicker = false)]
+  public class RandomSingleRowBottomTopEffect : IHueEffect
   {
 
     protected virtual bool DipToBlack { get; set; } = true;
-    protected virtual double DipToBlackWait { get; set; } = 0.8;
+    protected virtual double DipToBlackWait { get; set; } = 0.2;
 
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
@@ -40,7 +40,7 @@ namespace HueLightDJ.Effects.Layers
             var timeSpan = waitTime() / 2 * distance;
             await Task.Delay(timeSpan);
             //Debug.WriteLine($"{light.Id} Angle {angle} and timespan {timeSpan.TotalMilliseconds}");
-            light.SetState(cancellationToken, color, 1, waitTime() / 2);
+            light.SetState(cancellationToken, color, 1, TimeSpan.Zero);
 
             if (DipToBlack)
             {
@@ -49,12 +49,14 @@ namespace HueLightDJ.Effects.Layers
             }
 
           });
-    
+
         }
 
         await Task.Delay(waitTime() * 1.1);
       }
 
     }
+
+
   }
 }
