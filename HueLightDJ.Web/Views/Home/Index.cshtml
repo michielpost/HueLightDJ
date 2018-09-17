@@ -12,6 +12,7 @@
       </div>
       <div class="col-sm" v-show="status.groupNames != null" style="display:none">
           <input v-for="(item, index) in status.groupNames" :key="index" type="button" :value="'Connect ' + item" v-show="effects.groups == null" v-on:click="connect(item)" class="btn btn-dark" />
+          <span  v-show="status.currentGroup != null">Connected to {{status.currentGroup}}</span>
         @if (ViewBag.IsAdmin)
         {
           <input type="button" value="Disconnect" v-on:click="disconnect" class="btn btn-danger" />

@@ -14,5 +14,6 @@ namespace HueLightDJ.Web.Models
 
     public bool ShowDisconnect { get; internal set; }
     public List<string> GroupNames { get; internal set; }
+    public string CurrentGroup { get; set; }
   }
 }

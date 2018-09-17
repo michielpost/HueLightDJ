@@ -41,6 +41,7 @@ namespace HueLightDJ.Web.Hubs
       vm.AutoModeHasRandomEffects = EffectService.AutoModeHasRandomEffects;
       vm.ShowDisconnect = !(StreamingSetup.CurrentConnection?.HideDisconnect ?? false);
       vm.GroupNames = configs.Select(x => x.Name).ToList();
+      vm.CurrentGroup = StreamingSetup.CurrentConnection?.Name;
 
       Clients.All.SendAsync("Status", vm);
     }
