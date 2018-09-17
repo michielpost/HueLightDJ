@@ -287,7 +287,7 @@ namespace HueLightDJ.Web.Streaming
 
 
 
-      if (r.NextDouble() <= (withRandomEffects ? 0.6 : 0))
+      if (r.NextDouble() <= (withRandomEffects ? 0.4 : 0))
         StartRandomGroupEffect();
       else
       {
