@@ -27,65 +27,65 @@ namespace HueLightDJ.Effects.Layers
         _cts.Cancel();
       });
 
-      SetBPM(75);
-
-      new HsbLoopEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
-      ResetCts();
-
-      new RandomColorRangeEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
-      ResetCts();
-
-      SetBPM(20);
-
-      new RotatingEffect().Start(layer, () => WaitTime, color, _cts.Token);
-
-      await Task.Delay(TimeSpan.FromSeconds(1));
-      for (int i = 0; i < 25; i++)
+      while (!cancellationToken.IsCancellationRequested)
       {
-        SetBPM(20 + (i * 5));
-        await Task.Delay(TimeSpan.FromMilliseconds(500));
+        SetBPM(75);
+
+        new HsbLoopEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
+        ResetCts();
+
+        new RandomColorRangeEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
+        ResetCts();
+
+        SetBPM(20);
+
+        new RotatingEffect().Start(layer, () => WaitTime, color, _cts.Token);
+
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        for (int i = 0; i < 25; i++)
+        {
+          SetBPM(20 + (i * 5));
+          await Task.Delay(TimeSpan.FromMilliseconds(500));
+        }
+        await Task.Delay(TimeSpan.FromSeconds(2));
+
+        ResetCts();
+
+        SetBPM(75);
+        new RandomPulseEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(8), cancellationToken);
+        ResetCts();
+
+        new GradientWheelEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
+        ResetCts();
+
+        new RandomPulseRetraceEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
+        ResetCts();
+
+        new RainbowWheelEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
+        ResetCts();
+
+        new RandomSingleRowBottomTopEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
+        ResetCts();
+
+        new RandomPulseTopBottomEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(8), cancellationToken);
+        ResetCts();
+
+        new RainbowBottomTopEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(12), cancellationToken);
+        ResetCts();
+
+        new QuickFlashFrontBackEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
+        ResetCts();
       }
-      await Task.Delay(TimeSpan.FromSeconds(2));
-
-      ResetCts();
-
-      SetBPM(75);
-      new RandomPulseEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(8), cancellationToken);
-      ResetCts();
-
-      new GradientWheelEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
-      ResetCts();
-
-      new RandomPulseRetraceEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
-      ResetCts();
-
-      new RainbowWheelEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
-      ResetCts();
-
-      new RandomSingleRowBottomTopEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
-      ResetCts();
-
-      new RandomPulseTopBottomEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(8), cancellationToken);
-      ResetCts();
-
-      new RainbowBottomTopEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(12), cancellationToken);
-      ResetCts();
-
-      new QuickFlashFrontBackEffect().Start(layer, () => WaitTime, color, _cts.Token);
-      await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
-      ResetCts();
-
-      //Last one, can run untill cancelled
-      new HsbLoopEffect().Start(layer, waitTime, color, cancellationToken);
 
     }
 
