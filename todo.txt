@@ -16,20 +16,7 @@ effect: sinus op alles starten (individuele sinus, of ramp omhoog, of ramp down,
 https://youtu.be/js4B4mTsyYM?t=2m48s
 --
 
-pijltjestoetsen om area Dark te maken
-
-Interactive API using Mobile Sensors, X / Y effect 
-
 preview tonen als led strips
-
------
-Testen in office, oplossen via slimme groepen:
-V vorm, open en dicht klappen, rest ook een kleur ipv donker?
-Om en om eem kleur. Laten draaien?
-4 led strips die aanstaan en rond draaien als een kruis
-2 effecten combineren op een groep, zie DoubleRandom
-
-MultiEffectGroups maken: lange strips en centrale korte kop / 1-head and n-tails
 
 ------
 
@@ -45,7 +32,9 @@ spatie balk, random Beat effect
 
 Beat detection
 Audio library: https://github.com/filoe/cscore
-
+OnSet Detection: https://github.com/opcon/onset-detection
+https://www.badlogicgames.com/wordpress/?category_name=onset-detection-tutorial
+http://archive.gamedev.net/archive/reference/programming/features/beatdetection/
 ---
 
 Dip to dark, maar kan niet via effect layer...

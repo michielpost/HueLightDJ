@@ -1,5 +1,6 @@
 using HueLightDJ.Effects;
 using HueLightDJ.Effects.Base;
+using HueLightDJ.Effects.Layers;
 using HueLightDJ.Web.Hubs;
 using HueLightDJ.Web.Models;
 using Microsoft.AspNetCore.SignalR;
@@ -302,6 +303,7 @@ namespace HueLightDJ.Web.Streaming
           .Where(x => x.Name != typeof(ChristmasEffect).Name)
           .Where(x => x.Name != typeof(AllOffEffect).Name)
           .Where(x => x.Name != typeof(SetColorEffect).Name)
+          .Where(x => x.Name != typeof(DemoEffect).Name)
           .OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
 
         GenerateRandomEffectSettings(out RGBColor hexColor, out _, out _);
