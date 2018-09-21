@@ -43,7 +43,7 @@ namespace HueLightDJ.Web.Hubs
       vm.GroupNames = configs.Select(x => x.Name).ToList();
       vm.CurrentGroup = StreamingSetup.CurrentConnection?.Name;
 
-      Clients.All.SendAsync("Status", vm);
+      await Clients.All.SendAsync("Status", vm);
     }
 
     public Task GetEffects(bool forAll)

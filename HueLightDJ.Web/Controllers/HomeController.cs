@@ -15,7 +15,7 @@ namespace HueLightDJ.Web.Controllers
   public class HomeController : Controller
   {
     [HttpGet]
-    public async Task<IActionResult> Index(bool isAdmin)
+    public IActionResult Index(bool isAdmin)
     {
       ViewBag.IsAdmin = isAdmin;
       return View();

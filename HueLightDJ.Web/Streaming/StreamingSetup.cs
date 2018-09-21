@@ -113,7 +113,7 @@ namespace HueLightDJ.Web.Streaming
       }
     }
 
-    public static async Task<List<StreamingGroup>> SetupAndReturnGroupAsync(string groupName)
+    public static async Task SetupAndReturnGroupAsync(string groupName)
     {
       var configSection = await GetGroupConfigurationsAsync();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
@@ -143,14 +143,12 @@ namespace HueLightDJ.Web.Streaming
       //Optional: calculated effects that are placed on this layer
       baseLayer.AutoCalculateEffectUpdate(_cts.Token);
       effectLayer.AutoCalculateEffectUpdate(_cts.Token);
-
-      return StreamingGroups;
     }
 
     private static async Task Connect(bool demoMode, bool useSimulator, ConnectionConfiguration bridgeConfig)
     {
       var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
-      hub.Clients.All.SendAsync("StatusMsg", $"Connecting to bridge {bridgeConfig.Ip}");
+      await hub.Clients.All.SendAsync("StatusMsg", $"Connecting to bridge {bridgeConfig.Ip}");
 
       try
       {
@@ -174,7 +172,7 @@ namespace HueLightDJ.Web.Streaming
             throw new Exception($"No Entertainment Group found with id {bridgeConfig.GroupId}. Create one using the Philips Hue App or the Q42.HueApi.UniversalWindows.Sample");
           else
           {
-            hub.Clients.All.SendAsync("StatusMsg", $"Using Entertainment Group {group.Id} for bridge {bridgeConfig.Ip}");
+            await hub.Clients.All.SendAsync("StatusMsg", $"Using Entertainment Group {group.Id} for bridge {bridgeConfig.Ip}");
             Console.WriteLine($"Using Entertainment Group {group.Id}");
             _groupId = group.Id;
           }
