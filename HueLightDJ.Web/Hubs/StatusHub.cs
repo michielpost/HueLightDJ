@@ -129,6 +129,11 @@ namespace HueLightDJ.Web.Hubs
       return Clients.All.SendAsync("StatusMsg", msg);
     }
 
+    public void SetColors(string[,] matrix)
+    {
+      ManualControlService.SetColors(matrix);
+    }
+
     public async Task Disconnect()
     {
       EffectService.CancelAllEffects();

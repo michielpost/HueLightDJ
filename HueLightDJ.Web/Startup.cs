@@ -10,71 +10,81 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace HueLightDJ.Web
 {
-		  public class Startup
-		  {
-					public Startup(IConfiguration configuration)
-					{
-							  Configuration = configuration;
-					}
+  public class Startup
+  {
+    public Startup(IConfiguration configuration)
+    {
+      Configuration = configuration;
+    }
 
-					public static IConfiguration Configuration { get; set; }
+    public static IConfiguration Configuration { get; set; }
 
-          public static IServiceProvider ServiceProvider { get; set; }
+    public static IServiceProvider ServiceProvider { get; set; }
 
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
-					{
-							  services.Configure<CookiePolicyOptions>(options =>
-							  {
-										// This lambda determines whether user consent for non-essential cookies is needed for a given request.
-										options.CheckConsentNeeded = context => true;
-										options.MinimumSameSitePolicy = SameSiteMode.None;
-							  });
+    {
+      services.Configure<CookiePolicyOptions>(options =>
+      {
+        // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+        options.CheckConsentNeeded = context => true;
+        options.MinimumSameSitePolicy = SameSiteMode.None;
+      });
 
 
-							  services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-							  services.AddSignalR();
+      services.AddSignalR();
 
-					}
+      services.AddSwaggerGen(c =>
+      {
+        c.SwaggerDoc("v1", new Info { Title = "HueLightDJ API", Version = "v1" });
+      });
 
-					// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-					public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-					{
-                ServiceProvider = app.ApplicationServices;
+    }
 
-							  if (env.IsDevelopment())
-							  {
-										app.UseDeveloperExceptionPage();
-							  }
-							  else
-							  {
-										app.UseExceptionHandler("/Home/Error");
-										app.UseHsts();
-							  }
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+      ServiceProvider = app.ApplicationServices;
 
-							  app.UseHttpsRedirection();
-							  app.UseStaticFiles();
-							  app.UseCookiePolicy();
+      if (env.IsDevelopment())
+      {
+        app.UseDeveloperExceptionPage();
+      }
+      else
+      {
+        app.UseExceptionHandler("/Home/Error");
+        app.UseHsts();
+      }
 
-							  app.UseSignalR(routes =>
-							  {
-										routes.MapHub<StatusHub>("/statushub");
-										routes.MapHub<PreviewHub>("/previewhub");
-							  });
+      app.UseHttpsRedirection();
+      app.UseStaticFiles();
+      app.UseCookiePolicy();
 
+      app.UseSignalR(routes =>
+      {
+        routes.MapHub<StatusHub>("/statushub");
+        routes.MapHub<PreviewHub>("/previewhub");
+      });
 
-							  app.UseMvc(routes =>
-			          {
-					            routes.MapRoute(
-						            name: "default",
-						            template: "{controller=Home}/{action=Index}/{id?}");
-			          });
+      app.UseSwagger();
+      app.UseSwaggerUI(c =>
+      {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HueLightDJ API V1");
+      });
 
-					}
-		  }
+      app.UseMvc(routes =>
+      {
+        routes.MapRoute(
+          name: "default",
+          template: "{controller=Home}/{action=Index}/{id?}");
+      });
+    }
+  }
 }

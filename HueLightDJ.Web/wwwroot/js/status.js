@@ -9,7 +9,7 @@ connection.on("StartingEffect", (message, log) => {
   var color = log.rgbColor == null ? null : '\'' + log.rgbColor + '\'';
   var replayLink = '<span onclick="connection.invoke(\'StartEffect\', \'' + log.name + '\', ' + color + ');">replay</span>';
   if (log.effectType == "group") {
-    var replayLink = '<span onclick="connection.invoke(\'StartGroupEffect\', \'' + log.name + '\', ' + color + ', \'' + log.group + '\', \'' + log.iteratorMode + '\', \'' + log.secondaryIteratorMode + '\');">replay</span>';
+    replayLink = '<span onclick="connection.invoke(\'StartGroupEffect\', \'' + log.name + '\', ' + color + ', \'' + log.group + '\', \'' + log.iteratorMode + '\', \'' + log.secondaryIteratorMode + '\');">replay</span>';
   }
   addLogMsg(replayLink + " | " + message);
 });
@@ -93,6 +93,10 @@ const vuedj = new Vue({
     },
     stopEffects() {
       connection.invoke("StopEffects").catch(err => console.error(err.toString()));
+    },
+    setColors() {
+      //API to set colors using 2d array
+      connection.invoke("SetColors", [["FF0000", "00FFFF"], ["00FF00", "0000FF"]]).catch(err => console.error(err.toString()));
     },
     connect(name) {
       connection.invoke('Connect', name);
