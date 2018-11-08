@@ -96,7 +96,7 @@ const vuedj = new Vue({
     },
     setColors() {
       //API to set colors using 2d array
-      connection.invoke("SetColors", [["FF0000", "00FFFF"], ["00FF00", "0000FF"]]).catch(err => console.error(err.toString()));
+      connection.invoke("SetColors", [["FF0000", "FFFFFF"], ["00FF00", "0000FF"]]).catch(err => console.error(err.toString()));
     },
     connect(name) {
       connection.invoke('Connect', name);
