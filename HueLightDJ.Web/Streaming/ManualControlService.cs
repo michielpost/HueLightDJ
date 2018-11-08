@@ -49,6 +49,27 @@ namespace HueLightDJ.Web.Streaming
       }
     }
 
+    public static void SetColors(List<List<string>> matrix)
+    {
+      int height = matrix.Count();
+      int maxWidth = matrix.Max(x => x.Count);
+
+      var array = new string[height, maxWidth];
+
+      for (int x = 0; x < height; x++)
+      {
+        if (matrix[x]?.Any() ?? false)
+        {
+          for (int y = 0; y < matrix[x].Count; y++)
+          {
+            array[x, y] = matrix[x][y];
+          }
+        }
+      }
+
+      SetColors(array);
+    }
+
     private static int GetMatrixPositionX(LightLocation lightLocation, int matrixSize)
     {
       double pos = ((lightLocation.X +1) / 2) * matrixSize;

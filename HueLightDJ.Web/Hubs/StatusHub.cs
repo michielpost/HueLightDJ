@@ -133,6 +133,10 @@ namespace HueLightDJ.Web.Hubs
     {
       ManualControlService.SetColors(matrix);
     }
+    public void SetColorsList(List<List<string>> matrix)
+    {
+      ManualControlService.SetColors(matrix);
+    }
 
     public async Task Disconnect()
     {

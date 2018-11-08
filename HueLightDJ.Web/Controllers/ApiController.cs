@@ -6,7 +6,7 @@ using HueLightDJ.Web.Streaming;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HueLightDJ.Web.Hubs
+namespace HueLightDJ.Web.Controllers
 {
   [Route("api")]
   [ApiController]
@@ -16,6 +16,22 @@ namespace HueLightDJ.Web.Hubs
     public void SetColors([FromBody]string[,] matrix)
     {
       ManualControlService.SetColors(matrix);
+    }
+
+    [HttpPost("setcolorslist")]
+    public void SetColors([FromBody]List<List<string>> matrix)
+    {
+      ManualControlService.SetColors(matrix);
+    }
+
+    [HttpPost("test")]
+    public void Test([FromBody]string test)
+    {
+    }
+
+    [HttpPost("testempty")]
+    public void TestEmpty()
+    {
     }
   }
 }
