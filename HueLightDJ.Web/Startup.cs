@@ -41,6 +41,16 @@ namespace HueLightDJ.Web
 
       services.AddSignalR();
 
+      services.AddCors(options => options.AddPolicy("CorsPolicy",
+      builder =>
+      {
+        builder.AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowAnyOrigin()
+        .AllowCredentials();
+      }));
+
+
       services.AddSwaggerGen(c =>
       {
         c.SwaggerDoc("v1", new Info { Title = "HueLightDJ API", Version = "v1" });
@@ -67,6 +77,7 @@ namespace HueLightDJ.Web
       app.UseStaticFiles();
       app.UseCookiePolicy();
 
+      app.UseCors("CorsPolicy");
       app.UseSignalR(routes =>
       {
         routes.MapHub<StatusHub>("/statushub");
