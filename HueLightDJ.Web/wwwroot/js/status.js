@@ -98,6 +98,9 @@ const vuedj = new Vue({
       //API to set colors using 2d array
       connection.invoke("SetColors", [["FF0000", "FFFFFF"], ["00FF00", "0000FF"]]).catch(err => console.error(err.toString()));
     },
+    beat() {
+      connection.invoke("Beat", 1).catch(err => console.error(err.toString()));
+    },
     connect(name) {
       connection.invoke('Connect', name);
     },
@@ -158,3 +161,4 @@ Mousetrap.bindGlobal('s', function () { document.getElementById('briRange').valu
 Mousetrap.bindGlobal('x', function () { document.getElementById('briRange').value = 0; setBri(1) });
 Mousetrap.bindGlobal('r', function () { vuedj.startRandom(); });
 Mousetrap.bindGlobal('x', function () { vuedj.stopEffects(); });
+Mousetrap.bindGlobal('b', function () { vuedj.beat(); });

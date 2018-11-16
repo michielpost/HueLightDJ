@@ -430,5 +430,16 @@ namespace HueLightDJ.Web.Streaming
 
       StartTouchEffect(CancellationToken.None, randomTouch, waitTime, null, x, y);
     }
+
+    public static void Beat(double intensity)
+    {
+      var effectLayer = GetLayer(isBaseLayer: false);
+
+      //var effects = GetEffectTypes().Where(x => x.GetType() == typeof(RandomFlashEffect)).FirstOrDefault();
+
+      Func<TimeSpan> waitTime = () => TimeSpan.FromMilliseconds(100);
+
+      StartEffect(default(CancellationToken), typeof(FlashFadeEffect).GetTypeInfo(), effectLayer, waitTime, RGBColor.Random());
+    }
   }
 }

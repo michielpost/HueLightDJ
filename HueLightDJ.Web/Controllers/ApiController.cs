@@ -24,6 +24,12 @@ namespace HueLightDJ.Web.Controllers
       ManualControlService.SetColors(matrix);
     }
 
+    [HttpPost("beat")]
+    public void Beat([FromBody]double intensity)
+    {
+      EffectService.Beat(intensity);
+    }
+
     [HttpPost("test")]
     public void Test([FromBody]string test)
     {

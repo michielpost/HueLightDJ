@@ -137,6 +137,10 @@ namespace HueLightDJ.Web.Hubs
     {
       ManualControlService.SetColors(matrix);
     }
+    public void Beat(double intensity)
+    {
+      EffectService.Beat(intensity);
+    }
 
     public async Task Disconnect()
     {
