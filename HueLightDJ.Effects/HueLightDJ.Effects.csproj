@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Q42.HueApi" Version="3.7.2" />
-    <PackageReference Include="Q42.HueApi.ColorConverters" Version="3.7.1" />
-    <PackageReference Include="Q42.HueApi.Entertainment" Version="1.5.9" />
+    <PackageReference Include="Q42.HueApi" Version="3.8.1" />
+    <PackageReference Include="Q42.HueApi.ColorConverters" Version="3.8.1" />
+    <PackageReference Include="Q42.HueApi.Entertainment" Version="3.8.1" />
   </ItemGroup>
 
 </Project>
