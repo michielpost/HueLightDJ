@@ -160,5 +160,5 @@ Mousetrap.bindGlobal('w', function () { document.getElementById('briRange').valu
 Mousetrap.bindGlobal('s', function () { document.getElementById('briRange').value = 50; setBri(0.5) });
 Mousetrap.bindGlobal('x', function () { document.getElementById('briRange').value = 0; setBri(1) });
 Mousetrap.bindGlobal('r', function () { vuedj.startRandom(); });
-Mousetrap.bindGlobal('x', function () { vuedj.stopEffects(); });
+Mousetrap.bindGlobal('esc', function () { vuedj.stopEffects(); });
 Mousetrap.bindGlobal('b', function () { vuedj.beat(); });
