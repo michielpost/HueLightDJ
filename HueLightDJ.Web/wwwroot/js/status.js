@@ -6,9 +6,9 @@ connection.on("StatusMsg", (message) => {
   addLogMsg(message);
 });
 connection.on("StartingEffect", (message, log) => {
-  var color = log.rgbColor == null ? null : '\'' + log.rgbColor + '\'';
+  var color = log.rgbColor === null ? null : '\'' + log.rgbColor + '\'';
   var replayLink = '<span onclick="connection.invoke(\'StartEffect\', \'' + log.name + '\', ' + color + ');">replay</span>';
-  if (log.effectType == "group") {
+  if (log.effectType === "group") {
     replayLink = '<span onclick="connection.invoke(\'StartGroupEffect\', \'' + log.name + '\', ' + color + ', \'' + log.group + '\', \'' + log.iteratorMode + '\', \'' + log.secondaryIteratorMode + '\');">replay</span>';
   }
   addLogMsg(replayLink + " | " + message);
@@ -21,11 +21,11 @@ function addLogMsg(msg) {
 function js_yyyy_mm_dd_hh_mm_ss() {
   now = new Date();
   year = "" + now.getFullYear();
-  month = "" + (now.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
-  day = "" + now.getDate(); if (day.length == 1) { day = "0" + day; }
-  hour = "" + now.getHours(); if (hour.length == 1) { hour = "0" + hour; }
-  minute = "" + now.getMinutes(); if (minute.length == 1) { minute = "0" + minute; }
-  second = "" + now.getSeconds(); if (second.length == 1) { second = "0" + second; }
+  month = "" + (now.getMonth() + 1); if (month.length === 1) { month = "0" + month; }
+  day = "" + now.getDate(); if (day.length === 1) { day = "0" + day; }
+  hour = "" + now.getHours(); if (hour.length === 1) { hour = "0" + hour; }
+  minute = "" + now.getMinutes(); if (minute.length === 1) { minute = "0" + minute; }
+  second = "" + now.getSeconds(); if (second.length === 1) { second = "0" + second; }
   return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
 };
 
@@ -132,13 +132,13 @@ function setBri(value) {
 function startShortEffect(key) {
   var index = key - 1;
   var item = vuedj.effects.shortEffects[index];
-  if (item != null)
+  if (item !== null)
     vuedj.start(item);
 }
 function startLongEffect(key) {
   var index = key - 1;
   var item = vuedj.effects.baseEffects[index];
-  if (item != null)
+  if (item !== null)
     vuedj.start(item);
 }
 

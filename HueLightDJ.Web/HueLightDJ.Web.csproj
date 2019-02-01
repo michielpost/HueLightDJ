@@ -8,9 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.1.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
-    <PackageReference Include="Q42.HueApi" Version="3.8.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.1" />
+    <PackageReference Include="Q42.HueApi" Version="3.8.3" />
     <PackageReference Include="Q42.HueApi.ColorConverters" Version="3.8.1" />
     <PackageReference Include="Q42.HueApi.Entertainment" Version="3.8.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
