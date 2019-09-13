@@ -57,3 +57,6 @@ HueLightDJ is now available on port 8080
 ![Main](screenshots/screenshot01_main.png)
 ![Setup](screenshots/screenshot02_setup.png)
 ![Multi Bridge Location Editor](screenshots/screenshot03_location_editor.png)
+
+#### Disclaimer
+This app not affiliated with the Light DJ series of light show apps by NRTHRNLIGHTS, LLC
