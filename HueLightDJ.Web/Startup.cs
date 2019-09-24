@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace HueLightDJ.Web
 {
@@ -37,7 +37,9 @@ namespace HueLightDJ.Web
       });
 
 
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+      services.AddControllersWithViews()
+        .AddNewtonsoftJson()
+        .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
       services.AddSignalR();
 
@@ -46,20 +48,19 @@ namespace HueLightDJ.Web
       {
         builder.AllowAnyMethod()
         .AllowAnyHeader()
-        .AllowAnyOrigin()
-        .AllowCredentials();
+        .AllowAnyOrigin();
       }));
 
 
-      services.AddSwaggerGen(c =>
-      {
-        c.SwaggerDoc("v1", new Info { Title = "HueLightDJ API", Version = "v1" });
-      });
+      //services.AddSwaggerGen(c =>
+      //{
+      //  c.SwaggerDoc("v1", new Info { Title = "HueLightDJ API", Version = "v1" });
+      //});
 
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
       ServiceProvider = app.ApplicationServices;
 
@@ -78,23 +79,23 @@ namespace HueLightDJ.Web
       app.UseCookiePolicy();
 
       app.UseCors("CorsPolicy");
-      app.UseSignalR(routes =>
-      {
-        routes.MapHub<StatusHub>("/statushub");
-        routes.MapHub<PreviewHub>("/previewhub");
-      });
 
-      app.UseSwagger();
-      app.UseSwaggerUI(c =>
-      {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "HueLightDJ API V1");
-      });
+      //app.UseSwagger();
+      //app.UseSwaggerUI(c =>
+      //{
+      //  c.SwaggerEndpoint("/swagger/v1/swagger.json", "HueLightDJ API V1");
+      //});
 
-      app.UseMvc(routes =>
+      app.UseRouting();
+
+      app.UseEndpoints(endpoints =>
       {
-        routes.MapRoute(
-          name: "default",
-          template: "{controller=Home}/{action=Index}/{id?}");
+        endpoints.MapHub<StatusHub>("/statushub");
+        endpoints.MapHub<PreviewHub>("/previewhub");
+
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
       });
     }
   }
