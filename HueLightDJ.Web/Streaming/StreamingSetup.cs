@@ -25,13 +25,13 @@ namespace HueLightDJ.Web.Streaming
   {
     private static List<StreamingGroup> StreamingGroups { get; set; } = new List<StreamingGroup>();
     private static List<LightDJStreamingHueClient> StreamingHueClients { get; set; } = new List<LightDJStreamingHueClient>();
-    public static List<EntertainmentLayer> Layers { get; set; }
+    public static List<EntertainmentLayer>? Layers { get; set; }
     private static int BPM { get; set; } = 120;
     public static Ref<TimeSpan> WaitTime { get; set; } = TimeSpan.FromMilliseconds(500);
 
     
 
-    public static GroupConfiguration CurrentConnection { get; set; }
+    public static GroupConfiguration? CurrentConnection { get; set; }
 
    
 
@@ -53,7 +53,7 @@ namespace HueLightDJ.Web.Streaming
         var localClient = new LocalHueClient(bridgeConfig.Ip, bridgeConfig.Key);
         var group = await localClient.GetGroupAsync(bridgeConfig.GroupId);
 
-        if (group.Type != GroupType.Entertainment)
+        if (group?.Type != GroupType.Entertainment)
           continue;
 
         locations.AddRange(group.Locations.Select(x => new MultiBridgeLightLocation()
@@ -156,7 +156,7 @@ namespace HueLightDJ.Web.Streaming
         var client = new LightDJStreamingHueClient(bridgeConfig.Ip, bridgeConfig.Key, bridgeConfig.EntertainmentKey, demoMode);
 
         //Get the entertainment group
-        Dictionary<string, LightLocation> locations = null;
+        Dictionary<string, LightLocation> locations = new Dictionary<string, LightLocation>();
         if (demoMode)
         {
           string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
@@ -209,7 +209,7 @@ namespace HueLightDJ.Web.Streaming
 
     public async static Task<List<GroupConfiguration>> GetGroupConfigurationsAsync()
     {
-      IEnumerable<LocatedBridge> bridges = null;
+      IEnumerable<LocatedBridge> bridges = new List<LocatedBridge>();
       try
       {
         IBridgeLocator bridgeLocator = new HttpBridgeLocator();
@@ -277,6 +277,9 @@ namespace HueLightDJ.Web.Streaming
     {
       //Optional: Check if streaming is currently active
       var bridgeInfo = await StreamingHueClients.First().LocalHueClient.GetBridgeAsync();
+      if (bridgeInfo == null)
+        return false;
+
       Console.WriteLine(bridgeInfo.IsStreamingActive ? "Streaming is active" : "Streaming is not active");
 
       return bridgeInfo.IsStreamingActive;

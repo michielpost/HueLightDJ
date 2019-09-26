@@ -5,7 +5,6 @@ using Q42.HueApi.Streaming.Extensions;
 using Q42.HueApi.Streaming.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;

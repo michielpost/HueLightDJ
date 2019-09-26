@@ -12,7 +12,7 @@ namespace HueLightDJ.Web.Streaming
 {
   public static class GroupService
   {
-    public static List<GroupModel> GetAll(EntertainmentLayer layer = null)
+    public static List<GroupModel> GetAll(EntertainmentLayer? layer = null)
     {
       if (layer == null)
         layer = StreamingSetup.Layers.First();
@@ -51,7 +51,7 @@ namespace HueLightDJ.Web.Streaming
         new GroupModel("Random", GetRandomGroup()),
       };
 
-      if (StreamingSetup.CurrentConnection.Name == "Ster" || StreamingSetup.CurrentConnection.Name == "DEMO Ster")
+      if (StreamingSetup.CurrentConnection?.Name == "Ster" || StreamingSetup.CurrentConnection?.Name == "DEMO Ster")
       {
         result.Add(new GroupModel("Tentacles (alternating 2)", tentacles.ChunkByGroupNumber(2).Select(x => x.SelectMany(l => l)), 2));
         result.Add(new GroupModel("Tentacles (alternating 3)", tentacles.ChunkByGroupNumber(3).Select(x => x.SelectMany(l => l)), 3));

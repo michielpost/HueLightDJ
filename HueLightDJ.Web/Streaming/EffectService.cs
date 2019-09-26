@@ -71,6 +71,8 @@ namespace HueLightDJ.Web.Streaming
       foreach (var type in all)
       {
         var hueEffectAtt = type.GetCustomAttribute<HueEffectAttribute>();
+        if (hueEffectAtt == null)
+          continue;
 
         var effect = new EffectViewModel();
         effect.Name = hueEffectAtt.Name;
@@ -97,6 +99,8 @@ namespace HueLightDJ.Web.Streaming
       foreach (var type in groupEffectsTypes)
       {
         var hueEffectAtt = type.GetCustomAttribute<HueEffectAttribute>();
+        if (hueEffectAtt == null)
+          continue;
 
         var effect = new EffectViewModel();
         effect.Name = hueEffectAtt.Name;
@@ -182,7 +186,7 @@ namespace HueLightDJ.Web.Streaming
       return true;
     }
 
-    public static void StartEffect(string typeName, string colorHex, string group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
+    public static void StartEffect(string typeName, string colorHex, string? group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
       var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
 
@@ -198,6 +202,8 @@ namespace HueLightDJ.Web.Streaming
       if (selectedEffect != null)
       {
         var hueEffectAtt = selectedEffect.GetCustomAttribute<HueEffectAttribute>();
+        if (hueEffectAtt == null)
+          return;
 
         var isBaseLayer = hueEffectAtt.IsBaseEffect && iteratorMode != IteratorEffectMode.Single && iteratorMode != IteratorEffectMode.RandomOrdered;
         var layer = GetLayer(isBaseLayer);
@@ -234,7 +240,9 @@ namespace HueLightDJ.Web.Streaming
 
     private static void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, IEnumerable<IEnumerable<EntertainmentLight>> group, string groupName, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
-      MethodInfo methodInfo = selectedEffect.GetMethod("Start");
+      MethodInfo? methodInfo = selectedEffect.GetMethod("Start");
+      if (methodInfo == null)
+        return;
 
       //get group
       if (group == null)
@@ -243,7 +251,7 @@ namespace HueLightDJ.Web.Streaming
       object[] parametersArray = new object[] { group, waitTime, color, iteratorMode, secondaryIteratorMode, ctsToken};
 
      
-      object classInstance = Activator.CreateInstance(selectedEffect, null);
+      object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);
 
       var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
@@ -263,22 +271,27 @@ namespace HueLightDJ.Web.Streaming
 
     private static void StartTouchEffect(CancellationToken ctsToken, TypeInfo selectedEffect, Func<TimeSpan> waitTime, RGBColor? color, double x, double y)
     {
-      MethodInfo methodInfo = selectedEffect.GetMethod("Start");
+      MethodInfo? methodInfo = selectedEffect.GetMethod("Start");
+      if (methodInfo == null)
+        return;
 
       var layer = GetLayer(isBaseLayer: false);
 
       object[] parametersArray = new object[] { layer, waitTime, color, ctsToken, x, y };
 
-      object classInstance = Activator.CreateInstance(selectedEffect, null);
+      object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);
     }
 
     private static void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color)
     {
-      MethodInfo methodInfo = selectedEffect.GetMethod("Start");
+      MethodInfo? methodInfo = selectedEffect.GetMethod("Start");
+      if (methodInfo == null)
+        return;
+
       object[] parametersArray = new object[] { layer, waitTime, color, ctsToken };
 
-      object classInstance = Activator.CreateInstance(selectedEffect, null);
+      object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);
 
       var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));

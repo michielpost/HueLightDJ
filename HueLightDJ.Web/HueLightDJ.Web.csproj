@@ -1,7 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>CS8600;CS8602;CS8602;CS8603;CS8625;CS8613</WarningsAsErrors>
     <DockerTargetOS>Linux</DockerTargetOS>
     <UserSecretsId>5ddec17f-0b90-4870-a798-2662ddae9f15</UserSecretsId>
   </PropertyGroup>

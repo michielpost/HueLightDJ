@@ -71,8 +71,11 @@ namespace HueLightDJ.Web.Controllers
       var hueClient = new LocalHueClient(ip);
       var result = await hueClient.RegisterAsync("HueLightDJ", "Web", generateClientKey: true);
 
+      if (result == null)
+        throw new Exception("No result from bridge");
+
       var allLights = await hueClient.GetLightsAsync();
-      string groupId = "GroupId";
+      string? groupId = "GroupId";
 
       if(allLights.Any())
         groupId = await hueClient.CreateGroupAsync(allLights.Take(10).Select(x => x.Id), "Hue Light DJ group", Q42.HueApi.Models.Groups.RoomClass.TV, Q42.HueApi.Models.Groups.GroupType.Entertainment);
