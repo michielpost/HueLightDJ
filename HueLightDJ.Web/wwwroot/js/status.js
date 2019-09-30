@@ -1,5 +1,6 @@
 const connection = new signalR.HubConnectionBuilder()
     .withUrl("/statushub")
+    .withAutomaticReconnect()
     .build();
 
 connection.on("StatusMsg", (message) => {

@@ -1,6 +1,7 @@
 const previewConnection = new signalR.HubConnectionBuilder()
-  .withUrl("/previewhub")
-  .build();
+    .withUrl("/previewhub")
+    .withAutomaticReconnect()
+    .build();
 
 previewConnection.start()
   .catch(err => console.error(err.toString()));
