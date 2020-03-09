@@ -22,7 +22,7 @@ namespace HueLightDJ.Effects
         return;
 
       var center = EffectSettings.LocationCenter;
-      var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(center.X, center.Y));
+      var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(center.X, center.Y, center.Z));
 
       if (!color.HasValue)
         color = RGBColor.Random();

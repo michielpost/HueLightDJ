@@ -26,12 +26,12 @@ namespace HueLightDJ.Web.Streaming
       var quarter = new[] { layer.GetLeft().GetFront(), layer.GetLeft().GetBack(), layer.GetRight().GetBack(), layer.GetRight().GetFront() }.ToList();
       var alternating = allLightsOrdered.ChunkByGroupNumber(2);
       var alternatingFour = allLightsOrdered.ChunkByGroupNumber(4);
-      var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(center.X, center.Y)).ChunkByGroupNumber(3);
+      var orderedByDistance = layer.OrderBy(x => x.LightLocation.Distance(center.X, center.Y, center.Z)).ChunkByGroupNumber(3);
       var orderedByAngle = layer.OrderBy(x => x.LightLocation.Angle(center.X, center.Y)).ChunkBy(6);
 
       var leftToRight = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.X + 1) / 2) * 50)).OrderBy(x => x.Key);
       var fronToBack = allLightsOrdered.GroupBy(x => (int)(((x.LightLocation.Y + 1) / 2) * 50)).OrderBy(x => x.Key);
-      var ring = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Distance(center.X, center.Y) / 1.5) * 2));
+      var ring = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Distance(center.X, center.Y, center.Z) / 1.5) * 2));
       var tentacles = allLightsOrdered.GroupBy(x => (int)((x.LightLocation.Angle(center.X, center.Y) / 3.6 / 3))).OrderBy(x => x.Key);
 
       var result = new List<GroupModel>()
