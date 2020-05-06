@@ -18,12 +18,12 @@ namespace HueLightDJ.Web.Streaming
 {
   public static class EffectService
   {
-    private static List<TypeInfo> EffectTypes { get; set; }
-    private static List<TypeInfo> GroupEffectTypes { get; set; }
-    private static List<TypeInfo> TouchEffectTypes { get; set; }
+    private static List<TypeInfo> EffectTypes { get; set; } = new List<TypeInfo>();
+    private static List<TypeInfo> GroupEffectTypes { get; set; } = new List<TypeInfo>();
+    private static List<TypeInfo> TouchEffectTypes { get; set; } = new List<TypeInfo>();
     private static Dictionary<EntertainmentLayer, RunningEffectInfo> layerInfo = new Dictionary<EntertainmentLayer, RunningEffectInfo>();
 
-    private static CancellationTokenSource autoModeCts;
+    private static CancellationTokenSource? autoModeCts;
     public static bool AutoModeHasRandomEffects = true;
 
     public static List<TypeInfo> GetEffectTypes()
@@ -248,8 +248,7 @@ namespace HueLightDJ.Web.Streaming
       if (group == null)
         group = GroupService.GetRandomGroup();
 
-      object[] parametersArray = new object[] { group, waitTime, color, iteratorMode, secondaryIteratorMode, ctsToken};
-
+      object?[] parametersArray = new object?[] { group, waitTime, color, iteratorMode, secondaryIteratorMode, ctsToken};
      
       object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);
@@ -277,7 +276,7 @@ namespace HueLightDJ.Web.Streaming
 
       var layer = GetLayer(isBaseLayer: false);
 
-      object[] parametersArray = new object[] { layer, waitTime, color, ctsToken, x, y };
+      object?[] parametersArray = new object?[] { layer, waitTime, color, ctsToken, x, y };
 
       object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);
@@ -289,7 +288,7 @@ namespace HueLightDJ.Web.Streaming
       if (methodInfo == null)
         return;
 
-      object[] parametersArray = new object[] { layer, waitTime, color, ctsToken };
+      object?[] parametersArray = new object?[] { layer, waitTime, color, ctsToken };
 
       object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);

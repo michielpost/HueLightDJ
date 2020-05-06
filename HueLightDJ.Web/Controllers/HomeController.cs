@@ -86,7 +86,7 @@ namespace HueLightDJ.Web.Controllers
         UseSimulator = false,
         Key = result.Username,
         EntertainmentKey = result.StreamingClientKey,
-        GroupId = groupId
+        GroupId = groupId ?? "unknown"
       };
 
       return connection;
