@@ -28,7 +28,7 @@ namespace HueLightDJ.Web.Streaming
 
     public static List<TypeInfo> GetEffectTypes()
     {
-      if (EffectTypes == null)
+      if (!EffectTypes.Any())
       {
         var all = LoadAllEffects<IHueEffect>();
         EffectTypes = all;
@@ -39,7 +39,7 @@ namespace HueLightDJ.Web.Streaming
 
     public static List<TypeInfo> GetGroupEffectTypes()
     {
-      if (GroupEffectTypes == null)
+      if (!GroupEffectTypes.Any())
       {
         var all = LoadAllEffects<IHueGroupEffect>();
         GroupEffectTypes = all;
@@ -50,7 +50,7 @@ namespace HueLightDJ.Web.Streaming
 
     public static List<TypeInfo> GetTouchEffectTypes()
     {
-      if (TouchEffectTypes == null)
+      if (!TouchEffectTypes.Any())
       {
         var all = LoadAllEffects<IHueTouchEffect>();
         TouchEffectTypes = all;
