@@ -20,7 +20,11 @@ namespace HueLightDJ.Web.Streaming
     {
       _bridgeIp = ip;
       _demoMode = demoMode;
-      _hub = (IHubContext<PreviewHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<PreviewHub>));
+      var hub = (IHubContext<PreviewHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<PreviewHub>));
+      if (hub == null)
+        throw new Exception("Unable to get PreviewHub from ServiceProvider");
+
+      _hub = hub;
     }
 
     protected override void Send(IEnumerable<IEnumerable<StreamingLight>> chunks)

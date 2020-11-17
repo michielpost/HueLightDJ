@@ -28,7 +28,7 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - Multi Bridge light location configuration using the /Configure page
 
 ## Tech
-- ASP.Net Core 2.1 backend
+- ASP.Net Core 5.0 backend
 - SignalR for realtime communication between frontend and backend
 - Q42.HueApi for communicating with the Hue Bridge
 - Vue.js frontend
@@ -36,7 +36,7 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - Mousetrap for keyboard shortcuts
 
 ## Build and Install Instructions
-- Make sure to have ASP.Net Core 2.1 installed to build this project
+- Make sure to have .Net 5.0 installed to build this project
 - Get the IP, Key and EntertainmentKey for your Hue Bridge using the API or the included /Setup page (run the project and navigate to /setup)
 - Enter the IP, Key and EntertainmentKey in appsettings.json
 - Run the HueLightDJ.Web project(dotnet run inside the HueLightDJ.Web directory) 

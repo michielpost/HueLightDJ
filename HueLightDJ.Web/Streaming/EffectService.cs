@@ -188,7 +188,9 @@ namespace HueLightDJ.Web.Streaming
 
     public static void StartEffect(string typeName, string colorHex, string? group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
-      var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      var hub = (IHubContext<StatusHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      if (hub == null)
+        throw new Exception("Unable to get PreviewHub from ServiceProvider");
 
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
@@ -253,7 +255,10 @@ namespace HueLightDJ.Web.Streaming
       object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);
 
-      var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      var hub = (IHubContext<StatusHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      if (hub == null)
+        throw new Exception("Unable to get PreviewHub from ServiceProvider");
+
       hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {groupName}, {iteratorMode}-{secondaryIteratorMode} {color?.ToHex()}",
           new EffectLogMsg()
           {
@@ -293,7 +298,10 @@ namespace HueLightDJ.Web.Streaming
       object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);
 
-      var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      var hub = (IHubContext<StatusHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      if (hub == null)
+        throw new Exception("Unable to get PreviewHub from ServiceProvider");
+
       hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {color?.ToHex()}", new EffectLogMsg() { Name = selectedEffect.Name, RGBColor = color?.ToHex() });
 
     }
@@ -305,22 +313,24 @@ namespace HueLightDJ.Web.Streaming
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
 
+      all ??= new List<TypeInfo>();
 
 
       if (r.NextDouble() <= (withRandomEffects ? 0.4 : 0))
         StartRandomGroupEffect();
       else
       {
-        string effect = all
+        string? effect = all
           .Where(x => x.Name != typeof(ChristmasEffect).Name)
           .Where(x => x.Name != typeof(AllOffEffect).Name)
           .Where(x => x.Name != typeof(SetColorEffect).Name)
           .Where(x => x.Name != typeof(DemoEffect).Name)
-          .OrderBy(x => Guid.NewGuid()).FirstOrDefault().Name;
+          .OrderBy(x => Guid.NewGuid()).FirstOrDefault()?.Name;
 
         GenerateRandomEffectSettings(out RGBColor hexColor, out _, out _);
 
-        StartEffect(effect, hexColor.ToHex());
+        if(effect != null)
+          StartEffect(effect, hexColor.ToHex());
       }
 
     }
@@ -337,6 +347,8 @@ namespace HueLightDJ.Web.Streaming
 
       //Random group that supports multiple effects
       var group = GroupService.GetAll(layer).OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+      if (group == null)
+        return;
 
       //Get same number of effects as groups in the light list
       var effects = allGroupEffects.OrderBy(x => Guid.NewGuid()).Take(group.MaxEffects).ToList();

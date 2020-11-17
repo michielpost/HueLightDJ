@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2035
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30709.132
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Web", "HueLightDJ.Web\HueLightDJ.Web.csproj", "{29C86DC9-6C75-4468-9A22-A2C8E7DA419B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Web", "HueLightDJ.Web\HueLightDJ.Web.csproj", "{29C86DC9-6C75-4468-9A22-A2C8E7DA419B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Effects", "HueLightDJ.Effects\HueLightDJ.Effects.csproj", "{7F07C78A-1FCF-4451-9312-2A70DD0328E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Effects", "HueLightDJ.Effects\HueLightDJ.Effects.csproj", "{7F07C78A-1FCF-4451-9312-2A70DD0328E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

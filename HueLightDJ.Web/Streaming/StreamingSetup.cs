@@ -117,6 +117,9 @@ namespace HueLightDJ.Web.Streaming
     {
       var configSection = await GetGroupConfigurationsAsync();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
+      if (currentGroup == null)
+        throw new ArgumentNullException($"Group not found ({groupName})", nameof(groupName));
+
       bool demoMode = currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
       bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
 
@@ -147,7 +150,10 @@ namespace HueLightDJ.Web.Streaming
 
     private static async Task Connect(bool demoMode, bool useSimulator, ConnectionConfiguration bridgeConfig)
     {
-      var hub = (IHubContext<StatusHub>)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      var hub = (IHubContext<StatusHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
+      if (hub == null)
+        throw new Exception("Unable to get PreviewHub from ServiceProvider");
+
       await hub.Clients.All.SendAsync("StatusMsg", $"Connecting to bridge {bridgeConfig.Ip}");
 
       try
