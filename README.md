@@ -36,10 +36,10 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - Mousetrap for keyboard shortcuts
 
 ## Build and Install Instructions
-- Make sure to have .Net 5.0 installed to build this project
+- Make sure to have [.Net 5.0](https://dotnet.microsoft.com/download) installed to build this project (`dotnet build`)
 - Get the IP, Key and EntertainmentKey for your Hue Bridge using the API or the included /Setup page (run the project and navigate to /setup)
 - Enter the IP, Key and EntertainmentKey in appsettings.json
-- Run the HueLightDJ.Web project(dotnet run inside the HueLightDJ.Web directory) 
+- Run the HueLightDJ.Web project(`cd HueLightDJ.Web && dotnet run`) 
 
 ## Docker
 https://hub.docker.com/r/michielpost/huelightdj/
