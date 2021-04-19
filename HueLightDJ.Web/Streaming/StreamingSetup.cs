@@ -162,7 +162,7 @@ namespace HueLightDJ.Web.Streaming
         var client = new LightDJStreamingHueClient(bridgeConfig.Ip, bridgeConfig.Key, bridgeConfig.EntertainmentKey, demoMode);
 
         //Get the entertainment group
-        Dictionary<string, LightLocation> locations = new Dictionary<string, LightLocation>();
+        Dictionary<string, LightLocation>? locations = new Dictionary<string, LightLocation>();
         if (demoMode)
         {
           string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
@@ -185,6 +185,9 @@ namespace HueLightDJ.Web.Streaming
 
           locations = group.Locations;
         }
+
+        if (locations == null)
+          throw new Exception("No locations found.");
 
         //Create a streaming group
         var stream = new StreamingGroup(locations);
