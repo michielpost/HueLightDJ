@@ -1,7 +1,7 @@
 # HueLightDJ
 Hue Light DJ using Hue Entertainment API
 
-[![Build status](https://ci.appveyor.com/api/projects/status/sdng57og0rpx76ub/branch/master?svg=true)](https://ci.appveyor.com/project/michielpost/huelightdj/branch/master)
+[![Build .NET](https://github.com/michielpost/HueLightDJ/actions/workflows/build.yml/badge.svg)](https://github.com/michielpost/HueLightDJ/actions/workflows/build.yml)
 
 ## What is it?
 This web app connects to a Philips Hue Bridge over the local network. It uses the Hue Entertainment API to update the lights almost instantly.
