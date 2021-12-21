@@ -1,5 +1,9 @@
 @model IEnumerable<Q42.HueApi.Models.Bridge.LocatedBridge>
 @{
+  if (Model == null)
+    {
+        return;
+    }
     ViewData["Title"] = "Setup";
 }
 

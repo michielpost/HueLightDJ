@@ -1,5 +1,9 @@
 @model List<GroupConfiguration>
 @{
+  if (Model == null)
+    {
+        return;
+    }
   ViewData["Title"] = "Hue Light DJ";
   Layout = null;
 }

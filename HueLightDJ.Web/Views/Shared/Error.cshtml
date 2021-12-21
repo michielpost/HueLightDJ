@@ -1,5 +1,9 @@
-﻿@model ErrorViewModel
+@model ErrorViewModel
 @{
+    if (Model == null)
+    {
+        return;
+    }
     ViewData["Title"] = "Error";
 }
 
