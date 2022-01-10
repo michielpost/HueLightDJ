@@ -15,7 +15,7 @@ namespace HueLightDJ.Web.Controllers
     [HttpPost("setbpm")]
     public void SetBPM([FromBody]double bpm)
     {
-      ManualControlService.SetBPM(bpm);
+      StreamingSetup.SetBPM(bpm);
     }
 
     [HttpPost("setcolors")]
