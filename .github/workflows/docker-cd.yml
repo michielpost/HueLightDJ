@@ -15,10 +15,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: checkout code
         uses: actions/checkout@v2
 
+      # this is a little bit of "dark magick"...
+      # Github Registry seems to hate Usernames Containing UpperCase...
+      #
+      # this metadata action normalizes the image tags into something useable.
+      # I'm not sure it's the _best_ set of Docker Tags to use.
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v3
@@ -38,7 +42,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: startsWith(github.ref, 'refs/heads/main')
+      - if: startsWith(github.ref, 'refs/heads/master')
         run: echo "TAG=latest" >> $GITHUB_ENV
 
       - if: startsWith(github.ref, 'refs/tags')
