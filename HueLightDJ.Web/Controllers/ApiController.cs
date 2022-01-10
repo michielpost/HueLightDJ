@@ -30,6 +30,18 @@ namespace HueLightDJ.Web.Controllers
       EffectService.Beat(intensity);
     }
 
+    [HttpPost("start-auto")]
+    public void StartAuto()
+    {
+      EffectService.StartAutoMode();
+    }
+
+    [HttpPost("stop-auto")]
+    public void StopAuto()
+    {
+      EffectService.StopAutoMode();
+    }
+
     [HttpPost("test")]
     public void Test([FromBody]string test)
     {
