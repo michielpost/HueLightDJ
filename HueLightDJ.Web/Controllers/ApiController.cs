@@ -36,10 +36,11 @@ namespace HueLightDJ.Web.Controllers
       EffectService.StartAutoMode();
     }
 
-    [HttpPost("stop-auto")]
+    [HttpPost("stop-all")]
     public void StopAuto()
     {
       EffectService.StopAutoMode();
+      EffectService.StopEffects();
     }
 
     [HttpPost("test")]
