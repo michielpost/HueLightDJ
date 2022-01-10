@@ -13,7 +13,7 @@ namespace HueLightDJ.Web.Controllers
   public class ApiController : ControllerBase
   {
     [HttpPost("setbpm")]
-    public void SetBPM([FromBody]double bpm)
+    public void SetBPM([FromBody]int bpm)
     {
       StreamingSetup.SetBPM(bpm);
     }

@@ -9,12 +9,6 @@ namespace HueLightDJ.Web.Streaming
 {
   public static class ManualControlService
   {
-    public static void SetBPM(int bpm)
-    {
-      BPM = bpm;
-      WaitTime.Value = TimeSpan.FromMilliseconds((60 * 1000) / bpm);
-    }
-
     public static void SetColors(string[,] matrix)
     {
       var heightIndex = matrix.GetUpperBound(0);
