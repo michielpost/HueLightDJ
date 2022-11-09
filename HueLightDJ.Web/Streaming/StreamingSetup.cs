@@ -229,7 +229,7 @@ namespace HueLightDJ.Web.Streaming
       var allConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
 
       if (bridges == null || !bridges.Any())
-        return allConfig;
+        return allConfig ?? new();
       else
       {
         return allConfig.Where(x =>
