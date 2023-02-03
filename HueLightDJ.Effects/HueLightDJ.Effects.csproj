@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Q42.HueApi\src\HueApi.ColorConverters\HueApi.ColorConverters.csproj" />
-    <ProjectReference Include="..\..\Q42.HueApi\src\HueApi.Entertainment\HueApi.Entertainment.csproj" />
-    <ProjectReference Include="..\..\Q42.HueApi\src\HueApi\HueApi.csproj" />
+    <PackageReference Include="HueApi" Version="1.0.0" />
+    <PackageReference Include="HueApi.ColorConverters" Version="1.0.0" />
+    <PackageReference Include="HueApi.Entertainment" Version="1.4.0" />
   </ItemGroup>
 
 </Project>

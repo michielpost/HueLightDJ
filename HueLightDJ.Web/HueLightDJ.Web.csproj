@@ -12,16 +12,16 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.3" />
-  </ItemGroup>
+    <PackageReference Include="HueApi" Version="1.0.0" />
+    <PackageReference Include="HueApi.ColorConverters" Version="1.0.0" />
+    <PackageReference Include="HueApi.Entertainment" Version="1.4.0" />
+    </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Q42.HueApi\src\HueApi.ColorConverters\HueApi.ColorConverters.csproj" />
-    <ProjectReference Include="..\..\Q42.HueApi\src\HueApi.Entertainment\HueApi.Entertainment.csproj" />
-    <ProjectReference Include="..\..\Q42.HueApi\src\HueApi\HueApi.csproj" />
     <ProjectReference Include="..\HueLightDJ.Effects\HueLightDJ.Effects.csproj" />
   </ItemGroup>
 

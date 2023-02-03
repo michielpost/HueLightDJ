@@ -7,14 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Web", "HueLightD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Effects", "HueLightDJ.Effects\HueLightDJ.Effects.csproj", "{7F07C78A-1FCF-4451-9312-2A70DD0328E6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HueApi", "HueApi", "{13798B2B-5188-45BA-A5F4-8BC76185388E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueApi", "..\Q42.HueApi\src\HueApi\HueApi.csproj", "{433A049F-9EA7-4E0A-8566-66E1BF12FBEC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueApi.ColorConverters", "..\Q42.HueApi\src\HueApi.ColorConverters\HueApi.ColorConverters.csproj", "{71820B3A-BF3A-4744-9DB9-80387A0D4635}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueApi.Entertainment", "..\Q42.HueApi\src\HueApi.Entertainment\HueApi.Entertainment.csproj", "{1C8CE039-D32A-482C-B48E-B5F9ED160DF7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,26 +21,9 @@ Global
 		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{433A049F-9EA7-4E0A-8566-66E1BF12FBEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{433A049F-9EA7-4E0A-8566-66E1BF12FBEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{433A049F-9EA7-4E0A-8566-66E1BF12FBEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{433A049F-9EA7-4E0A-8566-66E1BF12FBEC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{71820B3A-BF3A-4744-9DB9-80387A0D4635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71820B3A-BF3A-4744-9DB9-80387A0D4635}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71820B3A-BF3A-4744-9DB9-80387A0D4635}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71820B3A-BF3A-4744-9DB9-80387A0D4635}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C8CE039-D32A-482C-B48E-B5F9ED160DF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C8CE039-D32A-482C-B48E-B5F9ED160DF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C8CE039-D32A-482C-B48E-B5F9ED160DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C8CE039-D32A-482C-B48E-B5F9ED160DF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{433A049F-9EA7-4E0A-8566-66E1BF12FBEC} = {13798B2B-5188-45BA-A5F4-8BC76185388E}
-		{71820B3A-BF3A-4744-9DB9-80387A0D4635} = {13798B2B-5188-45BA-A5F4-8BC76185388E}
-		{1C8CE039-D32A-482C-B48E-B5F9ED160DF7} = {13798B2B-5188-45BA-A5F4-8BC76185388E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F7061EF6-6F93-4EA7-959A-4F7F263C65A3}
