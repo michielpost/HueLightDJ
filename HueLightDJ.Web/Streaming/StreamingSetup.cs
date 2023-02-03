@@ -22,6 +22,7 @@ using HueApi.ColorConverters.Original.Extensions;
 using HueApi.Extensions;
 using NuGet.ContentModel;
 using System.Drawing;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 
 namespace HueLightDJ.Web.Streaming
 {
@@ -57,14 +58,25 @@ namespace HueLightDJ.Web.Streaming
         var localClient = new LocalHueApi(bridgeConfig.Ip, bridgeConfig.Key);
         var group = await localClient.GetEntertainmentConfigurationAsync(bridgeConfig.GroupId);
 
-        locations.AddRange(group.Data.First().Locations.ServiceLocations.Select(x => new MultiBridgeHuePosition()
+        var serviceLocations = group.Data.First().Locations.ServiceLocations;
+
+        foreach(var serviceLocation in serviceLocations)
         {
-          Bridge = bridgeConfig.Ip,
-          GroupId = bridgeConfig.GroupId,
-          Id = x.Service!.Rid,
-          X = x.Positions.First().X,
-          Y = x.Positions.First().Y
-        }));
+          for (int i = 0; i < serviceLocation.Positions.Count; i++)
+          {
+            locations.Add(new MultiBridgeHuePosition()
+             {
+               Bridge = bridgeConfig.Ip,
+               GroupId = bridgeConfig.GroupId,
+               Id = serviceLocation.Service!.Rid,
+               PositionIndex = i,
+               X = serviceLocation.Positions[i].X,
+               Y = serviceLocation.Positions[i].Y
+             });
+          }
+        }
+
+       
       }
 
       return locations;
@@ -83,19 +95,25 @@ namespace HueLightDJ.Web.Streaming
         var config = configSection.SelectMany(x => x.Connections).Where(x => x.Ip == ip && x.GroupId == groupId).FirstOrDefault();
         if(config != null)
         {
-          var client = new LocalHueApi(config.Ip, config.Key);
-          var bridgeLocations = group.ToDictionary(x => x.Id, l => new HuePosition(l.X, l.Y, 0));
+          var serviceLocations = group.GroupBy(x => x.Id);
 
+          var client = new LocalHueApi(config.Ip, config.Key);
           UpdateEntertainmentConfiguration updateReq = new UpdateEntertainmentConfiguration();
           updateReq.Locations = new Locations();
 
-          foreach (var location in bridgeLocations)
+          foreach (var location in serviceLocations)
           {
-            updateReq.Locations.ServiceLocations.Add(new HueServiceLocation
+            var serviceLoc = new HueServiceLocation
             {
-               Positions = new List<HuePosition> { new HuePosition(location.Value.X, location.Value.Y, 0)},
-               Service = new ResourceIdentifier() { Rid = location.Key, Rtype = "entertainment" }
-            });
+              Service = new ResourceIdentifier() { Rid = location.Key, Rtype = "entertainment" }
+            };
+
+            foreach(var pos in location)
+            {
+              serviceLoc.Positions.Add(new HuePosition(pos.X, pos.Y, 0));
+            }
+
+            updateReq.Locations.ServiceLocations.Add(serviceLoc);
           }
 
           await client.UpdateEntertainmentConfigurationAsync(groupId, updateReq);

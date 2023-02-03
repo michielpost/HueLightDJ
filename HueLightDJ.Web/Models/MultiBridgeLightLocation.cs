@@ -11,6 +11,8 @@ namespace HueLightDJ.Web.Models
     public Guid GroupId { get; set; }
 
     public Guid Id { get; set; }
+
+    public int PositionIndex { get; set; }
     public double X { get; set; }
     public double Y { get; set; }
   }
