@@ -10,7 +10,7 @@ namespace HueLightDJ.Web.Models
     public string Ip { get; set; }
     public string Key { get; set; }
     public string? EntertainmentKey { get; set; }
-    public string GroupId { get; set; }
+    public Guid GroupId { get; set; }
     public bool UseSimulator { get; set; }
   }
 }

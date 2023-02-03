@@ -1,4 +1,4 @@
-using Q42.HueApi.Models.Groups;
+using HueApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +7,7 @@ namespace HueLightDJ.Effects
 {
   public static class EffectSettings
   {
-    public static LightLocation LocationCenter { get; set; } = new LightLocation() { 0, 0, 0 };
+    public static HuePosition LocationCenter { get; set; } = new HuePosition();
 
   }
 }

@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using HueLightDJ.Web.Models;
 using HueLightDJ.Web.Streaming;
-using Q42.HueApi;
-using Q42.HueApi.Models.Bridge;
-using Q42.HueApi.Models.Groups;
+using HueApi;
+using HueApi.Models;
+using HueApi.BridgeLocator;
+using Org.BouncyCastle.Ocsp;
+using HueApi.Extensions.cs;
 
 namespace HueLightDJ.Web.Controllers
 {
@@ -48,18 +50,18 @@ namespace HueLightDJ.Web.Controllers
 
     [HttpGet]
     [Route("export/{groupName}")]
-    public async Task<List<Dictionary<string, LightLocation>>> ExportJson([FromRoute]string groupName)
+    public async Task<List<Dictionary<Guid, HuePosition>>> ExportJson([FromRoute]string groupName)
     {
       var locations = await StreamingSetup.GetLocationsAsync(groupName);
 
       return locations.GroupBy(x => x.Bridge)
-        .Select(x => x.ToDictionary(l => l.Id, loc => new LightLocation() { loc.X, loc.Y, 0 })).ToList();
+        .Select(x => x.ToDictionary(l => l.Id, loc => new HuePosition(loc.X, loc.Y, 0))).ToList();
 
     }
 
     [HttpGet]
     [Route("fullexport/{groupName}")]
-    public Task<List<MultiBridgeLightLocation>> FullExportJson([FromRoute]string groupName)
+    public Task<List<MultiBridgeHuePosition>> FullExportJson([FromRoute]string groupName)
     {
       return StreamingSetup.GetLocationsAsync(groupName);
     }
@@ -68,17 +70,41 @@ namespace HueLightDJ.Web.Controllers
     [Route("Register")]
     public async Task<ConnectionConfiguration> Register([FromForm]string ip)
     {
-      var hueClient = new LocalHueClient(ip);
-      var result = await hueClient.RegisterAsync("HueLightDJ", "Web", generateClientKey: true);
+      var result = await LocalHueApi.RegisterAsync(ip, "HueLightDJ", "Web", generateClientKey: true);
 
-      if (result == null)
+      if (result == null || result.Username == null)
         throw new Exception("No result from bridge");
 
-      var allLights = await hueClient.GetLightsAsync();
-      string? groupId = "GroupId";
+      var hueClient = new LocalHueApi(ip, result.Username);
+      var allLights = await hueClient.GetEntertainmentServicesAsync();
 
-      if(allLights.Any())
-        groupId = await hueClient.CreateGroupAsync(allLights.Take(10).Select(x => x.Id), "Hue Light DJ group", Q42.HueApi.Models.Groups.RoomClass.TV, Q42.HueApi.Models.Groups.GroupType.Entertainment);
+      var createReq = new HueApi.Models.Requests.UpdateEntertainmentConfiguration()
+      {
+        Metadata = new Metadata() { Name = "Hue Light DJ group " },
+        ConfigurationType = EntertainmentConfigurationType.music,
+        Locations = new Locations()
+      };
+
+      foreach (var light in allLights.Data.Where(x => x.Renderer))
+      {
+        var lightPosition = new HueServiceLocation
+        {
+          Service = light.ToResourceIdentifier(),
+          Positions = new System.Collections.Generic.List<HuePosition>
+           {
+             new HuePosition
+             {
+                X = 0.42, Y = 0.5, Z = 0
+             }
+          }
+        };
+
+        createReq.Locations.ServiceLocations.Add(lightPosition);
+      }
+
+      var createResult = await hueClient.CreateEntertainmentConfigurationAsync(createReq);
+
+      var groupId = createResult.Data.First().Rid;
 
       var connection = new ConnectionConfiguration()
       {
@@ -86,7 +112,7 @@ namespace HueLightDJ.Web.Controllers
         UseSimulator = false,
         Key = result.Username,
         EntertainmentKey = result.StreamingClientKey,
-        GroupId = groupId ?? "unknown"
+        GroupId = groupId
       };
 
       return connection;

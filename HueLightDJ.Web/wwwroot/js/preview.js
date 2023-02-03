@@ -100,13 +100,14 @@ function renderPreviewGrid(size, allowEdit) {
 
   function saveLocations() {
     var result = [];
-    for (const [key, value] of Object.entries(lights)) {
-      for (var i = 0; i < value.length; i++) {
-        var l = value[i];
+    for (const [key, values] of Object.entries(lights)) {
+      for (var i = 0; i < Object.keys(lights[key]).length; i++) {
+        var prop = Object.keys(lights[key])[i];
+        var l = lights[key][prop];
         if (l != undefined && l != null) {
           var pos = getXYPosition(l.label);
           result.push({
-            Id: i,
+            Id: prop,
             Bridge: key,
             GroupId: l.groupId,
             X: pos.x,

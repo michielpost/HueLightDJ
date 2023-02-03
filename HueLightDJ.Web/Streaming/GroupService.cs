@@ -1,8 +1,8 @@
 using HueLightDJ.Effects;
 using HueLightDJ.Web.Models;
-using Q42.HueApi.Streaming.Effects;
-using Q42.HueApi.Streaming.Extensions;
-using Q42.HueApi.Streaming.Models;
+using HueApi.Entertainment.Effects;
+using HueApi.Entertainment.Extensions;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

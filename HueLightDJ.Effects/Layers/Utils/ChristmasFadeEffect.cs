@@ -1,8 +1,8 @@
 using HueLightDJ.Effects.Base;
-using Q42.HueApi.ColorConverters;
-using Q42.HueApi.Streaming.Effects;
-using Q42.HueApi.Streaming.Extensions;
-using Q42.HueApi.Streaming.Models;
+using HueApi.ColorConverters;
+using HueApi.Entertainment.Effects;
+using HueApi.Entertainment.Extensions;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -44,9 +44,9 @@ namespace HueLightDJ.Effects
       return group.IteratorEffect(cancellationToken, async (current, ct, timeSpan) =>
       {
         if (startGreen)
-          current.SetState(ct, new Q42.HueApi.ColorConverters.RGBColor("00FF00"), 1, TimeSpan.FromMilliseconds(waitTime().TotalMilliseconds / 6 * r.Next(1,5)));
+          current.SetState(ct, new HueApi.ColorConverters.RGBColor("00FF00"), 1, TimeSpan.FromMilliseconds(waitTime().TotalMilliseconds / 6 * r.Next(1,5)));
         else
-          current.SetState(ct, new Q42.HueApi.ColorConverters.RGBColor("FF0000"), 1, TimeSpan.FromMilliseconds(waitTime().TotalMilliseconds / 6 * r.Next(1, 5)));
+          current.SetState(ct, new HueApi.ColorConverters.RGBColor("FF0000"), 1, TimeSpan.FromMilliseconds(waitTime().TotalMilliseconds / 6 * r.Next(1, 5)));
 
         startGreen = !startGreen;
       }, IteratorEffectMode.RandomOrdered, IteratorEffectMode.RandomOrdered, () => TimeSpan.FromMilliseconds(r.Next(10, 50)));

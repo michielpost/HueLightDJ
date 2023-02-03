@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Q42.HueApi.Models.Groups;
+using HueApi.Models;
 
 namespace HueLightDJ.Web.Models
 {
@@ -10,7 +10,7 @@ namespace HueLightDJ.Web.Models
   {
     public string Name { get; set; }
     public List<ConnectionConfiguration> Connections { get; set; }
-    public LightLocation LocationCenter { get; set; }
+    public HuePosition LocationCenter { get; set; }
     public bool IsAlwaysVisible { get; set; }
     public bool HideDisconnect { get; set; }
   }

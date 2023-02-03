@@ -4,20 +4,24 @@ using HueLightDJ.Web.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Q42.HueApi;
-using Q42.HueApi.ColorConverters;
-using Q42.HueApi.ColorConverters.Original;
-using Q42.HueApi.Interfaces;
-using Q42.HueApi.Models.Bridge;
-using Q42.HueApi.Models.Groups;
-using Q42.HueApi.Streaming;
-using Q42.HueApi.Streaming.Models;
+using HueApi;
+using HueApi.ColorConverters;
+using HueApi.ColorConverters.Original;
+using HueApi.Entertainment;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HueApi.Models;
+using HueApi.BridgeLocator;
+using HueApi.Models.Requests;
+using HueApi.ColorConverters.Original.Extensions;
+using HueApi.Extensions;
+using NuGet.ContentModel;
+using System.Drawing;
 
 namespace HueLightDJ.Web.Streaming
 {
@@ -35,41 +39,38 @@ namespace HueLightDJ.Web.Streaming
 
    
 
-    private static string _groupId;
+    private static Guid _groupId;
     private static CancellationTokenSource _cts;
 
-    public static async Task<List<MultiBridgeLightLocation>> GetLocationsAsync(string groupName)
+    public static async Task<List<MultiBridgeHuePosition>> GetLocationsAsync(string groupName)
     {
       var configSection = await GetGroupConfigurationsAsync();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
 
-      var locations = new List<MultiBridgeLightLocation>();
+      var locations = new List<MultiBridgeHuePosition>();
 
       if (currentGroup == null)
         return locations;
 
       foreach (var bridgeConfig in currentGroup.Connections)
       {
-        var localClient = new LocalHueClient(bridgeConfig.Ip, bridgeConfig.Key);
-        var group = await localClient.GetGroupAsync(bridgeConfig.GroupId);
+        var localClient = new LocalHueApi(bridgeConfig.Ip, bridgeConfig.Key);
+        var group = await localClient.GetEntertainmentConfigurationAsync(bridgeConfig.GroupId);
 
-        if (group?.Type != GroupType.Entertainment)
-          continue;
-
-        locations.AddRange(group.Locations.Select(x => new MultiBridgeLightLocation()
+        locations.AddRange(group.Data.First().Locations.ServiceLocations.Select(x => new MultiBridgeHuePosition()
         {
           Bridge = bridgeConfig.Ip,
           GroupId = bridgeConfig.GroupId,
-          Id = x.Key,
-          X = x.Value.X,
-          Y = x.Value.Y
+          Id = x.Service!.Rid,
+          X = x.Positions.First().X,
+          Y = x.Positions.First().Y
         }));
       }
 
       return locations;
     }
 
-    public static async Task SetLocations(List<MultiBridgeLightLocation> locations)
+    public static async Task SetLocations(List<MultiBridgeHuePosition> locations)
     {
       var configSection = await GetGroupConfigurationsAsync();
 
@@ -82,14 +83,27 @@ namespace HueLightDJ.Web.Streaming
         var config = configSection.SelectMany(x => x.Connections).Where(x => x.Ip == ip && x.GroupId == groupId).FirstOrDefault();
         if(config != null)
         {
-          var client = new LocalHueClient(config.Ip, config.Key);
-          var bridgeLocations = group.ToDictionary(x => x.Id, l => new LightLocation() { l.X, l.Y, 0 });
-          await client.UpdateGroupLocationsAsync(groupId, bridgeLocations);
+          var client = new LocalHueApi(config.Ip, config.Key);
+          var bridgeLocations = group.ToDictionary(x => x.Id, l => new HuePosition(l.X, l.Y, 0));
+
+          UpdateEntertainmentConfiguration updateReq = new UpdateEntertainmentConfiguration();
+          updateReq.Locations = new Locations();
+
+          foreach (var location in bridgeLocations)
+          {
+            updateReq.Locations.ServiceLocations.Add(new HueServiceLocation
+            {
+               Positions = new List<HuePosition> { new HuePosition(location.Value.X, location.Value.Y, 0)},
+               Service = new ResourceIdentifier() { Rid = location.Key, Rtype = "entertainment" }
+            });
+          }
+
+          await client.UpdateEntertainmentConfigurationAsync(groupId, updateReq);
         }
       }
     }
 
-    public static async Task AlertLight(MultiBridgeLightLocation light)
+    public static async Task AlertLight(MultiBridgeHuePosition light)
     {
       var configSection = await GetGroupConfigurationsAsync();
 
@@ -98,16 +112,35 @@ namespace HueLightDJ.Web.Streaming
       {
         foreach (var conn in config.Connections)
         {
-          var client = new LocalHueClient(conn.Ip, conn.Key);
+          var client = new LocalHueApi(conn.Ip, conn.Key);
           var allCommand = new LightCommand().TurnOn().SetColor(new RGBColor("0000FF")); //All blue
-          await client.SendGroupCommandAsync(allCommand, conn.GroupId);
+
+          var result = await client.GetEntertainmentConfigurationAsync(conn.GroupId);
+
+          //Turn all lights in this entertainment group on
+          var entServices = result.Data.First().Locations.ServiceLocations.Select(x => x.Service?.Rid).ToList();
+          var allResources = await client.GetResourcesAsync();
+
+          var devices = allResources.Data.Where(x => entServices.Contains(x.Id)).Select(x => x.Owner?.Rid).ToList();
+          var lights = allResources.Data.Where(x => devices.Contains(x.Id)).Select(x => x.Services?.Where(x => x.Rtype == "light").FirstOrDefault()?.Rid).ToList();
+
+          foreach (var singleLightId in lights.Where(x => x.HasValue))
+          {
+            await client.UpdateLightAsync(singleLightId!.Value, allCommand);
+          }
+
 
           //Only selected light red
           if (conn.Ip == light.Bridge)
           {
             var alertCommand = new LightCommand().TurnOn().SetColor(new RGBColor("FF0000")); ;
-            alertCommand.Alert = Alert.Once;
-            await client.SendCommandAsync(alertCommand, new List<string> { light.Id });
+            alertCommand.Alert = new UpdateAlert();
+
+            var device = allResources.Data.Where(x => x.Id == light.Id).Select(x => x.Owner?.Rid).FirstOrDefault();
+            var lightDeviceId = allResources.Data.Where(x => x.Id == device).Select(x => x.Services?.Where(x => x.Rtype == "light").FirstOrDefault()?.Rid).FirstOrDefault();
+
+            if(lightDeviceId.HasValue)
+              await client.UpdateLightAsync(lightDeviceId.Value, alertCommand);
           }
         }
       }
@@ -141,7 +174,7 @@ namespace HueLightDJ.Web.Streaming
 
       Layers = new List<EntertainmentLayer>() { baseLayer, effectLayer };
       CurrentConnection = currentGroup;
-      EffectSettings.LocationCenter = currentGroup.LocationCenter ?? new LightLocation() { 0,0,0};
+      EffectSettings.LocationCenter = currentGroup.LocationCenter ?? new HuePosition(0,0,0);
 
       //Optional: calculated effects that are placed on this layer
       baseLayer.AutoCalculateEffectUpdate(_cts.Token);
@@ -162,20 +195,20 @@ namespace HueLightDJ.Web.Streaming
         var client = new LightDJStreamingHueClient(bridgeConfig.Ip, bridgeConfig.Key, bridgeConfig.EntertainmentKey, demoMode);
 
         //Get the entertainment group
-        Dictionary<string, LightLocation>? locations = new Dictionary<string, LightLocation>();
+        Dictionary<int, HuePosition>? locations = new Dictionary<int, HuePosition>();
         if (demoMode)
         {
           string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
-          locations = JsonConvert.DeserializeObject<Dictionary<string, LightLocation>>(demoJson);
+          locations = JsonConvert.DeserializeObject<Dictionary<int, HuePosition>>(demoJson);
           _groupId = bridgeConfig.GroupId;
         }
         else
         {
-          var all = await client.LocalHueClient.GetEntertainmentGroups();
-          var group = all.Where(x => x.Id == bridgeConfig.GroupId).FirstOrDefault();
+          var all = await client.LocalHueApi.GetEntertainmentConfigurationsAsync();
+          var group = all.Data.Where(x => x.Id == bridgeConfig.GroupId).FirstOrDefault();
 
           if (group == null)
-            throw new Exception($"No Entertainment Group found with id {bridgeConfig.GroupId}. Create one using the Philips Hue App or the Q42.HueApi.UniversalWindows.Sample");
+            throw new Exception($"No Entertainment Group found with id {bridgeConfig.GroupId}. Create one using the Philips Hue App or the HueApi.UniversalWindows.Sample");
           else
           {
             await hub.Clients.All.SendAsync("StatusMsg", $"Using Entertainment Group {group.Id} for bridge {bridgeConfig.Ip}");
@@ -183,7 +216,7 @@ namespace HueLightDJ.Web.Streaming
             _groupId = group.Id;
           }
 
-          locations = group.Locations;
+          locations = group.Channels.ToDictionary(x => x.ChannelId, x => x.Position);
         }
 
         if (locations == null)
@@ -196,10 +229,10 @@ namespace HueLightDJ.Web.Streaming
 
         //Connect to the streaming group
         if (!demoMode)
-          await client.Connect(_groupId, simulator: useSimulator);
+          await client.ConnectAsync(_groupId, simulator: useSimulator);
 
         //Start auto updating this entertainment group
-        client.AutoUpdate(stream, _cts.Token, 50, onlySendDirtyStates: false);
+        client.AutoUpdateAsync(stream, _cts.Token, 50, onlySendDirtyStates: false);
 
         StreamingHueClients.Add(client);
         StreamingGroups.Add(stream);
@@ -267,7 +300,7 @@ namespace HueLightDJ.Web.Streaming
       {
         try
         {
-          client.LocalHueClient.SetStreamingAsync(_groupId, active: false);
+          client.LocalHueApi.SetStreamingAsync(_groupId, active: false);
           client.Close();
         }
         catch { }
@@ -285,13 +318,23 @@ namespace HueLightDJ.Web.Streaming
     public async static Task<bool> IsStreamingActive()
     {
       //Optional: Check if streaming is currently active
-      var bridgeInfo = await StreamingHueClients.First().LocalHueClient.GetBridgeAsync();
-      if (bridgeInfo == null)
+      var entServices = await StreamingHueClients.First().LocalHueApi.GetEntertainmentServicesAsync();
+      if (!entServices.Data.Any())
         return false;
 
-      Console.WriteLine(bridgeInfo.IsStreamingActive ? "Streaming is active" : "Streaming is not active");
+      var numSupported = entServices.Data.Sum(x => x.MaxStreams);
 
-      return bridgeInfo.IsStreamingActive;
+      var entConfigs = await StreamingHueClients.First().LocalHueApi.GetEntertainmentConfigurationsAsync();
+      if (!entConfigs.Data.Any())
+        return false;
+
+      var active = entConfigs.Data.Where(x => x.Status == EntertainmentConfigurationStatus.active).Count();
+
+      var streamingChannelsLeft = numSupported - active;
+
+      Console.WriteLine($"{streamingChannelsLeft} our of {numSupported} streaming channels left");
+
+      return streamingChannelsLeft <= 0;
 
     }
 

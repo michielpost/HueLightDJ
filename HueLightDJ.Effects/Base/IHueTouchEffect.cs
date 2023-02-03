@@ -1,5 +1,5 @@
-using Q42.HueApi.ColorConverters;
-using Q42.HueApi.Streaming.Models;
+using HueApi.ColorConverters;
+using HueApi.Entertainment.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

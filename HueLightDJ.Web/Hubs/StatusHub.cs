@@ -1,7 +1,7 @@
 using HueLightDJ.Web.Models;
 using HueLightDJ.Web.Streaming;
 using Microsoft.AspNetCore.SignalR;
-using Q42.HueApi.Streaming.Extensions;
+using HueApi.Entertainment.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

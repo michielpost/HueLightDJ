@@ -1,7 +1,7 @@
 using HueLightDJ.Effects.Base;
-using Q42.HueApi.ColorConverters;
-using Q42.HueApi.Streaming.Effects.BasEffects;
-using Q42.HueApi.Streaming.Models;
+using HueApi.ColorConverters;
+using HueApi.Entertainment.Effects.BasEffects;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -58,7 +58,7 @@ namespace HueLightDJ.Effects.Layers
 
       CurrentAngle = 90;
 
-      var state = new Q42.HueApi.Streaming.Models.StreamingState();
+      var state = new HueApi.Entertainment.Models.StreamingState();
       state.SetBrightness(1);
       state.SetRGBColor(_color);
 

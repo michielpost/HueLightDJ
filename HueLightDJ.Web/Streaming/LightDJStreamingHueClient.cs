@@ -1,8 +1,8 @@
 using HueLightDJ.Web.Hubs;
 using HueLightDJ.Web.Models;
 using Microsoft.AspNetCore.SignalR;
-using Q42.HueApi.Streaming;
-using Q42.HueApi.Streaming.Models;
+using HueApi.Entertainment;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +27,7 @@ namespace HueLightDJ.Web.Streaming
       _hub = hub;
     }
 
-    protected override void Send(IEnumerable<IEnumerable<StreamingLight>> chunks)
+    protected override void Send(IEnumerable<IEnumerable<StreamingChannel>> chunks)
     {
       if(!_demoMode)
         base.Send(chunks);
@@ -38,8 +38,8 @@ namespace HueLightDJ.Web.Streaming
       {
         Bridge = _bridgeIp,
         Id = x.Id,
-        X = x.LightLocation.X,
-        Y = x.LightLocation.Y,
+        X = x.ChannelLocation.X,
+        Y = x.ChannelLocation.Y,
         Hex = x.State.RGBColor.ToHex(),
         Bri = x.State.Brightness
       }));

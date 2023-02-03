@@ -1,9 +1,9 @@
-using Q42.HueApi.Models.Groups;
-using Q42.HueApi.Streaming.Models;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HueApi.Models;
 
 namespace HueLightDJ.Web.Streaming
 {
@@ -40,7 +40,7 @@ namespace HueLightDJ.Web.Streaming
               var color = matrix[x, y];
               foreach (var current in lightsMatrix[x, y])
               {
-                current.State.SetRGBColor(new Q42.HueApi.ColorConverters.RGBColor(color));
+                current.State.SetRGBColor(new HueApi.ColorConverters.RGBColor(color));
                 current.State.SetBrightness(1);
               }
             }
@@ -70,14 +70,14 @@ namespace HueLightDJ.Web.Streaming
       SetColors(array);
     }
 
-    private static int GetMatrixPositionX(LightLocation lightLocation, int matrixSize)
+    private static int GetMatrixPositionX(HuePosition HuePosition, int matrixSize)
     {
-      double pos = ((lightLocation.X +1) / 2) * matrixSize;
+      double pos = ((HuePosition.X +1) / 2) * matrixSize;
       return (int)pos;
     }
-    private static int GetMatrixPositionY(LightLocation lightLocation, int matrixSize)
+    private static int GetMatrixPositionY(HuePosition HuePosition, int matrixSize)
     {
-      double pos = ((1 - (lightLocation.Y + 1) / 2)) * matrixSize;
+      double pos = ((1 - (HuePosition.Y + 1) / 2)) * matrixSize;
       return (int)pos;
     }
   }
