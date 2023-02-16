@@ -13,10 +13,12 @@ namespace HueLightDJ.Web.Controllers
   public class ApiController : ControllerBase
   {
     private readonly IHubService hub;
+    private readonly EffectService effectService;
 
-    public ApiController(IHubService hub)
+    public ApiController(IHubService hub, EffectService effectService)
     {
       this.hub = hub;
+      this.effectService = effectService;
     }
 
     [HttpPost("setcolors")]
@@ -34,7 +36,7 @@ namespace HueLightDJ.Web.Controllers
     [HttpPost("beat")]
     public void Beat([FromBody]double intensity)
     {
-      EffectService.Beat(hub, intensity);
+      effectService.Beat(intensity);
     }
 
     [HttpPost("test")]

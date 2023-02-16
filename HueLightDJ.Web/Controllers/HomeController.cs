@@ -19,6 +19,13 @@ namespace HueLightDJ.Services.Controllers
 {
   public class HomeController : Controller
   {
+    private readonly StreamingSetup streamingSetup;
+
+    public HomeController(StreamingSetup streamingSetup)
+    {
+      this.streamingSetup = streamingSetup;
+    }
+
     [HttpGet]
     public IActionResult Index(bool isAdmin)
     {
@@ -48,7 +55,7 @@ namespace HueLightDJ.Services.Controllers
     public async Task<IActionResult> Configure()
     {
       var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
-      var config = await StreamingSetup.GetGroupConfigurationsAsync(fullConfig);
+      var config = await streamingSetup.GetGroupConfigurationsAsync(fullConfig);
       return View(config);
     }
 
@@ -58,7 +65,7 @@ namespace HueLightDJ.Services.Controllers
     {
       var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
 
-      var locations = await StreamingSetup.GetLocationsAsync(fullConfig, groupName);
+      var locations = await streamingSetup.GetLocationsAsync(fullConfig, groupName);
 
       return locations.GroupBy(x => x.Bridge)
         .Select(x => x.ToDictionary(l => l.Id, loc => new HuePosition(loc.X, loc.Y, 0))).ToList();
@@ -71,7 +78,7 @@ namespace HueLightDJ.Services.Controllers
     {
       var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
 
-      return StreamingSetup.GetLocationsAsync(fullConfig, groupName);
+      return streamingSetup.GetLocationsAsync(fullConfig, groupName);
     }
 
     [HttpPost]

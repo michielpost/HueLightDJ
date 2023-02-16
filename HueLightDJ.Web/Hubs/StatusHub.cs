@@ -13,11 +13,13 @@ namespace HueLightDJ.Web.Hubs
 {
   public class StatusHub : Hub
   {
-    private readonly IHubService hub;
+    private readonly EffectService effectService;
+    private readonly StreamingSetup streamingSetup;
 
-    public StatusHub(IHubService hub)
+    public StatusHub(EffectService effectService, StreamingSetup streamingSetup)
     {
-      this.hub = hub;
+      this.effectService = effectService;
+      this.streamingSetup = streamingSetup;
     }
 
     public async Task Connect(string groupName)
@@ -29,7 +31,7 @@ namespace HueLightDJ.Web.Hubs
         var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
 
         //Connect
-        await StreamingSetup.SetupAndReturnGroupAsync(hub, fullConfig, groupName);
+        await streamingSetup.SetupAndReturnGroupAsync(fullConfig, groupName);
         await Clients.All.SendAsync("StatusMsg", "Connected to bridge");
 
         await GetEffects(true);
@@ -46,7 +48,7 @@ namespace HueLightDJ.Web.Hubs
     {
       var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
 
-      var configs = await StreamingSetup.GetGroupConfigurationsAsync(fullConfig);
+      var configs = await streamingSetup.GetGroupConfigurationsAsync(fullConfig);
       StatusViewModel vm = new StatusViewModel();
       vm.bpm = StreamingSetup.GetBPM();
       vm.IsAutoMode = EffectService.IsAutoModeRunning();
@@ -76,12 +78,12 @@ namespace HueLightDJ.Web.Hubs
 
     public void StartEffect(string typeName, string colorHex)
     {
-      EffectService.StartEffect(hub, typeName, colorHex);
+      effectService.StartEffect(typeName, colorHex);
     }
 
     public void StartGroupEffect(string typeName, string colorHex, string groupName, string iteratorMode, string secondaryIteratorMode)
     {
-      EffectService.StartEffect(hub, typeName, colorHex, groupName, Enum.Parse<IteratorEffectMode>(iteratorMode), Enum.Parse<IteratorEffectMode>(secondaryIteratorMode));
+      effectService.StartEffect(typeName, colorHex, groupName, Enum.Parse<IteratorEffectMode>(iteratorMode), Enum.Parse<IteratorEffectMode>(secondaryIteratorMode));
     }
 
     public Task IncreaseBPM(int value)
@@ -108,12 +110,12 @@ namespace HueLightDJ.Web.Hubs
 
     public void StartRandom()
     {
-      EffectService.StartRandomEffect(hub);
+      effectService.StartRandomEffect();
     }
 
     public Task StartAutoMode()
     {
-      EffectService.StartAutoMode(hub);
+      effectService.StartAutoMode();
       return GetStatus();
     }
 
@@ -151,7 +153,7 @@ namespace HueLightDJ.Web.Hubs
     }
     public void Beat(double intensity)
     {
-      EffectService.Beat(hub, intensity);
+      effectService.Beat(intensity);
     }
 
     public async Task Disconnect()

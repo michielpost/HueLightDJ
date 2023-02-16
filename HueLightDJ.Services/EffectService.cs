@@ -14,7 +14,7 @@ using HueLightDJ.Services.Models;
 
 namespace HueLightDJ.Services
 {
-  public static class EffectService
+  public class EffectService
   {
     private static List<TypeInfo> EffectTypes { get; set; } = new List<TypeInfo>();
     private static List<TypeInfo> GroupEffectTypes { get; set; } = new List<TypeInfo>();
@@ -23,6 +23,12 @@ namespace HueLightDJ.Services
 
     private static CancellationTokenSource? autoModeCts;
     public static bool AutoModeHasRandomEffects = true;
+    private readonly IHubService hub;
+
+    public EffectService(IHubService hub)
+    {
+      this.hub = hub;
+    }
 
     public static List<TypeInfo> GetEffectTypes()
     {
@@ -147,7 +153,7 @@ namespace HueLightDJ.Services
       }
     }
 
-    public static void StartAutoMode(IHubService hub)
+    public void StartAutoMode()
     {
       autoModeCts?.Cancel();
       autoModeCts = new CancellationTokenSource();
@@ -156,7 +162,7 @@ namespace HueLightDJ.Services
       {
         while(!autoModeCts.IsCancellationRequested)
         {
-          StartRandomEffect(hub, AutoModeHasRandomEffects);
+          StartRandomEffect(AutoModeHasRandomEffects);
 
           var secondsToWait = StreamingSetup.WaitTime.Value.TotalSeconds > 1 ? 18 : 6; //low bpm? play effect longer
           await Task.Delay(TimeSpan.FromSeconds(secondsToWait));
@@ -184,7 +190,7 @@ namespace HueLightDJ.Services
       return true;
     }
 
-    public static void StartEffect(IHubService hub, string typeName, string colorHex, string? group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
+    public void StartEffect(string typeName, string colorHex, string? group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
@@ -224,17 +230,17 @@ namespace HueLightDJ.Services
           //get group
           var selectedGroup = GroupService.GetAll(layer).Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
 
-          StartEffect(hub, cts.Token, selectedEffect, selectedGroup.SelectMany(x => x), group, waitTime, color, iteratorMode, secondaryIteratorMode);
+          StartEffect(cts.Token, selectedEffect, selectedGroup.SelectMany(x => x), group, waitTime, color, iteratorMode, secondaryIteratorMode);
         }
         else
         {
-          StartEffect(hub, cts.Token, selectedEffect, layer, waitTime, color);
+          StartEffect(cts.Token, selectedEffect, layer, waitTime, color);
         }
         
       }
     }
 
-    private static void StartEffect(IHubService hub, CancellationToken ctsToken, TypeInfo selectedEffect, IEnumerable<IEnumerable<EntertainmentLight>> group, string groupName, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
+    private void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, IEnumerable<IEnumerable<EntertainmentLight>> group, string groupName, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
       MethodInfo? methodInfo = selectedEffect.GetMethod("Start");
       if (methodInfo == null)
@@ -263,7 +269,7 @@ namespace HueLightDJ.Services
 
     }
 
-    private static void StartTouchEffect(CancellationToken ctsToken, TypeInfo selectedEffect, Func<TimeSpan> waitTime, RGBColor? color, double x, double y)
+    private void StartTouchEffect(CancellationToken ctsToken, TypeInfo selectedEffect, Func<TimeSpan> waitTime, RGBColor? color, double x, double y)
     {
       MethodInfo? methodInfo = selectedEffect.GetMethod("Start");
       if (methodInfo == null)
@@ -277,7 +283,7 @@ namespace HueLightDJ.Services
       methodInfo.Invoke(classInstance, parametersArray);
     }
 
-    private static void StartEffect(IHubService hub, CancellationToken ctsToken, TypeInfo selectedEffect, EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color)
+    private void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color)
     {
       MethodInfo? methodInfo = selectedEffect.GetMethod("Start");
       if (methodInfo == null)
@@ -292,7 +298,7 @@ namespace HueLightDJ.Services
 
     }
 
-    public static void StartRandomEffect(IHubService hub, bool withRandomEffects = true)
+    public void StartRandomEffect(bool withRandomEffects = true)
     {
       var r = new Random();
 
@@ -303,7 +309,7 @@ namespace HueLightDJ.Services
 
 
       if (r.NextDouble() <= (withRandomEffects ? 0.4 : 0))
-        StartRandomGroupEffect(hub);
+        StartRandomGroupEffect();
       else
       {
         string? effect = all
@@ -316,12 +322,12 @@ namespace HueLightDJ.Services
         GenerateRandomEffectSettings(out RGBColor hexColor, out _, out _);
 
         if(effect != null)
-          StartEffect(hub, effect, hexColor.ToHex());
+          StartEffect(effect, hexColor.ToHex());
       }
 
     }
 
-    private static void StartRandomGroupEffect(IHubService hub, bool useMultipleEffects = true)
+    private void StartRandomGroupEffect(bool useMultipleEffects = true)
     {
       Func<TimeSpan> waitTime = () => StreamingSetup.WaitTime;
 
@@ -361,11 +367,11 @@ namespace HueLightDJ.Services
           )
         {
           //Random colors on all individual is boring, start another effect!
-          StartRandomEffect(hub);
+          StartRandomEffect();
           break;
         }
 
-        StartEffect(hub, cts.Token, effects[i], section, group.Name, waitTime, hexColor, iteratorMode, iteratorSecondaryMode);
+        StartEffect(cts.Token, effects[i], section, group.Name, waitTime, hexColor, iteratorMode, iteratorSecondaryMode);
       }
 
 
@@ -430,7 +436,7 @@ namespace HueLightDJ.Services
       }
     }
 
-    public static void StartRandomTouchEffect(double x, double y)
+    public void StartRandomTouchEffect(double x, double y)
     {
       var effectLayer = GetLayer(isBaseLayer: false);
 
@@ -441,7 +447,7 @@ namespace HueLightDJ.Services
       StartTouchEffect(CancellationToken.None, randomTouch, waitTime, null, x, y);
     }
 
-    public static void Beat(IHubService hub, double intensity)
+    public void Beat(double intensity)
     {
       var effectLayer = GetLayer(isBaseLayer: false);
 
@@ -449,7 +455,7 @@ namespace HueLightDJ.Services
 
       Func<TimeSpan> waitTime = () => TimeSpan.FromMilliseconds(100);
 
-      StartEffect(hub, default(CancellationToken), typeof(FlashFadeEffect).GetTypeInfo(), effectLayer, waitTime, RGBColor.Random());
+      StartEffect(default(CancellationToken), typeof(FlashFadeEffect).GetTypeInfo(), effectLayer, waitTime, RGBColor.Random());
     }
   }
 }

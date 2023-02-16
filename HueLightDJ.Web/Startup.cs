@@ -39,13 +39,12 @@ namespace HueLightDJ.Web
       });
 
 
-      services.AddControllersWithViews()
-        .AddNewtonsoftJson()
-        .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+      services.AddControllersWithViews();
 
       services.AddSignalR();
 
       services.AddTransient<IHubService, HubService>();
+      services.AddHueLightDJServices();
 
       services.AddCors(options => options.AddPolicy("CorsPolicy",
       builder =>
