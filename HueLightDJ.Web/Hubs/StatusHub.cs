@@ -28,10 +28,8 @@ namespace HueLightDJ.Web.Hubs
 
       try
       {
-        var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
-
         //Connect
-        await streamingSetup.SetupAndReturnGroupAsync(fullConfig, groupName);
+        await streamingSetup.SetupAndReturnGroupAsync(groupName);
         await Clients.All.SendAsync("StatusMsg", "Connected to bridge");
 
         await GetEffects(true);
@@ -46,9 +44,7 @@ namespace HueLightDJ.Web.Hubs
 
     public async Task GetStatus()
     {
-      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
-
-      var configs = await streamingSetup.GetGroupConfigurationsAsync(fullConfig);
+      var configs = await streamingSetup.GetGroupConfigurationsAsync();
       StatusViewModel vm = new StatusViewModel();
       vm.bpm = StreamingSetup.GetBPM();
       vm.IsAutoMode = EffectService.IsAutoModeRunning();

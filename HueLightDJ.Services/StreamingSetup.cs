@@ -15,6 +15,7 @@ using HueApi.ColorConverters.Original.Extensions;
 using HueApi.Extensions;
 using HueLightDJ.Services.Models;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 
 namespace HueLightDJ.Services
 {
@@ -35,14 +36,17 @@ namespace HueLightDJ.Services
     private static Guid _groupId;
     private static CancellationTokenSource _cts;
     private readonly IHubService hub;
-    public StreamingSetup(IHubService hub)
+    private readonly List<GroupConfiguration> fullConfig;
+
+    public StreamingSetup(IHubService hub, IOptions<List<GroupConfiguration>> fullConfig)
     {
       this.hub = hub;
+      this.fullConfig = fullConfig.Value;
     }
 
-    public async Task<List<MultiBridgeHuePosition>> GetLocationsAsync(List<GroupConfiguration> fullConfig, string groupName)
+    public async Task<List<MultiBridgeHuePosition>> GetLocationsAsync(string groupName)
     {
-      var configSection = await GetGroupConfigurationsAsync(fullConfig);
+      var configSection = await GetGroupConfigurationsAsync();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
 
       var locations = new List<MultiBridgeHuePosition>();
@@ -79,9 +83,9 @@ namespace HueLightDJ.Services
       return locations;
     }
 
-    public async Task SetLocations(List<GroupConfiguration> fullConfig, List<MultiBridgeHuePosition> locations)
+    public async Task SetLocations(List<MultiBridgeHuePosition> locations)
     {
-      var configSection = await GetGroupConfigurationsAsync(fullConfig);
+      var configSection = await GetGroupConfigurationsAsync();
 
       var grouped = locations.GroupBy(x => x.Bridge);
 
@@ -118,9 +122,9 @@ namespace HueLightDJ.Services
       }
     }
 
-    public async Task AlertLight(List<GroupConfiguration> fullConfig, MultiBridgeHuePosition light)
+    public async Task AlertLight(MultiBridgeHuePosition light)
     {
-      var configSection = await GetGroupConfigurationsAsync(fullConfig);
+      var configSection = await GetGroupConfigurationsAsync();
 
       var config = configSection.Where(x => x.Connections.Any(c => c.Ip == light.Bridge)).FirstOrDefault();
       if (config != null)
@@ -161,9 +165,9 @@ namespace HueLightDJ.Services
       }
     }
 
-    public async Task SetupAndReturnGroupAsync(List<GroupConfiguration> fullConfig, string groupName)
+    public async Task SetupAndReturnGroupAsync(string groupName)
     {
-      var configSection = await GetGroupConfigurationsAsync(fullConfig);
+      var configSection = await GetGroupConfigurationsAsync();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
       if (currentGroup == null)
         throw new ArgumentNullException($"Group not found ({groupName})", nameof(groupName));
@@ -260,7 +264,7 @@ namespace HueLightDJ.Services
 
     }
 
-    public async Task<List<GroupConfiguration>> GetGroupConfigurationsAsync(List<GroupConfiguration> fullConfig)
+    public async Task<List<GroupConfiguration>> GetGroupConfigurationsAsync()
     {
       IEnumerable<LocatedBridge> bridges = new List<LocatedBridge>();
       try

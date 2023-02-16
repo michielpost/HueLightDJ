@@ -54,8 +54,7 @@ namespace HueLightDJ.Services.Controllers
     [Route("Configure")]
     public async Task<IActionResult> Configure()
     {
-      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
-      var config = await streamingSetup.GetGroupConfigurationsAsync(fullConfig);
+      var config = await streamingSetup.GetGroupConfigurationsAsync();
       return View(config);
     }
 
@@ -63,9 +62,7 @@ namespace HueLightDJ.Services.Controllers
     [Route("export/{groupName}")]
     public async Task<List<Dictionary<Guid, HuePosition>>> ExportJson([FromRoute]string groupName)
     {
-      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
-
-      var locations = await streamingSetup.GetLocationsAsync(fullConfig, groupName);
+      var locations = await streamingSetup.GetLocationsAsync(groupName);
 
       return locations.GroupBy(x => x.Bridge)
         .Select(x => x.ToDictionary(l => l.Id, loc => new HuePosition(loc.X, loc.Y, 0))).ToList();
@@ -76,9 +73,7 @@ namespace HueLightDJ.Services.Controllers
     [Route("fullexport/{groupName}")]
     public Task<List<MultiBridgeHuePosition>> FullExportJson([FromRoute]string groupName)
     {
-      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
-
-      return streamingSetup.GetLocationsAsync(fullConfig, groupName);
+      return streamingSetup.GetLocationsAsync(groupName);
     }
 
     [HttpPost]

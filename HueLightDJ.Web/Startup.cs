@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using HueLightDJ.Services;
 using HueLightDJ.Web.Services;
+using HueLightDJ.Services.Models;
 
 namespace HueLightDJ.Web
 {
@@ -44,6 +45,7 @@ namespace HueLightDJ.Web
       services.AddSignalR();
 
       services.AddTransient<IHubService, HubService>();
+      services.Configure<List<GroupConfiguration>>(Configuration.GetSection("HueSetup"));
       services.AddHueLightDJServices();
 
       services.AddCors(options => options.AddPolicy("CorsPolicy",

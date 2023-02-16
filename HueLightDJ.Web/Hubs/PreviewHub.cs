@@ -33,21 +33,18 @@ namespace HueLightDJ.Web.Hubs
 
     public async Task GetLocations(string groupName)
     {
-      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
-      var locations = await streamingSetup.GetLocationsAsync(fullConfig, groupName);
+      var locations = await streamingSetup.GetLocationsAsync(groupName);
       Clients.Caller.SendAsync("newLocations", locations);
     }
 
     public Task SetLocations(List<MultiBridgeHuePosition> locations)
     {
-      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
-      return streamingSetup.SetLocations(fullConfig, locations);
+      return streamingSetup.SetLocations(locations);
     }
 
     public Task Locate(MultiBridgeHuePosition light)
     {
-      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
-      return streamingSetup.AlertLight(fullConfig, light);
+      return streamingSetup.AlertLight(light);
     }
 
   }
