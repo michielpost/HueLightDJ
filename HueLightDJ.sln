@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Web", "HueLightD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Effects", "HueLightDJ.Effects\HueLightDJ.Effects.csproj", "{7F07C78A-1FCF-4451-9312-2A70DD0328E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Services", "HueLightDJ.Services\HueLightDJ.Services.csproj", "{ABAE567B-5BDF-4129-987C-312B9246A38E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F07C78A-1FCF-4451-9312-2A70DD0328E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABAE567B-5BDF-4129-987C-312B9246A38E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABAE567B-5BDF-4129-987C-312B9246A38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABAE567B-5BDF-4129-987C-312B9246A38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABAE567B-5BDF-4129-987C-312B9246A38E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

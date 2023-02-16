@@ -1,11 +1,12 @@
-using HueLightDJ.Web.Models;
-using HueLightDJ.Web.Streaming;
 using Microsoft.AspNetCore.SignalR;
 using HueApi.Entertainment.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HueLightDJ.Services.Models;
+using HueLightDJ.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace HueLightDJ.Web.Hubs
 {
@@ -24,18 +25,21 @@ namespace HueLightDJ.Web.Hubs
 
     public async Task GetLocations(string groupName)
     {
-      var locations = await StreamingSetup.GetLocationsAsync(groupName);
+      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
+      var locations = await StreamingSetup.GetLocationsAsync(fullConfig, groupName);
       Clients.Caller.SendAsync("newLocations", locations);
     }
 
     public Task SetLocations(List<MultiBridgeHuePosition> locations)
     {
-      return StreamingSetup.SetLocations(locations);
+      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
+      return StreamingSetup.SetLocations(fullConfig, locations);
     }
 
     public Task Locate(MultiBridgeHuePosition light)
     {
-      return StreamingSetup.AlertLight(light);
+      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
+      return StreamingSetup.AlertLight(fullConfig, light);
     }
 
   }

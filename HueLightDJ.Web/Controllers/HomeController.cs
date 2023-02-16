@@ -4,15 +4,18 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using HueLightDJ.Web.Models;
-using HueLightDJ.Web.Streaming;
+using HueLightDJ.Services.Models;
+using HueLightDJ.Services;
 using HueApi;
 using HueApi.Models;
 using HueApi.BridgeLocator;
 using Org.BouncyCastle.Ocsp;
 using HueApi.Extensions.cs;
+using HueLightDJ.Web.Models;
+using HueLightDJ.Web;
+using Microsoft.Extensions.Configuration;
 
-namespace HueLightDJ.Web.Controllers
+namespace HueLightDJ.Services.Controllers
 {
   public class HomeController : Controller
   {
@@ -44,7 +47,8 @@ namespace HueLightDJ.Web.Controllers
     [Route("Configure")]
     public async Task<IActionResult> Configure()
     {
-      var config = await StreamingSetup.GetGroupConfigurationsAsync();
+      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
+      var config = await StreamingSetup.GetGroupConfigurationsAsync(fullConfig);
       return View(config);
     }
 
@@ -52,7 +56,9 @@ namespace HueLightDJ.Web.Controllers
     [Route("export/{groupName}")]
     public async Task<List<Dictionary<Guid, HuePosition>>> ExportJson([FromRoute]string groupName)
     {
-      var locations = await StreamingSetup.GetLocationsAsync(groupName);
+      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
+
+      var locations = await StreamingSetup.GetLocationsAsync(fullConfig, groupName);
 
       return locations.GroupBy(x => x.Bridge)
         .Select(x => x.ToDictionary(l => l.Id, loc => new HuePosition(loc.X, loc.Y, 0))).ToList();
@@ -63,7 +69,9 @@ namespace HueLightDJ.Web.Controllers
     [Route("fullexport/{groupName}")]
     public Task<List<MultiBridgeHuePosition>> FullExportJson([FromRoute]string groupName)
     {
-      return StreamingSetup.GetLocationsAsync(groupName);
+      var fullConfig = Startup.Configuration.GetSection("HueSetup").Get<List<GroupConfiguration>>();
+
+      return StreamingSetup.GetLocationsAsync(fullConfig, groupName);
     }
 
     [HttpPost]

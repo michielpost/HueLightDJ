@@ -1,30 +1,25 @@
-using HueLightDJ.Web.Hubs;
-using HueLightDJ.Web.Models;
-using Microsoft.AspNetCore.SignalR;
 using HueApi.Entertainment;
 using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HueLightDJ.Services.Models;
 
-namespace HueLightDJ.Web.Streaming
+namespace HueLightDJ.Services
 {
   public class LightDJStreamingHueClient : StreamingHueClient
   {
-    private IHubContext<PreviewHub> _hub;
     private bool _demoMode;
+    private readonly IHubService _hub;
     private string _bridgeIp;
 
-    public LightDJStreamingHueClient(string ip, string appKey, string clientKey, bool demoMode) : base(ip, appKey, clientKey)
+    public LightDJStreamingHueClient(IHubService hub, string ip, string appKey, string clientKey, bool demoMode) : base(ip, appKey, clientKey)
     {
+      this._hub = hub;
       _bridgeIp = ip;
       _demoMode = demoMode;
-      var hub = (IHubContext<PreviewHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<PreviewHub>));
-      if (hub == null)
-        throw new Exception("Unable to get PreviewHub from ServiceProvider");
-
-      _hub = hub;
+     
     }
 
     protected override void Send(IEnumerable<IEnumerable<StreamingChannel>> chunks)
@@ -34,7 +29,7 @@ namespace HueLightDJ.Web.Streaming
 
       var flatten = chunks.SelectMany(x => x);
 
-      _hub.Clients.All.SendAsync("preview", flatten.Select(x => new PreviewModel()
+      _hub.SendAsync("preview", flatten.Select(x => new PreviewModel()
       {
         Bridge = _bridgeIp,
         Id = x.Id,

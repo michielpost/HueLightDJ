@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HueLightDJ.Web.Models
+namespace HueLightDJ.Services.Models
 {
   public class ConnectionConfiguration
   {

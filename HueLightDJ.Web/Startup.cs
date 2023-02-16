@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using HueLightDJ.Services;
+using HueLightDJ.Web.Services;
 
 namespace HueLightDJ.Web
 {
@@ -42,6 +44,8 @@ namespace HueLightDJ.Web
         .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
       services.AddSignalR();
+
+      services.AddTransient<IHubService, HubService>();
 
       services.AddCors(options => options.AddPolicy("CorsPolicy",
       builder =>

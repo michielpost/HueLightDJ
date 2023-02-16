@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HueApi.Entertainment.Extensions;
 
-namespace HueLightDJ.Web.Models
+namespace HueLightDJ.Services.Models
 {
     public class EffectLogMsg
     {

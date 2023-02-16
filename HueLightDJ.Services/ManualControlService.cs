@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HueApi.Models;
 
-namespace HueLightDJ.Web.Streaming
+namespace HueLightDJ.Services
 {
   public static class ManualControlService
   {

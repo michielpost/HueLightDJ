@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HueLightDJ.Web.Models
+namespace HueLightDJ.Services.Models
 {
     public class RunningEffectInfo
     {

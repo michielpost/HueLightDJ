@@ -1,14 +1,12 @@
 using HueLightDJ.Effects;
-using HueLightDJ.Web.Models;
-using HueApi.Entertainment.Effects;
 using HueApi.Entertainment.Extensions;
 using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using HueLightDJ.Services.Models;
 
-namespace HueLightDJ.Web.Streaming
+namespace HueLightDJ.Services
 {
   public static class GroupService
   {

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8625;CS8613</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HueApi" Version="1.0.0" />
+    <PackageReference Include="HueApi.ColorConverters" Version="1.0.0" />
+    <PackageReference Include="HueApi.Entertainment" Version="1.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HueLightDJ.Effects\HueLightDJ.Effects.csproj" />
+  </ItemGroup>
+
+</Project>
