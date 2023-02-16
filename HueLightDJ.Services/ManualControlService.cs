@@ -16,7 +16,7 @@ namespace HueLightDJ.Services
 
       var lightsMatrix = new List<EntertainmentLight>[heightIndex + 1, widthIndex + 1];
 
-      var allLights = StreamingSetup.Layers.First();
+      var allLights = StreamingSetup.GetFirstLayer();
       foreach (var light in allLights)
       {
         int x = GetMatrixPositionY(light.LightLocation, heightIndex + 1);

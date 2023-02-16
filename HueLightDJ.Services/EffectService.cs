@@ -78,9 +78,11 @@ namespace HueLightDJ.Services
         if (hueEffectAtt == null)
           continue;
 
-        var effect = new EffectViewModel();
-        effect.Name = hueEffectAtt.Name;
-        effect.TypeName = type.Name;
+        var effect = new EffectViewModel()
+        {
+          Name = hueEffectAtt.Name,
+          TypeName = type.Name,
+        };
         effect.HasColorPicker = hueEffectAtt.HasColorPicker;
 
         if(!string.IsNullOrEmpty(hueEffectAtt.DefaultColor))
@@ -106,9 +108,11 @@ namespace HueLightDJ.Services
         if (hueEffectAtt == null)
           continue;
 
-        var effect = new EffectViewModel();
-        effect.Name = hueEffectAtt.Name;
-        effect.TypeName = type.Name;
+        var effect = new EffectViewModel()
+        {
+          Name = hueEffectAtt.Name,
+          TypeName = type.Name
+        };
         effect.HasColorPicker = hueEffectAtt.HasColorPicker;
 
         if (!string.IsNullOrEmpty(hueEffectAtt.DefaultColor))
@@ -230,7 +234,8 @@ namespace HueLightDJ.Services
           //get group
           var selectedGroup = GroupService.GetAll(layer).Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
 
-          StartEffect(cts.Token, selectedEffect, selectedGroup.SelectMany(x => x), group, waitTime, color, iteratorMode, secondaryIteratorMode);
+          if(selectedGroup!= null)
+            StartEffect(cts.Token, selectedEffect, selectedGroup.SelectMany(x => x), group!, waitTime, color, iteratorMode, secondaryIteratorMode);
         }
         else
         {
@@ -385,8 +390,8 @@ namespace HueLightDJ.Services
         hexColor = RGBColor.Random(r);
 
       Array values = Enum.GetValues(typeof(IteratorEffectMode));
-      iteratorMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
-      iteratorSecondaryMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
+      iteratorMode = (IteratorEffectMode?)values.GetValue(r.Next(values.Length)) ?? IteratorEffectMode.All;
+      iteratorSecondaryMode = (IteratorEffectMode?)values.GetValue(r.Next(values.Length)) ?? IteratorEffectMode.Random;
 
       //Bounce and Single are no fun for random mode
       if (iteratorMode == IteratorEffectMode.Bounce || iteratorMode == IteratorEffectMode.Single)
@@ -397,6 +402,9 @@ namespace HueLightDJ.Services
 
     private static EntertainmentLayer GetLayer(bool isBaseLayer)
     {
+      if (StreamingSetup.Layers == null || !StreamingSetup.Layers.Any())
+        throw new Exception("No layers found.");
+
       if (isBaseLayer)
         return StreamingSetup.Layers.First();
 
@@ -441,6 +449,8 @@ namespace HueLightDJ.Services
       var effectLayer = GetLayer(isBaseLayer: false);
 
       var randomTouch = GetTouchEffectTypes().OrderBy(_ => Guid.NewGuid()).FirstOrDefault();
+      if (randomTouch == null)
+        return;
 
       Func<TimeSpan> waitTime = () => StreamingSetup.WaitTime;
 

@@ -34,7 +34,7 @@ namespace HueLightDJ.Services
    
 
     private static Guid _groupId;
-    private static CancellationTokenSource _cts;
+    private static CancellationTokenSource _cts = new();
     private readonly IHubService hub;
     private readonly List<GroupConfiguration> fullConfig;
 
@@ -326,6 +326,14 @@ namespace HueLightDJ.Services
       StreamingGroups.Clear();
       CurrentConnection = null;
      
+    }
+
+    public static EntertainmentLayer GetFirstLayer()
+    {
+      if (Layers == null || !Layers.Any())
+        throw new Exception("No layers found.");
+
+      return Layers.First();
     }
 
     public async static Task<bool> IsStreamingActive()

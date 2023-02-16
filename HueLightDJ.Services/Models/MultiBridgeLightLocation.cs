@@ -7,7 +7,7 @@ namespace HueLightDJ.Services.Models
 {
   public class MultiBridgeHuePosition
   {
-    public string Bridge { get; set; }
+    public required string Bridge { get; set; }
     public Guid GroupId { get; set; }
 
     public Guid Id { get; set; }

@@ -7,25 +7,25 @@ namespace HueLightDJ.Services.Models
 {
   public class EffectsVM
   {
-    public Dictionary<string, List<EffectViewModel>> BaseEffects { get; set; }
-    public List<EffectViewModel> ShortEffects { get; set; }
-    public List<EffectViewModel> GroupEffects { get; set; }
-    public List<GroupInfoViewModel> Groups { get; set; }
-    public List<string> IteratorModes { get; set; }
-    public List<string> SecondaryIteratorModes { get; set; }
+    public Dictionary<string, List<EffectViewModel>> BaseEffects { get; set; } = new();
+    public List<EffectViewModel> ShortEffects { get; set; } = new();
+    public List<EffectViewModel> GroupEffects { get; set; } = new();
+    public List<GroupInfoViewModel> Groups { get; set; } = new();
+    public List<string> IteratorModes { get; set; } = new();
+    public List<string> SecondaryIteratorModes { get; set; } = new();
 
   }
 
   public class EffectViewModel
   {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
-    public string TypeName { get; set; }
+    public required string TypeName { get; set; }
     public bool HasColorPicker { get; set; }
 
 
     //VueJS properties:
-    public string Color { get; set; }
+    public string? Color { get; set; }
 
     public bool IsRandom { get; set; } = true;
 
@@ -33,7 +33,7 @@ namespace HueLightDJ.Services.Models
 
   public class GroupInfoViewModel
   {
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
   }
 }

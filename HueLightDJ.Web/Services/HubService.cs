@@ -10,12 +10,8 @@ namespace HueLightDJ.Web.Services
   {
     private IHubContext<PreviewHub> _hub;
 
-    public HubService()
+    public HubService(IHubContext<PreviewHub> hub)
     {
-      var hub = (IHubContext<PreviewHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<PreviewHub>));
-      if (hub == null)
-        throw new Exception("Unable to get PreviewHub from ServiceProvider");
-
       _hub = hub;
     }
 

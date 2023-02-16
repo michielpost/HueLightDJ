@@ -82,7 +82,7 @@ namespace HueLightDJ.Services.Controllers
     {
       var result = await LocalHueApi.RegisterAsync(ip, "HueLightDJ", "Web", generateClientKey: true);
 
-      if (result == null || result.Username == null)
+      if (result == null || result.Username == null || string.IsNullOrEmpty(result.StreamingClientKey))
         throw new Exception("No result from bridge");
 
       var hueClient = new LocalHueApi(ip, result.Username);

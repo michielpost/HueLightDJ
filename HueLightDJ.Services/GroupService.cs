@@ -13,7 +13,7 @@ namespace HueLightDJ.Services
     public static List<GroupModel> GetAll(EntertainmentLayer? layer = null)
     {
       if (layer == null)
-        layer = StreamingSetup.Layers.First();
+        layer = StreamingSetup.GetFirstLayer();
 
       var center = EffectSettings.LocationCenter;
 
@@ -61,7 +61,7 @@ namespace HueLightDJ.Services
 
     public static IEnumerable<IEnumerable<EntertainmentLight>> GetRandomGroup()
     {
-      var layer = StreamingSetup.Layers.First();
+      var layer = StreamingSetup.GetFirstLayer();
       var orderRandom = layer.OrderBy(x => Guid.NewGuid());
 
       var min = 2;

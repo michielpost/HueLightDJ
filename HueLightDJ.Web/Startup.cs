@@ -24,9 +24,9 @@ namespace HueLightDJ.Web
       Configuration = configuration;
     }
 
-    public static IConfiguration Configuration { get; set; }
+    public static IConfiguration Configuration { get; set; } = default!;
 
-    public static IServiceProvider ServiceProvider { get; set; }
+    public static IServiceProvider ServiceProvider { get; set; } = default!;
 
 
     // This method gets called by the runtime. Use this method to add services to the container.
