@@ -1,9 +1,9 @@
-name: Docker CD
+name: Docker - GitHub Registry
 
 on:
   push:
     branches:
-      - feature/HueApiV2
+      - master
     tags:
       - '*'
     paths-ignore:
@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # this is a little bit of "dark magick"...
       # Github Registry seems to hate Usernames Containing UpperCase...
