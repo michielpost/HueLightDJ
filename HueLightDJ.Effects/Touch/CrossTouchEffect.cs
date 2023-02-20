@@ -1,8 +1,8 @@
 using HueLightDJ.Effects.Base;
-using Q42.HueApi.ColorConverters;
-using Q42.HueApi.Streaming.Effects;
-using Q42.HueApi.Streaming.Effects.Examples;
-using Q42.HueApi.Streaming.Models;
+using HueApi.ColorConverters;
+using HueApi.Entertainment.Effects;
+using HueApi.Entertainment.Effects.Examples;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

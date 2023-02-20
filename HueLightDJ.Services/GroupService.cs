@@ -1,21 +1,19 @@
 using HueLightDJ.Effects;
-using HueLightDJ.Web.Models;
-using Q42.HueApi.Streaming.Effects;
-using Q42.HueApi.Streaming.Extensions;
-using Q42.HueApi.Streaming.Models;
+using HueApi.Entertainment.Extensions;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using HueLightDJ.Services.Models;
 
-namespace HueLightDJ.Web.Streaming
+namespace HueLightDJ.Services
 {
   public static class GroupService
   {
     public static List<GroupModel> GetAll(EntertainmentLayer? layer = null)
     {
       if (layer == null)
-        layer = StreamingSetup.Layers.First();
+        layer = StreamingSetup.GetFirstLayer();
 
       var center = EffectSettings.LocationCenter;
 
@@ -63,7 +61,7 @@ namespace HueLightDJ.Web.Streaming
 
     public static IEnumerable<IEnumerable<EntertainmentLight>> GetRandomGroup()
     {
-      var layer = StreamingSetup.Layers.First();
+      var layer = StreamingSetup.GetFirstLayer();
       var orderRandom = layer.OrderBy(x => Guid.NewGuid());
 
       var min = 2;

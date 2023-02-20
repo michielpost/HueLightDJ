@@ -1,22 +1,20 @@
 using HueLightDJ.Effects;
 using HueLightDJ.Effects.Base;
 using HueLightDJ.Effects.Layers;
-using HueLightDJ.Web.Hubs;
-using HueLightDJ.Web.Models;
-using Microsoft.AspNetCore.SignalR;
-using Q42.HueApi.ColorConverters;
-using Q42.HueApi.Streaming.Extensions;
-using Q42.HueApi.Streaming.Models;
+using HueApi.ColorConverters;
+using HueApi.Entertainment.Extensions;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using HueLightDJ.Services.Models;
 
-namespace HueLightDJ.Web.Streaming
+namespace HueLightDJ.Services
 {
-  public static class EffectService
+  public class EffectService
   {
     private static List<TypeInfo> EffectTypes { get; set; } = new List<TypeInfo>();
     private static List<TypeInfo> GroupEffectTypes { get; set; } = new List<TypeInfo>();
@@ -25,6 +23,12 @@ namespace HueLightDJ.Web.Streaming
 
     private static CancellationTokenSource? autoModeCts;
     public static bool AutoModeHasRandomEffects = true;
+    private readonly IHubService hub;
+
+    public EffectService(IHubService hub)
+    {
+      this.hub = hub;
+    }
 
     public static List<TypeInfo> GetEffectTypes()
     {
@@ -74,9 +78,11 @@ namespace HueLightDJ.Web.Streaming
         if (hueEffectAtt == null)
           continue;
 
-        var effect = new EffectViewModel();
-        effect.Name = hueEffectAtt.Name;
-        effect.TypeName = type.Name;
+        var effect = new EffectViewModel()
+        {
+          Name = hueEffectAtt.Name,
+          TypeName = type.Name,
+        };
         effect.HasColorPicker = hueEffectAtt.HasColorPicker;
 
         if(!string.IsNullOrEmpty(hueEffectAtt.DefaultColor))
@@ -102,9 +108,11 @@ namespace HueLightDJ.Web.Streaming
         if (hueEffectAtt == null)
           continue;
 
-        var effect = new EffectViewModel();
-        effect.Name = hueEffectAtt.Name;
-        effect.TypeName = type.Name;
+        var effect = new EffectViewModel()
+        {
+          Name = hueEffectAtt.Name,
+          TypeName = type.Name
+        };
         effect.HasColorPicker = hueEffectAtt.HasColorPicker;
 
         if (!string.IsNullOrEmpty(hueEffectAtt.DefaultColor))
@@ -149,7 +157,7 @@ namespace HueLightDJ.Web.Streaming
       }
     }
 
-    public static void StartAutoMode()
+    public void StartAutoMode()
     {
       autoModeCts?.Cancel();
       autoModeCts = new CancellationTokenSource();
@@ -186,12 +194,8 @@ namespace HueLightDJ.Web.Streaming
       return true;
     }
 
-    public static void StartEffect(string typeName, string colorHex, string? group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
+    public void StartEffect(string typeName, string colorHex, string? group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
-      var hub = (IHubContext<StatusHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
-      if (hub == null)
-        throw new Exception("Unable to get PreviewHub from ServiceProvider");
-
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();
 
@@ -230,7 +234,8 @@ namespace HueLightDJ.Web.Streaming
           //get group
           var selectedGroup = GroupService.GetAll(layer).Where(x => x.Name == group).Select(x => x.Lights).FirstOrDefault();
 
-          StartEffect(cts.Token, selectedEffect, selectedGroup.SelectMany(x => x), group, waitTime, color, iteratorMode, secondaryIteratorMode);
+          if(selectedGroup!= null)
+            StartEffect(cts.Token, selectedEffect, selectedGroup.SelectMany(x => x), group!, waitTime, color, iteratorMode, secondaryIteratorMode);
         }
         else
         {
@@ -240,7 +245,7 @@ namespace HueLightDJ.Web.Streaming
       }
     }
 
-    private static void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, IEnumerable<IEnumerable<EntertainmentLight>> group, string groupName, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
+    private void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, IEnumerable<IEnumerable<EntertainmentLight>> group, string groupName, Func<TimeSpan> waitTime, RGBColor? color, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
       MethodInfo? methodInfo = selectedEffect.GetMethod("Start");
       if (methodInfo == null)
@@ -255,11 +260,7 @@ namespace HueLightDJ.Web.Streaming
       object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);
 
-      var hub = (IHubContext<StatusHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
-      if (hub == null)
-        throw new Exception("Unable to get PreviewHub from ServiceProvider");
-
-      hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {groupName}, {iteratorMode}-{secondaryIteratorMode} {color?.ToHex()}",
+      hub.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {groupName}, {iteratorMode}-{secondaryIteratorMode} {color?.ToHex()}",
           new EffectLogMsg()
           {
             EffectType = "group",
@@ -273,7 +274,7 @@ namespace HueLightDJ.Web.Streaming
 
     }
 
-    private static void StartTouchEffect(CancellationToken ctsToken, TypeInfo selectedEffect, Func<TimeSpan> waitTime, RGBColor? color, double x, double y)
+    private void StartTouchEffect(CancellationToken ctsToken, TypeInfo selectedEffect, Func<TimeSpan> waitTime, RGBColor? color, double x, double y)
     {
       MethodInfo? methodInfo = selectedEffect.GetMethod("Start");
       if (methodInfo == null)
@@ -287,7 +288,7 @@ namespace HueLightDJ.Web.Streaming
       methodInfo.Invoke(classInstance, parametersArray);
     }
 
-    private static void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color)
+    private void StartEffect(CancellationToken ctsToken, TypeInfo selectedEffect, EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color)
     {
       MethodInfo? methodInfo = selectedEffect.GetMethod("Start");
       if (methodInfo == null)
@@ -298,15 +299,11 @@ namespace HueLightDJ.Web.Streaming
       object? classInstance = Activator.CreateInstance(selectedEffect, null);
       methodInfo.Invoke(classInstance, parametersArray);
 
-      var hub = (IHubContext<StatusHub>?)Startup.ServiceProvider.GetService(typeof(IHubContext<StatusHub>));
-      if (hub == null)
-        throw new Exception("Unable to get PreviewHub from ServiceProvider");
-
-      hub.Clients.All.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {color?.ToHex()}", new EffectLogMsg() { Name = selectedEffect.Name, RGBColor = color?.ToHex() });
+      hub.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {color?.ToHex()}", new EffectLogMsg() { Name = selectedEffect.Name, RGBColor = color?.ToHex() });
 
     }
 
-    public static void StartRandomEffect(bool withRandomEffects = true)
+    public void StartRandomEffect(bool withRandomEffects = true)
     {
       var r = new Random();
 
@@ -335,7 +332,7 @@ namespace HueLightDJ.Web.Streaming
 
     }
 
-    private static void StartRandomGroupEffect(bool useMultipleEffects = true)
+    private void StartRandomGroupEffect(bool useMultipleEffects = true)
     {
       Func<TimeSpan> waitTime = () => StreamingSetup.WaitTime;
 
@@ -393,8 +390,8 @@ namespace HueLightDJ.Web.Streaming
         hexColor = RGBColor.Random(r);
 
       Array values = Enum.GetValues(typeof(IteratorEffectMode));
-      iteratorMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
-      iteratorSecondaryMode = (IteratorEffectMode)values.GetValue(r.Next(values.Length));
+      iteratorMode = (IteratorEffectMode?)values.GetValue(r.Next(values.Length)) ?? IteratorEffectMode.All;
+      iteratorSecondaryMode = (IteratorEffectMode?)values.GetValue(r.Next(values.Length)) ?? IteratorEffectMode.Random;
 
       //Bounce and Single are no fun for random mode
       if (iteratorMode == IteratorEffectMode.Bounce || iteratorMode == IteratorEffectMode.Single)
@@ -405,6 +402,9 @@ namespace HueLightDJ.Web.Streaming
 
     private static EntertainmentLayer GetLayer(bool isBaseLayer)
     {
+      if (StreamingSetup.Layers == null || !StreamingSetup.Layers.Any())
+        throw new Exception("No layers found.");
+
       if (isBaseLayer)
         return StreamingSetup.Layers.First();
 
@@ -444,18 +444,20 @@ namespace HueLightDJ.Web.Streaming
       }
     }
 
-    public static void StartRandomTouchEffect(double x, double y)
+    public void StartRandomTouchEffect(double x, double y)
     {
       var effectLayer = GetLayer(isBaseLayer: false);
 
       var randomTouch = GetTouchEffectTypes().OrderBy(_ => Guid.NewGuid()).FirstOrDefault();
+      if (randomTouch == null)
+        return;
 
       Func<TimeSpan> waitTime = () => StreamingSetup.WaitTime;
 
       StartTouchEffect(CancellationToken.None, randomTouch, waitTime, null, x, y);
     }
 
-    public static void Beat(double intensity)
+    public void Beat(double intensity)
     {
       var effectLayer = GetLayer(isBaseLayer: false);
 

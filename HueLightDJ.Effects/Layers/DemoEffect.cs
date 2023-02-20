@@ -4,8 +4,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HueLightDJ.Effects.Base;
-using Q42.HueApi.ColorConverters;
-using Q42.HueApi.Streaming.Models;
+using HueApi.ColorConverters;
+using HueApi.Entertainment.Models;
 
 namespace HueLightDJ.Effects.Layers
 {

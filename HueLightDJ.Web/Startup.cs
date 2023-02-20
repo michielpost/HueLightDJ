@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using HueLightDJ.Services;
+using HueLightDJ.Web.Services;
+using HueLightDJ.Services.Models;
 
 namespace HueLightDJ.Web
 {
@@ -21,9 +24,9 @@ namespace HueLightDJ.Web
       Configuration = configuration;
     }
 
-    public static IConfiguration Configuration { get; set; }
+    public static IConfiguration Configuration { get; set; } = default!;
 
-    public static IServiceProvider ServiceProvider { get; set; }
+    public static IServiceProvider ServiceProvider { get; set; } = default!;
 
 
     // This method gets called by the runtime. Use this method to add services to the container.
@@ -37,11 +40,13 @@ namespace HueLightDJ.Web
       });
 
 
-      services.AddControllersWithViews()
-        .AddNewtonsoftJson()
-        .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+      services.AddControllersWithViews();
 
       services.AddSignalR();
+
+      services.AddTransient<IHubService, HubService>();
+      services.Configure<List<GroupConfiguration>>(Configuration.GetSection("HueSetup"));
+      services.AddHueLightDJServices();
 
       services.AddCors(options => options.AddPolicy("CorsPolicy",
       builder =>

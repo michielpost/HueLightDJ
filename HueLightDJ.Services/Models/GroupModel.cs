@@ -1,11 +1,11 @@
-using Q42.HueApi.Streaming.Extensions;
-using Q42.HueApi.Streaming.Models;
+using HueApi.Entertainment.Extensions;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HueLightDJ.Web.Models
+namespace HueLightDJ.Services.Models
 {
   public class GroupModel
   {

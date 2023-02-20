@@ -1,7 +1,7 @@
 using HueLightDJ.Effects.Base;
-using Q42.HueApi.ColorConverters;
-using Q42.HueApi.Streaming.Effects;
-using Q42.HueApi.Streaming.Models;
+using HueApi.ColorConverters;
+using HueApi.Entertainment.Effects;
+using HueApi.Entertainment.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,7 +17,7 @@ namespace HueLightDJ.Effects.Touch
     {
       Func<TimeSpan> customWaitTime = () => waitTime() / 10;
 
-      Q42.HueApi.Streaming.Effects.RandomPulseEffect effect = new Q42.HueApi.Streaming.Effects.RandomPulseEffect(false, customWaitTime);
+      HueApi.Entertainment.Effects.Examples.RandomPulseEffect effect = new HueApi.Entertainment.Effects.Examples.RandomPulseEffect(false, customWaitTime);
       effect.X = x;
       effect.Y = y;
       effect.AutoRepeat = false;

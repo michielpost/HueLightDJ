@@ -29,7 +29,7 @@ function renderPreviewGrid(size, allowEdit) {
     previewConnection.on("newLocations", (preview) => {
       for (var i = 0; i < preview.length; i++) {
         var light = preview[i];
-        placeLight(light.bridge, light.id, light.x, light.y, light.hex, light.bri, light.groupId)
+        placeLight(light.bridge, light.id, light.x, light.y, light.hex, light.bri, light.groupId, light.positionIndex)
       }
     });
   }
@@ -100,15 +100,17 @@ function renderPreviewGrid(size, allowEdit) {
 
   function saveLocations() {
     var result = [];
-    for (const [key, value] of Object.entries(lights)) {
-      for (var i = 0; i < value.length; i++) {
-        var l = value[i];
+    for (const [key, values] of Object.entries(lights)) {
+      for (var i = 0; i < Object.keys(lights[key]).length; i++) {
+        var prop = Object.keys(lights[key])[i];
+        var l = lights[key][prop];
         if (l != undefined && l != null) {
           var pos = getXYPosition(l.label);
           result.push({
-            Id: i,
+            Id: l.lightId,
             Bridge: key,
             GroupId: l.groupId,
+            PositionIndex: l.positionIndex,
             X: pos.x,
             Y: pos.y
           });
@@ -138,7 +140,7 @@ function renderPreviewGrid(size, allowEdit) {
     return xypos;
   }
 
-  function placeLight(bridgeIp, id, x, y, hex, bri, groupId) {
+  function placeLight(bridgeIp, lightId, x, y, hex, bri, groupId, positionIndex) {
     var bridgeArray = lights[bridgeIp];
     var rad = 30 * bri;
     var xPos = xyToPosition(x);
@@ -148,6 +150,10 @@ function renderPreviewGrid(size, allowEdit) {
       lights[bridgeIp] = [];
     }
 
+    var id = lightId + '_' + positionIndex;
+    if (positionIndex === undefined || positionIndex == null) {
+      id = lightId;
+    }
     var current = lights[bridgeIp][id];
 
     if (current === undefined || current == null) {
@@ -155,7 +161,9 @@ function renderPreviewGrid(size, allowEdit) {
       lights[bridgeIp][id] = {
         glow: createGlowRing(xPos, yPos),
         label: createLightLabel(xPos, yPos, id, bridgeIp),
-        groupId: groupId
+        groupId: groupId,
+        lightId: lightId,
+        positionIndex: positionIndex
       };
       updateGlowRing(bridgeIp, id, hex, bri);
       addLightToContainer(lights[bridgeIp][id]);

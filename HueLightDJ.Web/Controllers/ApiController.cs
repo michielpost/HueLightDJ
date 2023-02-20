@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HueLightDJ.Web.Streaming;
+using HueLightDJ.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +12,15 @@ namespace HueLightDJ.Web.Controllers
   [ApiController]
   public class ApiController : ControllerBase
   {
+    private readonly IHubService hub;
+    private readonly EffectService effectService;
+
+    public ApiController(IHubService hub, EffectService effectService)
+    {
+      this.hub = hub;
+      this.effectService = effectService;
+    }
+
     [HttpPost("setcolors")]
     public void SetColors([FromBody]string[,] matrix)
     {
@@ -27,7 +36,7 @@ namespace HueLightDJ.Web.Controllers
     [HttpPost("beat")]
     public void Beat([FromBody]double intensity)
     {
-      EffectService.Beat(intensity);
+      effectService.Beat(intensity);
     }
 
     [HttpPost("test")]

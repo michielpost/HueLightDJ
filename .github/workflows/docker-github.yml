@@ -1,0 +1,57 @@
+name: Docker - GitHub Registry
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      # this is a little bit of "dark magick"...
+      # Github Registry seems to hate Usernames Containing UpperCase...
+      #
+      # this metadata action normalizes the image tags into something useable.
+      # I'm not sure it's the _best_ set of Docker Tags to use.
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}${{ env.TAG }}
+          tags: |
+            type=raw,value=1.0.${{ github.run_number }},priority=1000
+            type=ref,event=branch
+            type=sha
+            type=raw,value=latest
+
+      - name: Log in to ghcr
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - if: startsWith(github.ref, 'refs/heads/master')
+        run: echo "TAG=latest" >> $GITHUB_ENV
+
+      - if: startsWith(github.ref, 'refs/tags')
+        run: echo "TAG=$(git describe --tags)" >> $GITHUB_ENV
+
+      - name: Build & Push
+        uses: docker/build-push-action@v4
+        with:
+          context: ./
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}

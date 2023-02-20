@@ -9,7 +9,7 @@ namespace HueLightDJ.Effects.Base
 
     public int Order { get; set; } = 100;
 
-    public string Name { get; set; }
+    public required string Name { get; set; }
     public string Group { get; set; } = "Other";
 
     /// <summary>
@@ -19,6 +19,6 @@ namespace HueLightDJ.Effects.Base
 
     public bool HasColorPicker { get; set; } = true;
 
-    public string DefaultColor { get; set; }
+    public string? DefaultColor { get; set; }
   }
 }
