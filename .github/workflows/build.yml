@@ -13,8 +13,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 7.0.x
-    - name: Install maui-android workload
-      run: dotnet workload install maui-android 
+    - name: Install maui workloads
+      run: dotnet workload install maui-android maui-ios maui-maccatalyst
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Publish Website
