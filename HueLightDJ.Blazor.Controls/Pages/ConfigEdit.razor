@@ -3,6 +3,7 @@
 @inject NavigationManager NavManager
 
 <MudText Typo="Typo.h3">@config?.Name</MudText>
+<MudTextField @bind-Value="titleEdit" Variant="Variant.Text"></MudTextField>
 
 @foreach (var connection in config?.Connections ?? new())
 {
@@ -18,12 +19,11 @@
 }
 
 
-<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save" Href="@($"/bridge-add/{config?.Id}")">Add Bridge</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/bridge-add/{config?.Id}")">Add Bridge</MudButton>
 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Save</MudButton>
-<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Delete</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Delete">Delete</MudButton>
 
 
 @code {
     
-
 }

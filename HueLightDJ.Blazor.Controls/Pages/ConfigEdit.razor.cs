@@ -15,16 +15,33 @@ namespace HueLightDJ.Blazor.Controls.Pages
 
     GroupConfiguration? config;
 
+    private string titleEdit { get; set; } = string.Empty;
+
+
     protected override async Task OnParametersSetAsync()
     {
       config = await LocalStorageService.Get(Id);
-      base.OnParametersSetAsync();
+      titleEdit = config?.Name;
+      await base.OnParametersSetAsync();
     }
 
     public async Task Save()
     {
-      //var config = await LocalStorageService.Add("HueLightDJ setup");
-      //NavManager.NavigateTo($"/config-edit?id={config.Id}");
+      if(config == null)
+        return;
+
+      config.Name = titleEdit;
+      config = await LocalStorageService.Save(config);
+      NavManager.NavigateTo($"/configs");
+    }
+
+    public async Task Delete()
+    {
+      if (config == null)
+        return;
+
+      await LocalStorageService.Delete(config.Id);
+      NavManager.NavigateTo($"/configs");
     }
   }
 }

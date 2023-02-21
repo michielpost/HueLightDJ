@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using HueLightDJ.Blazor.Controls.Pages;
 using HueLightDJ.Services.Interfaces.Models;
 using System;
 using System.Collections.Generic;
@@ -36,26 +37,36 @@ namespace HueLightDJ.Blazor.Controls.Services
       return localStore.SetItemAsync(key, configs);
     }
 
-    public async ValueTask<GroupConfiguration> Add(GroupConfiguration config)
+    public ValueTask<GroupConfiguration> Add(string name)
+    {
+      var config = new GroupConfiguration { Id = Guid.NewGuid(), Name = name };
+      return Save(config);
+    }
+
+    internal async ValueTask<GroupConfiguration> Save(GroupConfiguration config)
     {
       var all = await GetAllAsync();
 
       var existing = all.Where(x => x.Id == config.Id).FirstOrDefault();
-      if(existing != null)
+      if (existing != null)
         all.Remove(existing);
 
-      all.Add(config);
+      all.Insert(0, config);
       await SaveAllAsync(all);
 
       return config;
     }
 
-    public ValueTask<GroupConfiguration> Add(string name)
+    public async Task Delete(Guid id)
     {
-      var config = new GroupConfiguration { Id = Guid.NewGuid(), Name = name };
-      return Add(config);
+      var all = await GetAllAsync();
+
+      var existing = all.Where(x => x.Id == id).FirstOrDefault();
+      if (existing != null)
+        all.Remove(existing);
+
+      await SaveAllAsync(all);
     }
-
-
+    
   }
 }
