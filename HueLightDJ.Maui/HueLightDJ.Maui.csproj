@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <TargetFrameworks>net7.0-android</TargetFrameworks>
@@ -6,6 +6,8 @@
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
         <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
+        <Nullable>enable</Nullable>
+        <WarningsAsErrors>nullable</WarningsAsErrors>
         <OutputType>Exe</OutputType>
         <RootNamespace>HueLightDJ.Maui</RootNamespace>
         <UseMaui>true</UseMaui>
@@ -14,7 +16,7 @@
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
 
         <!-- Display name -->
-        <ApplicationTitle>HueLightDJ.Maui</ApplicationTitle>
+        <ApplicationTitle>HueLightDJ</ApplicationTitle>
 
         <!-- App Identifier -->
         <ApplicationId>com.companyname.huelightdj.maui</ApplicationId>
@@ -55,7 +57,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\HueLightDJ.Blazor.Controls\HueLightDJ.Blazor.Controls.csproj" />
       <ProjectReference Include="..\HueLightDJ.Effects\HueLightDJ.Effects.csproj" />
+      <ProjectReference Include="..\HueLightDJ.Services.Interfaces\HueLightDJ.Services.Interfaces.csproj" />
       <ProjectReference Include="..\HueLightDJ.Services\HueLightDJ.Services.csproj" />
     </ItemGroup>
 

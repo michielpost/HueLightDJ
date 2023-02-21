@@ -9,12 +9,12 @@ namespace HueLightDJ.Maui.Services
 {
   public class HubService : IHubService
   {
-    public Task SendAsync(string method, object arg1)
+    public Task SendAsync(string method, object? arg1)
     {
       return Task.CompletedTask;
     }
 
-    public Task SendAsync(string method, object arg1, object arg2)
+    public Task SendAsync(string method, object? arg1, object? arg2)
     {
       return Task.CompletedTask;
     }

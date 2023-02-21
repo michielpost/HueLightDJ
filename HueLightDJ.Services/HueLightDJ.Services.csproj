@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HueLightDJ.Effects\HueLightDJ.Effects.csproj" />
+    <ProjectReference Include="..\HueLightDJ.Services.Interfaces\HueLightDJ.Services.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

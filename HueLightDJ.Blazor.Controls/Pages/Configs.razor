@@ -1,0 +1,27 @@
+@page "/configs"
+@inject StorageService LocalStorageService
+@inject NavigationManager NavManager
+
+<MudText Typo="Typo.h3">Configs</MudText>
+
+@foreach(var config in configs)
+{
+    <MudCard>
+      <MudCardContent>
+            <MudText>@config.Name</MudText>
+      </MudCardContent>
+      <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/config-edit/{config.Id}")">Edit</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">Start</MudButton>
+      </MudCardActions>
+  </MudCard>
+}
+
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="AddNew">Add</MudButton>
+@*<MudButton Variant="Variant.Text" Color="Color.Primary">Import</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Primary">Export</MudButton>*@
+
+
+@code {
+   
+}

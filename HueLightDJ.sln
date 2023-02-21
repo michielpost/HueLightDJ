@@ -11,11 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Services", "HueL
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{480D6478-52DB-4D40-8882-25126869164C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Maui", "HueLightDJ.Maui\HueLightDJ.Maui.csproj", "{EA7E4D3E-6D00-4AEE-BD55-F96502771670}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Maui", "HueLightDJ.Maui\HueLightDJ.Maui.csproj", "{EA7E4D3E-6D00-4AEE-BD55-F96502771670}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Blazor.Controls", "HueLightDJ.Blazor.Controls\HueLightDJ.Blazor.Controls.csproj", "{504EA7E7-050E-432D-AB32-D7389E04F6C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Blazor.Controls", "HueLightDJ.Blazor.Controls\HueLightDJ.Blazor.Controls.csproj", "{504EA7E7-050E-432D-AB32-D7389E04F6C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Services.Interfaces", "HueLightDJ.Services.Interfaces\HueLightDJ.Services.Interfaces.csproj", "{72401AE0-DD68-4116-97C3-FC223AE15E56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Services.Interfaces", "HueLightDJ.Services.Interfaces\HueLightDJ.Services.Interfaces.csproj", "{72401AE0-DD68-4116-97C3-FC223AE15E56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

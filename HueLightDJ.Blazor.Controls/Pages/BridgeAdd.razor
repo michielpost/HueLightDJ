@@ -1,0 +1,28 @@
+@page "/bridge-add/{Id:guid}"
+@using HueApi.BridgeLocator;
+@inject StorageService LocalStorageService
+@inject NavigationManager NavManager
+@inject IHueSetupService HueSetupService
+
+<MudText Typo="Typo.h3">Add bridge to @config?.Name</MudText>
+
+@foreach (var bridge in bridges)
+{
+    <MudCard>
+        <MudCardContent>
+            <MudText>@bridge.IpAddress</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">Add (first click bridge button)</MudButton>
+        </MudCardActions>
+    </MudCard>
+}
+
+
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Input IP</MudButton>
+
+
+@code {
+  
+
+}

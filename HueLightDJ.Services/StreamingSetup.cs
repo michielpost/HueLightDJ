@@ -16,6 +16,8 @@ using HueApi.Extensions;
 using HueLightDJ.Services.Models;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
+using HueLightDJ.Services.Interfaces;
+using HueLightDJ.Services.Interfaces.Models;
 
 namespace HueLightDJ.Services
 {
@@ -56,8 +58,11 @@ namespace HueLightDJ.Services
 
       foreach (var bridgeConfig in currentGroup.Connections)
       {
+        if (!bridgeConfig.GroupId.HasValue)
+          continue;
+
         var localClient = new LocalHueApi(bridgeConfig.Ip, bridgeConfig.Key);
-        var group = await localClient.GetEntertainmentConfigurationAsync(bridgeConfig.GroupId);
+        var group = await localClient.GetEntertainmentConfigurationAsync(bridgeConfig.GroupId.Value);
 
         var serviceLocations = group.Data.First().Locations.ServiceLocations;
 
@@ -68,7 +73,7 @@ namespace HueLightDJ.Services
             locations.Add(new MultiBridgeHuePosition()
              {
                Bridge = bridgeConfig.Ip,
-               GroupId = bridgeConfig.GroupId,
+               GroupId = bridgeConfig.GroupId.Value,
                Id = serviceLocation.Service!.Rid,
                PositionIndex = i,
                X = serviceLocation.Positions[i].X,
@@ -131,10 +136,13 @@ namespace HueLightDJ.Services
       {
         foreach (var conn in config.Connections)
         {
+          if(!conn.GroupId.HasValue)
+            continue;
+
           var client = new LocalHueApi(conn.Ip, conn.Key);
           var allCommand = new LightCommand().TurnOn().SetColor(new RGBColor("0000FF")); //All blue
 
-          var result = await client.GetEntertainmentConfigurationAsync(conn.GroupId);
+          var result = await client.GetEntertainmentConfigurationAsync(conn.GroupId.Value);
 
           //Turn all lights in this entertainment group on
           var entServices = result.Data.First().Locations.ServiceLocations.Select(x => x.Service?.Rid).ToList();
@@ -203,6 +211,11 @@ namespace HueLightDJ.Services
     private async Task Connect(bool demoMode, bool useSimulator, ConnectionConfiguration bridgeConfig)
     {
       await hub.SendAsync("StatusMsg", $"Connecting to bridge {bridgeConfig.Ip}");
+      if (!bridgeConfig.GroupId.HasValue)
+      {
+        await hub.SendAsync("StatusMsg", $"No group id specified. Abort connection.");
+        return;
+      }
 
       try
       {
@@ -215,7 +228,7 @@ namespace HueLightDJ.Services
         {
           string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
           locations = JsonSerializer.Deserialize<Dictionary<int, HuePosition>>(demoJson);
-          _groupId = bridgeConfig.GroupId;
+          _groupId = bridgeConfig.GroupId.Value;
         }
         else
         {

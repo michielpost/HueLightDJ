@@ -1,0 +1,29 @@
+@page "/config-edit/{Id:guid}"
+@inject StorageService LocalStorageService
+@inject NavigationManager NavManager
+
+<MudText Typo="Typo.h3">@config?.Name</MudText>
+
+@foreach (var connection in config?.Connections ?? new())
+{
+    <MudCard>
+        <MudCardContent>
+            <MudText>@connection.Ip</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/bridge-edit/{config!.Id}/{connection.Ip}")">Edit</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">Remove</MudButton>
+        </MudCardActions>
+    </MudCard>
+}
+
+
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save" Href="@($"/bridge-add/{config?.Id}")">Add Bridge</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Save</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Delete</MudButton>
+
+
+@code {
+    
+
+}

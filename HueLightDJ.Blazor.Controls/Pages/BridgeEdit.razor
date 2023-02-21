@@ -1,0 +1,25 @@
+@page "/bridge-edit/{Id:guid}/{Ip}"
+@using HueApi.BridgeLocator;
+@inject StorageService LocalStorageService
+@inject NavigationManager NavManager
+@inject IHueSetupService HueSetupService
+
+<MudText Typo="Typo.h3">Bridge: @bridge.Ip</MudText>
+<MudText Typo="Typo.h4">Current group: @bridge.GroupId</MudText>
+
+@foreach (var group in groups ?? new())
+{
+    <MudCard>
+        <MudCardContent>
+            <MudText>@group.Name</MudText>
+            <MudText>Lights: @group.LightServices.Count()</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">Add</MudButton>
+        </MudCardActions>
+    </MudCard>
+}
+
+@code {
+    
+}

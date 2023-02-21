@@ -1,6 +1,8 @@
-using HueLightDJ.Maui.Data;
+using HueLightDJ.Blazor.Controls;
 using HueLightDJ.Maui.Services;
 using HueLightDJ.Services;
+using HueLightDJ.Services.Interfaces;
+using HueLightDJ.Services.Interfaces.Models;
 using HueLightDJ.Services.Models;
 using Microsoft.Extensions.Logging;
 
@@ -24,6 +26,12 @@ namespace HueLightDJ.Maui
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
+
+      builder.Services.AddHueLightDJBlazorControls();
+
+      builder.Services.AddTransient<IEffectService, EffectService>();
+      builder.Services.AddTransient<IHueSetupService, HueSetupService>();
+
 
       builder.Services.AddTransient<IHubService, HubService>();
       builder.Services.Configure<List<GroupConfiguration>>(GetConfig);

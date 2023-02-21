@@ -11,10 +11,11 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using HueLightDJ.Services.Models;
+using HueLightDJ.Services.Interfaces;
 
 namespace HueLightDJ.Services
 {
-  public class EffectService
+  public class EffectService : IEffectService
   {
     private static List<TypeInfo> EffectTypes { get; set; } = new List<TypeInfo>();
     private static List<TypeInfo> GroupEffectTypes { get; set; } = new List<TypeInfo>();

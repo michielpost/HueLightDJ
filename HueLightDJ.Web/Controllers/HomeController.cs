@@ -14,6 +14,7 @@ using HueApi.Extensions.cs;
 using HueLightDJ.Web.Models;
 using HueLightDJ.Web;
 using Microsoft.Extensions.Configuration;
+using HueLightDJ.Services.Interfaces.Models;
 
 namespace HueLightDJ.Services.Controllers
 {
