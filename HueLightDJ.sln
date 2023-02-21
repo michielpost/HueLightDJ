@@ -7,7 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Web", "HueLightD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Effects", "HueLightDJ.Effects\HueLightDJ.Effects.csproj", "{7F07C78A-1FCF-4451-9312-2A70DD0328E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Services", "HueLightDJ.Services\HueLightDJ.Services.csproj", "{ABAE567B-5BDF-4129-987C-312B9246A38E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Services", "HueLightDJ.Services\HueLightDJ.Services.csproj", "{ABAE567B-5BDF-4129-987C-312B9246A38E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{480D6478-52DB-4D40-8882-25126869164C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Maui", "HueLightDJ.Maui\HueLightDJ.Maui.csproj", "{EA7E4D3E-6D00-4AEE-BD55-F96502771670}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Blazor.Controls", "HueLightDJ.Blazor.Controls\HueLightDJ.Blazor.Controls.csproj", "{504EA7E7-050E-432D-AB32-D7389E04F6C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.Services.Interfaces", "HueLightDJ.Services.Interfaces\HueLightDJ.Services.Interfaces.csproj", "{72401AE0-DD68-4116-97C3-FC223AE15E56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +35,27 @@ Global
 		{ABAE567B-5BDF-4129-987C-312B9246A38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABAE567B-5BDF-4129-987C-312B9246A38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABAE567B-5BDF-4129-987C-312B9246A38E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA7E4D3E-6D00-4AEE-BD55-F96502771670}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA7E4D3E-6D00-4AEE-BD55-F96502771670}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA7E4D3E-6D00-4AEE-BD55-F96502771670}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EA7E4D3E-6D00-4AEE-BD55-F96502771670}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA7E4D3E-6D00-4AEE-BD55-F96502771670}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA7E4D3E-6D00-4AEE-BD55-F96502771670}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{504EA7E7-050E-432D-AB32-D7389E04F6C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{504EA7E7-050E-432D-AB32-D7389E04F6C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{504EA7E7-050E-432D-AB32-D7389E04F6C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{504EA7E7-050E-432D-AB32-D7389E04F6C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72401AE0-DD68-4116-97C3-FC223AE15E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72401AE0-DD68-4116-97C3-FC223AE15E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72401AE0-DD68-4116-97C3-FC223AE15E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72401AE0-DD68-4116-97C3-FC223AE15E56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EA7E4D3E-6D00-4AEE-BD55-F96502771670} = {480D6478-52DB-4D40-8882-25126869164C}
+		{504EA7E7-050E-432D-AB32-D7389E04F6C5} = {480D6478-52DB-4D40-8882-25126869164C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F7061EF6-6F93-4EA7-959A-4F7F263C65A3}
