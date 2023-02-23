@@ -1,31 +1,23 @@
-using HueLightDJ.Blazor.Controls;
-using HueLightDJ.Maui.Services;
-using HueLightDJ.Services;
+using HueLightDJ.BlazorWeb.Client;
 using HueLightDJ.Services.Interfaces;
 using HueLightDJ.Services.Interfaces.Models;
-using HueLightDJ.Services.Models;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using HueLightDJ.Blazor.Controls;
+using HueLightDJ.BlazorWeb.Client.Services;
+using HueLightDJ.Services;
 
-namespace HueLightDJ.Maui
+namespace HueLightDJ.BlazorWeb.Client
 {
-  public static class MauiProgram
+  public class Program
   {
-    public static MauiApp CreateMauiApp()
+    public static async Task Main(string[] args)
     {
-      var builder = MauiApp.CreateBuilder();
-      builder
-          .UseMauiApp<App>()
-          .ConfigureFonts(fonts =>
-          {
-            //fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-          });
+      var builder = WebAssemblyHostBuilder.CreateDefault(args);
+      builder.RootComponents.Add<App>("#app");
+      builder.RootComponents.Add<HeadOutlet>("head::after");
 
-      builder.Services.AddMauiBlazorWebView();
-
-#if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
-		builder.Logging.AddDebug();
-#endif
+      builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
       builder.Services.AddHueLightDJBlazorControls();
 
@@ -35,17 +27,17 @@ namespace HueLightDJ.Maui
 
       builder.Services.AddSingleton<IHubService, HubService>();
       builder.Services.Configure<List<GroupConfiguration>>(GetConfig);
-      builder.Services.AddHueLightDJServices();
 
-      return builder.Build();
+      await builder.Build().RunAsync();
     }
 
+    //TODO: Remove
     private static void GetConfig(List<GroupConfiguration> obj)
     {
       obj.Add(new GroupConfiguration
       {
         Name = "Home",
-         Connections = new List<ConnectionConfiguration>
+        Connections = new List<ConnectionConfiguration>
          {
            new ConnectionConfiguration
            {
@@ -55,7 +47,7 @@ namespace HueLightDJ.Maui
               GroupId  =  Guid.Parse("1b9e4f91-d0de-45a6-b525-1e3a1c140399")
            }
          }
-         
+
       });
     }
   }

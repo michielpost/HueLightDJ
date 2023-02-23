@@ -17,6 +17,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Blazor.Controls"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HueLightDJ.Services.Interfaces", "HueLightDJ.Services.Interfaces\HueLightDJ.Services.Interfaces.csproj", "{72401AE0-DD68-4116-97C3-FC223AE15E56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.BlazorWeb.Server", "HueLightDJ.BlazorWeb\Server\HueLightDJ.BlazorWeb.Server.csproj", "{3055F2B3-74DA-4496-A3A6-41A18EAF64C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.BlazorWeb.Client", "HueLightDJ.BlazorWeb\Client\HueLightDJ.BlazorWeb.Client.csproj", "{B848E625-2D1D-4187-9828-9513BF8A6DEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HueLightDJ.BlazorWeb.Shared", "HueLightDJ.BlazorWeb\Shared\HueLightDJ.BlazorWeb.Shared.csproj", "{F008AB22-F74F-4432-AFEB-709E11FD1F52}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BlazorWeb", "BlazorWeb", "{DE625249-CD6C-4671-8E5D-778FFDFF279B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +57,18 @@ Global
 		{72401AE0-DD68-4116-97C3-FC223AE15E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72401AE0-DD68-4116-97C3-FC223AE15E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72401AE0-DD68-4116-97C3-FC223AE15E56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3055F2B3-74DA-4496-A3A6-41A18EAF64C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3055F2B3-74DA-4496-A3A6-41A18EAF64C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3055F2B3-74DA-4496-A3A6-41A18EAF64C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3055F2B3-74DA-4496-A3A6-41A18EAF64C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B848E625-2D1D-4187-9828-9513BF8A6DEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B848E625-2D1D-4187-9828-9513BF8A6DEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B848E625-2D1D-4187-9828-9513BF8A6DEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B848E625-2D1D-4187-9828-9513BF8A6DEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F008AB22-F74F-4432-AFEB-709E11FD1F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F008AB22-F74F-4432-AFEB-709E11FD1F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F008AB22-F74F-4432-AFEB-709E11FD1F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F008AB22-F74F-4432-AFEB-709E11FD1F52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +76,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{EA7E4D3E-6D00-4AEE-BD55-F96502771670} = {480D6478-52DB-4D40-8882-25126869164C}
 		{504EA7E7-050E-432D-AB32-D7389E04F6C5} = {480D6478-52DB-4D40-8882-25126869164C}
+		{3055F2B3-74DA-4496-A3A6-41A18EAF64C8} = {DE625249-CD6C-4671-8E5D-778FFDFF279B}
+		{B848E625-2D1D-4187-9828-9513BF8A6DEF} = {DE625249-CD6C-4671-8E5D-778FFDFF279B}
+		{F008AB22-F74F-4432-AFEB-709E11FD1F52} = {DE625249-CD6C-4671-8E5D-778FFDFF279B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F7061EF6-6F93-4EA7-959A-4F7F263C65A3}
