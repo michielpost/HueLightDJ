@@ -199,7 +199,8 @@ namespace HueLightDJ.Services
       bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
 
       //Disconnect any current connections
-      Disconnect();
+
+      this.Disconnect();
       _cts = new CancellationTokenSource();
 
       List<Task> connectTasks = new List<Task>();
@@ -221,6 +222,8 @@ namespace HueLightDJ.Services
       //Optional: calculated effects that are placed on this layer
       baseLayer.AutoCalculateEffectUpdate(_cts.Token);
       effectLayer.AutoCalculateEffectUpdate(_cts.Token);
+
+      hub.StatusChanged();
     }
 
     private async Task Connect(bool demoMode, bool useSimulator, ConnectionConfiguration bridgeConfig)
@@ -314,12 +317,14 @@ namespace HueLightDJ.Services
       }
     }
 
-    public static void SetBrightnessFilter(double value)
+    public void SetBrightnessFilter(double value)
     {
       foreach (var stream in StreamingGroups)
       {
         stream.BrightnessFilter = value;
       }
+
+      hub.StatusChanged();
     }
 
     private static EntertainmentLayer GetNewLayer(bool isBaseLayer = false)
@@ -333,7 +338,7 @@ namespace HueLightDJ.Services
       return layer;
     }
 
-    public static void Disconnect()
+    public void Disconnect()
     {
       if (_cts != null)
         _cts.Cancel();
@@ -348,13 +353,13 @@ namespace HueLightDJ.Services
         catch { }
       }
 
-      EffectService.CancelAllEffects();
-
       Layers = null;
       StreamingHueClients.Clear();
       StreamingGroups.Clear();
       CurrentConnection = null;
-     
+
+      hub.SendAsync("StatusMsg", "Disconnected");
+      hub.StatusChanged();
     }
 
     public static EntertainmentLayer GetFirstLayer()
@@ -393,16 +398,19 @@ namespace HueLightDJ.Services
       return BPM;
     }
 
-    public static int SetBPM(int bpm)
+    public int SetBPM(int bpm)
     {
       BPM = bpm;
       WaitTime.Value = TimeSpan.FromMilliseconds((60 * 1000) / bpm);
+      hub.StatusChanged();
       return GetBPM();
     }
 
-    public static int IncreaseBPM(int value)
+    public int IncreaseBPM(int value)
     {
-      return SetBPM(BPM + value);
+      var result = SetBPM(BPM + value);
+      hub.StatusChanged();
+      return result;
     }
   }
 }

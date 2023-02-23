@@ -1,9 +1,13 @@
 @page "/lightdj/{Id:guid}"
 @inject StorageService LocalStorageService
 @inject ILightDJService LightDJService
+@inject IHubService HubService
 @inject NavigationManager NavManager
 
 <MudText Typo="Typo.h3">@config?.Name</MudText>
+
+<MudText>Log msg:</MudText>
+<MudText>@lastMsg</MudText>
 
 
 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Connect">Connect</MudButton>

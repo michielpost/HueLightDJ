@@ -25,6 +25,7 @@ namespace HueLightDJ.Maui.Services
     public Task Connect(GroupConfiguration config)
     {
       //Connect
+      effectService.StopEffects();
       return streamingSetup.SetupAndReturnGroupAsync(config);
     }
 
@@ -57,21 +58,21 @@ namespace HueLightDJ.Maui.Services
 
     public Task IncreaseBPM(int value)
     {
-      StreamingSetup.IncreaseBPM(value);
+      streamingSetup.IncreaseBPM(value);
       return GetStatus();
 
     }
 
     public Task SetBPM(int value)
     {
-      StreamingSetup.SetBPM(value);
+      streamingSetup.SetBPM(value);
       return GetStatus();
 
     }
 
     public void SetBri(double value)
     {
-      StreamingSetup.SetBrightnessFilter(value);
+      streamingSetup.SetBrightnessFilter(value);
     }
 
 
@@ -88,7 +89,7 @@ namespace HueLightDJ.Maui.Services
 
     public Task StopAutoMode()
     {
-      EffectService.StopAutoMode();
+      effectService.StopAutoMode();
       return Task.CompletedTask;
     }
 
@@ -100,8 +101,8 @@ namespace HueLightDJ.Maui.Services
 
     public Task StopEffects()
     {
-      EffectService.StopAutoMode();
-      EffectService.StopEffects();
+      effectService.StopAutoMode();
+      effectService.StopEffects();
       return Task.CompletedTask;
     }
 
@@ -120,9 +121,9 @@ namespace HueLightDJ.Maui.Services
 
     public Task Disconnect()
     {
-      EffectService.CancelAllEffects();
+      effectService.CancelAllEffects();
 
-      StreamingSetup.Disconnect();
+      streamingSetup.Disconnect();
       return Task.CompletedTask;
     }
 

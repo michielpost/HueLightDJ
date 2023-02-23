@@ -85,21 +85,21 @@ namespace HueLightDJ.Web.Hubs
 
     public Task IncreaseBPM(int value)
     {
-      StreamingSetup.IncreaseBPM(value);
+      streamingSetup.IncreaseBPM(value);
       return GetStatus();
 
     }
 
     public Task SetBPM(int value)
     {
-      StreamingSetup.SetBPM(value);
+      streamingSetup.SetBPM(value);
       return GetStatus();
 
     }
 
     public void SetBri(double value)
     {
-      StreamingSetup.SetBrightnessFilter(value);
+      streamingSetup.SetBrightnessFilter(value);
 
       Clients.Others.SendAsync("Bri", value);
     }
@@ -118,7 +118,7 @@ namespace HueLightDJ.Web.Hubs
 
     public Task StopAutoMode()
     {
-      EffectService.StopAutoMode();
+      effectService.StopAutoMode();
       return GetStatus();
     }
 
@@ -130,8 +130,8 @@ namespace HueLightDJ.Web.Hubs
 
     public Task StopEffects()
     {
-      EffectService.StopAutoMode();
-      EffectService.StopEffects();
+      effectService.StopAutoMode();
+      effectService.StopEffects();
       return GetStatus();
     }
 
@@ -155,9 +155,9 @@ namespace HueLightDJ.Web.Hubs
 
     public async Task Disconnect()
     {
-      EffectService.CancelAllEffects();
+      effectService.CancelAllEffects();
 
-      StreamingSetup.Disconnect();
+      streamingSetup.Disconnect();
       await Clients.All.SendAsync("effects", new EffectsVM());
       await Clients.All.SendAsync("StatusMsg", "DISCONNECTED...");
       await GetStatus();

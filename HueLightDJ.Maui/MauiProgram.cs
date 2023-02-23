@@ -33,7 +33,7 @@ namespace HueLightDJ.Maui
       builder.Services.AddTransient<IHueSetupService, HueSetupService>();
 
 
-      builder.Services.AddTransient<IHubService, HubService>();
+      builder.Services.AddSingleton<IHubService, HubService>();
       builder.Services.Configure<List<GroupConfiguration>>(GetConfig);
       builder.Services.AddHueLightDJServices();
 

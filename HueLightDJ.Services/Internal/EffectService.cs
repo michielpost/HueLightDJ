@@ -151,12 +151,13 @@ namespace HueLightDJ.Services
       return vm;
     }
 
-    public static void StopEffects()
+    public void StopEffects()
     {
       foreach(var layer in layerInfo)
       {
         layer.Value?.CancellationTokenSource?.Cancel();
       }
+      hub.StatusChanged();
     }
 
     public void StartAutoMode()
@@ -183,9 +184,10 @@ namespace HueLightDJ.Services
       }, autoModeCts.Token);
     }
 
-    public static void StopAutoMode()
+    public void StopAutoMode()
     {
       autoModeCts?.Cancel();
+      hub.StatusChanged();
     }
 
     public static bool IsAutoModeRunning()
@@ -302,7 +304,7 @@ namespace HueLightDJ.Services
       methodInfo.Invoke(classInstance, parametersArray);
 
       hub.SendAsync("StartingEffect", $"Starting: {selectedEffect.Name} {color?.ToHex()}", new EffectLogMsg() { Name = selectedEffect.Name, RGBColor = color?.ToHex() });
-
+      hub.StatusChanged();
     }
 
     public void StartRandomEffect(bool withRandomEffects = true)
@@ -436,7 +438,7 @@ namespace HueLightDJ.Services
       return result.OrderBy(x => x.Value.Order).Select(x => x.Key).ToList();
     }
 
-    public static void CancelAllEffects()
+    public void CancelAllEffects()
     {
       StopAutoMode();
 

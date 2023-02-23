@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HueLightDJ.Services.Models;
+using HueLightDJ.Services.Interfaces;
 
 namespace HueLightDJ.Services
 {
