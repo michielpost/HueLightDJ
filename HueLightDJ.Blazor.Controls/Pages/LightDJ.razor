@@ -40,7 +40,7 @@
     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StopEffects())">Stop All Effects</MudButton>
     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.Beat(1))">Beat</MudButton>
 
-    <MudSlider Min="0" Max="100" Value="@Brightness" @onchange="@(() => LightDJService.SetBri(Brightness))">Brightness</MudSlider>
+    <MudSlider Min="0" Max="100" ValueLabel="true" @bind-Value="@Brightness" @onchange="@(() => LightDJService.SetBri(Brightness))">Brightness</MudSlider>
 
     <MudText Typo="Typo.h5">Long Running</MudText>
     @foreach (var effectGroup in effectsVM.BaseEffects)
