@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <TargetFrameworks>net7.0-android</TargetFrameworks>
@@ -8,6 +8,11 @@
         <!-- <TargetFrameworks>$(TargetFrameworks);net7.0-tizen</TargetFrameworks> -->
         <Nullable>enable</Nullable>
         <WarningsAsErrors>nullable</WarningsAsErrors>
+      
+      <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
+      <BlazorWebAssemblyPreserveCollationData>false</BlazorWebAssemblyPreserveCollationData>
+      <InvariantGlobalization>true</InvariantGlobalization>
+      
         <OutputType>Exe</OutputType>
         <RootNamespace>HueLightDJ.Maui</RootNamespace>
         <UseMaui>true</UseMaui>

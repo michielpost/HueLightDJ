@@ -16,6 +16,8 @@ jobs:
     - name: Install maui workloads
       run: dotnet workload install maui-android
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Debug
     - name: Publish Website
-      run: dotnet publish HueLightDJ.Web -o publish/HueLightDJ.Web -c Release
+      run: dotnet publish HueLightDJ.BlazorWeb.Server -o publish/HueLightDJ.BlazorWeb.Server -c Debug
+    - name: Publish Website (OLD)
+      run: dotnet publish HueLightDJ.Web -o publish/HueLightDJ.Web -c Debug
