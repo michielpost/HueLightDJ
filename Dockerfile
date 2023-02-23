@@ -6,11 +6,11 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["HueLightDJ.BlazorWeb.Server/HueLightDJ.BlazorWeb.Server.csproj", "HueLightDJ.BlazorWeb.Server/"]
+COPY ["HueLightDJ.BlazorWeb/Server/HueLightDJ.BlazorWeb.Server.csproj", "HueLightDJ.BlazorWeb/Server/"]
 COPY ["HueLightDJ.Effects/HueLightDJ.Effects.csproj", "HueLightDJ.Effects/"]
-RUN dotnet restore "HueLightDJ.BlazorWeb.Server/HueLightDJ.BlazorWeb.Server.csproj"
+RUN dotnet restore "HueLightDJ.BlazorWeb/Server/HueLightDJ.BlazorWeb.Server.csproj"
 COPY . .
-WORKDIR "/src/HueLightDJ.BlazorWeb.Server"
+WORKDIR "/src/HueLightDJ.BlazorWeb/Server"
 RUN dotnet build "HueLightDJ.BlazorWeb.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish
