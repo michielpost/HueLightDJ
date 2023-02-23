@@ -4,21 +4,24 @@
 @inject NavigationManager NavManager
 @inject IHueSetupService HueSetupService
 
-<MudText Typo="Typo.h3">Bridge: @bridge.Ip</MudText>
-<MudText Typo="Typo.h4">Current group: @bridge.GroupId</MudText>
+<MudText Typo="Typo.h3">Bridge: @bridge?.Ip</MudText>
+<MudText>Current group: @groups?.Where(x => x.Id == bridge?.GroupId).FirstOrDefault()?.Metadata?.Name</MudText>
 
 @foreach (var group in groups ?? new())
 {
     <MudCard>
         <MudCardContent>
-            <MudText>@group.Name</MudText>
-            <MudText>Lights: @group.LightServices.Count()</MudText>
+            <MudText>@group!.Metadata?.Name</MudText>
+            <MudText>Lights: @group!.Locations.ServiceLocations.Count()</MudText>
         </MudCardContent>
         <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary">Add</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => Select(group.Id))">Select</MudButton>
         </MudCardActions>
     </MudCard>
 }
+
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Save</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Remove">Remove</MudButton>
 
 @code {
     

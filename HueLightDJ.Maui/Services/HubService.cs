@@ -11,11 +11,13 @@ namespace HueLightDJ.Maui.Services
   {
     public Task SendAsync(string method, object? arg1)
     {
+      Console.WriteLine(method);
       return Task.CompletedTask;
     }
 
     public Task SendAsync(string method, object? arg1, object? arg2)
     {
+      Console.WriteLine(method);
       return Task.CompletedTask;
     }
   }

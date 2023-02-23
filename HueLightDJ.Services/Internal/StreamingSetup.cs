@@ -46,11 +46,20 @@ namespace HueLightDJ.Services
       this.fullConfig = fullConfig.Value;
     }
 
+    [Obsolete]
     public async Task<List<MultiBridgeHuePosition>> GetLocationsAsync(string groupName)
     {
       var configSection = await GetGroupConfigurationsAsync();
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
 
+      if(currentGroup == null)
+        return new List<MultiBridgeHuePosition>();
+
+      return await GetLocationsAsync(currentGroup);
+    }
+
+    public async Task<List<MultiBridgeHuePosition>> GetLocationsAsync(GroupConfiguration currentGroup)
+    {
       var locations = new List<MultiBridgeHuePosition>();
 
       if (currentGroup == null)
@@ -66,23 +75,23 @@ namespace HueLightDJ.Services
 
         var serviceLocations = group.Data.First().Locations.ServiceLocations;
 
-        foreach(var serviceLocation in serviceLocations)
+        foreach (var serviceLocation in serviceLocations)
         {
           for (int i = 0; i < serviceLocation.Positions.Count; i++)
           {
             locations.Add(new MultiBridgeHuePosition()
-             {
-               Bridge = bridgeConfig.Ip,
-               GroupId = bridgeConfig.GroupId.Value,
-               Id = serviceLocation.Service!.Rid,
-               PositionIndex = i,
-               X = serviceLocation.Positions[i].X,
-               Y = serviceLocation.Positions[i].Y
-             });
+            {
+              Bridge = bridgeConfig.Ip,
+              GroupId = bridgeConfig.GroupId.Value,
+              Id = serviceLocation.Service!.Rid,
+              PositionIndex = i,
+              X = serviceLocation.Positions[i].X,
+              Y = serviceLocation.Positions[i].Y
+            });
           }
         }
 
-       
+
       }
 
       return locations;
@@ -173,6 +182,7 @@ namespace HueLightDJ.Services
       }
     }
 
+    [Obsolete]
     public async Task SetupAndReturnGroupAsync(string groupName)
     {
       var configSection = await GetGroupConfigurationsAsync();
@@ -180,6 +190,11 @@ namespace HueLightDJ.Services
       if (currentGroup == null)
         throw new ArgumentNullException($"Group not found ({groupName})", nameof(groupName));
 
+      await SetupAndReturnGroupAsync(currentGroup);
+    }
+
+    public async Task SetupAndReturnGroupAsync(GroupConfiguration currentGroup)
+    {
       bool demoMode = currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
       bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
 
@@ -201,7 +216,7 @@ namespace HueLightDJ.Services
 
       Layers = new List<EntertainmentLayer>() { baseLayer, effectLayer };
       CurrentConnection = currentGroup;
-      EffectSettings.LocationCenter = currentGroup.LocationCenter ?? new HuePosition(0,0,0);
+      EffectSettings.LocationCenter = currentGroup.LocationCenter ?? new HuePosition(0, 0, 0);
 
       //Optional: calculated effects that are placed on this layer
       baseLayer.AutoCalculateEffectUpdate(_cts.Token);
@@ -277,6 +292,7 @@ namespace HueLightDJ.Services
 
     }
 
+    [Obsolete]
     public async Task<List<GroupConfiguration>> GetGroupConfigurationsAsync()
     {
       IEnumerable<LocatedBridge> bridges = new List<LocatedBridge>();

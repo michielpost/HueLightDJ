@@ -1,4 +1,6 @@
+using Blazored.LocalStorage;
 using HueApi.BridgeLocator;
+using HueApi.Models;
 using HueLightDJ.Services.Interfaces.Models;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -17,6 +19,8 @@ namespace HueLightDJ.Blazor.Controls.Pages
     GroupConfiguration? config;
     IEnumerable<LocatedBridge> bridges = new List<LocatedBridge>();
 
+    private string ipAdd { get; set; } = string.Empty;
+
     protected override async Task OnParametersSetAsync()
     {
       config = await LocalStorageService.Get(Id);
@@ -24,10 +28,35 @@ namespace HueLightDJ.Blazor.Controls.Pages
       await base.OnParametersSetAsync();
     }
 
+    public void Select(string ip)
+    {
+      ipAdd = ip;
+    }
+
     public async Task Save()
     {
-      //var config = await LocalStorageService.Add("HueLightDJ setup");
-      //NavManager.NavigateTo($"/config-edit?id={config.Id}");
+      if (config == null)
+        return;
+
+      //Get key from hue bridge
+      var result = await HueSetupService.RegisterAsync(ipAdd);
+
+      if (result == null || result.Username == null || string.IsNullOrEmpty(result.StreamingClientKey))
+        throw new Exception("No result from bridge");
+
+      //Add to config
+      if (config == null)
+        return;
+
+      config.Connections.Add(new ConnectionConfiguration
+      {
+        EntertainmentKey = result.StreamingClientKey,
+        Ip = result.Ip ?? ipAdd,
+        Key = result.Username
+      });
+
+      await LocalStorageService.Save(config);
+      NavManager.NavigateTo($"/bridge-edit/{config.Id}/{result.Ip}");
     }
   }
 }

@@ -29,7 +29,7 @@ namespace HueLightDJ.Maui
 
       builder.Services.AddHueLightDJBlazorControls();
 
-      builder.Services.AddTransient<IEffectService, EffectService>();
+      builder.Services.AddTransient<ILightDJService, LightDJService>();
       builder.Services.AddTransient<IHueSetupService, HueSetupService>();
 
 

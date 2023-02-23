@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static MudBlazor.CategoryTypes;
 
 namespace HueLightDJ.Blazor.Controls.Pages
 {
@@ -37,10 +38,35 @@ namespace HueLightDJ.Blazor.Controls.Pages
       await base.OnParametersSetAsync();
     }
 
+    public async Task Remove()
+    {
+      if (config == null)
+        return;
+
+      config.Connections.RemoveAll(x => x.Ip == this.Ip);
+
+      await LocalStorageService.Save(config);
+      NavManager.NavigateTo($"/config-edit/{config.Id}");
+    }
+
     public async Task Save()
     {
-      //var config = await LocalStorageService.Add("HueLightDJ setup");
-      //NavManager.NavigateTo($"/config-edit?id={config.Id}");
+      if (config == null)
+        return;
+
+      await LocalStorageService.Save(config);
+      NavManager.NavigateTo($"/config-edit/{config.Id}");
+    }
+
+    public async Task Select(Guid groupId)
+    {
+      if (config == null || bridge == null)
+        return;
+
+      bridge.GroupId = groupId;
+
+      await LocalStorageService.Save(config);
+      NavManager.NavigateTo($"/config-edit/{config.Id}");
     }
 
   }

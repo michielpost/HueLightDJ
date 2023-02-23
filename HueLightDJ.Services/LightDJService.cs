@@ -1,76 +1,48 @@
-using Microsoft.AspNetCore.SignalR;
 using HueApi.Entertainment.Extensions;
+using HueLightDJ.Services;
+using HueLightDJ.Services.Interfaces;
+using HueLightDJ.Services.Interfaces.Models;
+using HueLightDJ.Services.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using HueLightDJ.Services.Models;
-using HueLightDJ.Services;
-using HueLightDJ.Web.Models;
-using Microsoft.Extensions.Configuration;
-using HueLightDJ.Services.Interfaces.Models;
 
-namespace HueLightDJ.Web.Hubs
+namespace HueLightDJ.Maui.Services
 {
-  public class StatusHub : Hub
+  public class LightDJService : ILightDJService
   {
     private readonly EffectService effectService;
     private readonly StreamingSetup streamingSetup;
 
-    public StatusHub(EffectService effectService, StreamingSetup streamingSetup)
+    public LightDJService(EffectService effectService, StreamingSetup streamingSetup)
     {
       this.effectService = effectService;
       this.streamingSetup = streamingSetup;
     }
 
-    public async Task Connect(string groupName)
+    public Task Connect(GroupConfiguration config)
     {
-      await Clients.All.SendAsync("StatusMsg", $"Connecting to bridge for group {groupName}...");
-
-      try
-      {
-        //Connect
-        await streamingSetup.SetupAndReturnGroupAsync(groupName);
-        await Clients.All.SendAsync("StatusMsg", "Connected to bridge");
-
-        await GetEffects(true);
-        await GetStatus();
-      }
-      catch(Exception ex)
-      {
-        await Clients.All.SendAsync("StatusMsg", $"Failed to connect to bridge for group {groupName}, " + ex);
-
-      }
+      //Connect
+      return streamingSetup.SetupAndReturnGroupAsync(config);
     }
 
-    public async Task GetStatus()
+    public async Task<StatusModel> GetStatus()
     {
-      var configs = await streamingSetup.GetGroupConfigurationsAsync();
-      StatusViewModel vm = new StatusViewModel();
+      StatusModel vm = new StatusModel();
       vm.bpm = StreamingSetup.GetBPM();
       vm.IsAutoMode = EffectService.IsAutoModeRunning();
       vm.AutoModeHasRandomEffects = EffectService.AutoModeHasRandomEffects;
       vm.ShowDisconnect = !(StreamingSetup.CurrentConnection?.HideDisconnect ?? false);
-      vm.GroupNames = configs.Select(x => x.Name).ToList();
       vm.CurrentGroup = StreamingSetup.CurrentConnection?.Name;
 
-      await Clients.All.SendAsync("Status", vm);
+      return vm;
     }
 
-    public Task GetEffects(bool forAll)
+    public Task<EffectsVM> GetEffects()
     {
-      if (StreamingSetup.Layers?.Count > 0)
-      {
-        var allEffects = EffectService.GetEffectViewModels();
-
-        if(forAll)
-          return Clients.All.SendAsync("effects", allEffects);
-        else
-          return Clients.Caller.SendAsync("effects", allEffects);
-
-      }
-
-      return Task.CompletedTask;
+      return Task.FromResult(EffectService.GetEffectViewModels());
     }
 
     public void StartEffect(string typeName, string colorHex)
@@ -100,8 +72,6 @@ namespace HueLightDJ.Web.Hubs
     public void SetBri(double value)
     {
       StreamingSetup.SetBrightnessFilter(value);
-
-      Clients.Others.SendAsync("Bri", value);
     }
 
 
@@ -119,25 +89,20 @@ namespace HueLightDJ.Web.Hubs
     public Task StopAutoMode()
     {
       EffectService.StopAutoMode();
-      return GetStatus();
+      return Task.CompletedTask;
     }
 
     public Task ToggleAutoRandomMode()
     {
       EffectService.AutoModeHasRandomEffects = !EffectService.AutoModeHasRandomEffects;
-      return GetStatus();
+      return Task.CompletedTask;
     }
 
     public Task StopEffects()
     {
       EffectService.StopAutoMode();
       EffectService.StopEffects();
-      return GetStatus();
-    }
-
-    public Task SendStatus(string msg)
-    {
-      return Clients.All.SendAsync("StatusMsg", msg);
+      return Task.CompletedTask;
     }
 
     public void SetColors(string[,] matrix)
@@ -153,14 +118,14 @@ namespace HueLightDJ.Web.Hubs
       effectService.Beat(intensity);
     }
 
-    public async Task Disconnect()
+    public Task Disconnect()
     {
       EffectService.CancelAllEffects();
 
       StreamingSetup.Disconnect();
-      await Clients.All.SendAsync("effects", new EffectsVM());
-      await Clients.All.SendAsync("StatusMsg", "DISCONNECTED...");
-      await GetStatus();
+      return Task.CompletedTask;
     }
+
+    
   }
 }

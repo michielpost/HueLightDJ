@@ -1,6 +1,7 @@
 using HueApi;
 using HueApi.BridgeLocator;
 using HueApi.Models;
+using HueApi.Models.Clip;
 using HueLightDJ.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,11 @@ namespace HueLightDJ.Maui.Services
       catch { }
 
       return ips;
+    }
+
+    public Task<RegisterEntertainmentResult?> RegisterAsync(string ip)
+    {
+      return LocalHueApi.RegisterAsync(ip, "HueLightDJ", "Web", generateClientKey: true);
     }
   }
 }

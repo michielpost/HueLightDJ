@@ -11,8 +11,20 @@
             <MudText>@config.Name</MudText>
       </MudCardContent>
       <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/config-edit/{config.Id}")">Edit</MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Primary">Start</MudButton>
+            @if (config.Connections.Any())
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/config-edit/{config.Id}")">Edit</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/bridge-add/{config.Id}")">Add bridge</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => Remove(config.Id))">Remove</MudButton>
+            }
+
+            @if (config.Connections.Where(x => x.GroupId.HasValue).Any())
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/lightdj/{config.Id}")">Start</MudButton>
+            }
       </MudCardActions>
   </MudCard>
 }

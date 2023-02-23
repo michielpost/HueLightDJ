@@ -1,0 +1,17 @@
+@page "/lightdj/{Id:guid}"
+@inject StorageService LocalStorageService
+@inject ILightDJService LightDJService
+@inject NavigationManager NavManager
+
+<MudText Typo="Typo.h3">@config?.Name</MudText>
+
+
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Connect">Connect</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Disconnect">Disconnect</MudButton>
+
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StartRandom())">Random</MudButton>
+
+
+@code {
+    
+}

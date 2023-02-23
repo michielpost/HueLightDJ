@@ -13,13 +13,13 @@
             <MudText>@bridge.IpAddress</MudText>
         </MudCardContent>
         <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary">Add (first click bridge button)</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => Select(bridge.IpAddress))">Select</MudButton>
         </MudCardActions>
     </MudCard>
 }
 
-
-<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Input IP</MudButton>
+<MudTextField @bind-Value="ipAdd" Variant="Variant.Text"></MudTextField>
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Add (click the bridge button first!)</MudButton>
 
 
 @code {
