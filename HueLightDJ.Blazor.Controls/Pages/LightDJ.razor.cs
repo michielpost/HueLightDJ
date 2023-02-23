@@ -17,11 +17,14 @@ namespace HueLightDJ.Blazor.Controls.Pages
 
     private string lastMsg = string.Empty;
     private StatusModel statusModel = new();
+    private EffectsVM effectsVM = new();
+    private int Brightness = 100;
 
 
     protected override async Task OnParametersSetAsync()
     {
       config = await LocalStorageService.Get(Id);
+      effectsVM = await LightDJService.GetEffects();
 
       await base.OnParametersSetAsync();
     }

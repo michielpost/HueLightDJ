@@ -14,9 +14,9 @@ namespace HueLightDJ.Services.Interfaces
 
     Task<EffectsVM> GetEffects();
 
-    void StartEffect(string typeName, string colorHex);
+    void StartEffect(string typeName, string? colorHex);
 
-    void StartGroupEffect(string typeName, string colorHex, string groupName, string iteratorMode, string secondaryIteratorMode);
+    void StartGroupEffect(string typeName, string? colorHex, string groupName, string iteratorMode, string secondaryIteratorMode);
 
     Task IncreaseBPM(int value);
 
@@ -30,6 +30,9 @@ namespace HueLightDJ.Services.Interfaces
 
     Task StopAutoMode();
 
+    Task SetAutoRandomMode(bool value);
+
+    [Obsolete]
     Task ToggleAutoRandomMode();
 
     Task StopEffects();

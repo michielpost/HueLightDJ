@@ -10,7 +10,6 @@ namespace HueLightDJ.Services.Interfaces.Models
     public Dictionary<string, List<EffectViewModel>> BaseEffects { get; set; } = new();
     public List<EffectViewModel> ShortEffects { get; set; } = new();
     public List<EffectViewModel> GroupEffects { get; set; } = new();
-    public List<GroupInfoViewModel> Groups { get; set; } = new();
     public List<string> IteratorModes { get; set; } = new();
     public List<string> SecondaryIteratorModes { get; set; } = new();
 
@@ -31,9 +30,5 @@ namespace HueLightDJ.Services.Interfaces.Models
 
   }
 
-  public class GroupInfoViewModel
-  {
-    public required string Name { get; set; }
-
-  }
+  
 }

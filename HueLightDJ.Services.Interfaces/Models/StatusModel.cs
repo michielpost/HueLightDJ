@@ -15,5 +15,15 @@ namespace HueLightDJ.Services.Interfaces.Models
 
     public bool ShowDisconnect { get; set; }
     public string? CurrentGroup { get; set; }
+
+    public List<GroupInfoViewModel> Groups { get; set; } = new();
+
+    public bool IsConnected => !string.IsNullOrEmpty(CurrentGroup);
+  }
+
+  public class GroupInfoViewModel
+  {
+    public required string Name { get; set; }
+
   }
 }

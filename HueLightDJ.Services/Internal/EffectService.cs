@@ -69,7 +69,8 @@ namespace HueLightDJ.Services
     {
       var all = GetEffectTypes();
       var groupEffectsTypes = GetGroupEffectTypes();
-      var groups = GroupService.GetAll();
+
+     
 
       Dictionary<string, List<EffectViewModel>> baseEffects = new Dictionary<string, List<EffectViewModel>>();
       List<EffectViewModel> shortEffects = new List<EffectViewModel>();
@@ -144,7 +145,6 @@ namespace HueLightDJ.Services
       vm.BaseEffects = baseEffects;
       vm.ShortEffects = shortEffects;
       vm.GroupEffects = groupEffects;
-      vm.Groups = groups.Select(x => new GroupInfoViewModel() { Name = x.Name }).ToList();
       vm.IteratorModes = iteratorNames;
       vm.SecondaryIteratorModes = secondaryIteratorNames;
 
@@ -198,7 +198,7 @@ namespace HueLightDJ.Services
       return true;
     }
 
-    public void StartEffect(string typeName, string colorHex, string? group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
+    public void StartEffect(string typeName, string? colorHex, string? group = null, IteratorEffectMode iteratorMode = IteratorEffectMode.All, IteratorEffectMode secondaryIteratorMode = IteratorEffectMode.All)
     {
       var all = GetEffectTypes();
       var allGroup = GetGroupEffectTypes();

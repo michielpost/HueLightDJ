@@ -31,12 +31,19 @@ namespace HueLightDJ.Maui.Services
 
     public async Task<StatusModel> GetStatus()
     {
+
       StatusModel vm = new StatusModel();
       vm.bpm = StreamingSetup.GetBPM();
       vm.IsAutoMode = EffectService.IsAutoModeRunning();
       vm.AutoModeHasRandomEffects = EffectService.AutoModeHasRandomEffects;
       vm.ShowDisconnect = !(StreamingSetup.CurrentConnection?.HideDisconnect ?? false);
       vm.CurrentGroup = StreamingSetup.CurrentConnection?.Name;
+
+      if (StreamingSetup.CurrentConnection != null)
+      {
+        var groups = GroupService.GetAll();
+        vm.Groups = groups.Select(x => new GroupInfoViewModel() { Name = x.Name }).ToList();
+      }
 
       return vm;
     }
@@ -46,12 +53,12 @@ namespace HueLightDJ.Maui.Services
       return Task.FromResult(EffectService.GetEffectViewModels());
     }
 
-    public void StartEffect(string typeName, string colorHex)
+    public void StartEffect(string typeName, string? colorHex)
     {
       effectService.StartEffect(typeName, colorHex);
     }
 
-    public void StartGroupEffect(string typeName, string colorHex, string groupName, string iteratorMode, string secondaryIteratorMode)
+    public void StartGroupEffect(string typeName, string? colorHex, string groupName, string iteratorMode, string secondaryIteratorMode)
     {
       effectService.StartEffect(typeName, colorHex, groupName, Enum.Parse<IteratorEffectMode>(iteratorMode), Enum.Parse<IteratorEffectMode>(secondaryIteratorMode));
     }
@@ -93,6 +100,13 @@ namespace HueLightDJ.Maui.Services
       return Task.CompletedTask;
     }
 
+    public Task SetAutoRandomMode(bool value)
+    {
+      EffectService.AutoModeHasRandomEffects = value;
+      return Task.CompletedTask;
+    }
+
+    [Obsolete]
     public Task ToggleAutoRandomMode()
     {
       EffectService.AutoModeHasRandomEffects = !EffectService.AutoModeHasRandomEffects;
