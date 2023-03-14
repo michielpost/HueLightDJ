@@ -1,46 +1,63 @@
-using HueApi.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using HueLightDJ.Services.Interfaces.Models;
+using System.ServiceModel;
+using HueLightDJ.Services.Interfaces.Models.Requests;
+using ProtoBuf.Grpc;
 
 namespace HueLightDJ.Services.Interfaces
 {
+  [ServiceContract]
   public interface ILightDJService
   {
-    Task Connect(GroupConfiguration config);
+    [OperationContract]
+    Task Connect(GroupConfiguration config, CallContext context = default);
 
-    Task<StatusModel> GetStatus();
+    [OperationContract]
+    Task<StatusModel> GetStatus(CallContext context = default);
 
-    Task<EffectsVM> GetEffects();
+    [OperationContract]
+    Task<EffectsVM> GetEffects(CallContext context = default);
 
-    void StartEffect(string typeName, string? colorHex);
+    [OperationContract]
+    void StartEffect(StartEffectRequest request, CallContext context = default);
 
-    void StartGroupEffect(string typeName, string? colorHex, string groupName, string iteratorMode, string secondaryIteratorMode);
+    [OperationContract]
+    void StartGroupEffect(StartEffectRequest request, CallContext context = default);
 
-    Task IncreaseBPM(int value);
+    [OperationContract]
+    Task IncreaseBPM(IntRequest value, CallContext context = default);
 
-    Task SetBPM(int value);
+    [OperationContract]
+    Task SetBPM(IntRequest value, CallContext context = default);
 
-    void SetBri(double value);
+    [OperationContract]
+    void SetBri(DoubleRequest value, CallContext context = default);
 
-    void StartRandom();
+    [OperationContract]
+    void StartRandom(CallContext context = default);
 
-    Task StartAutoMode();
+    [OperationContract]
+    Task StartAutoMode(CallContext context = default);
 
-    Task StopAutoMode();
+    [OperationContract]
+    Task StopAutoMode(CallContext context = default);
 
-    Task SetAutoRandomMode(bool value);
+    [OperationContract]
+    Task SetAutoRandomMode(BoolRequest value, CallContext context = default);
 
-    [Obsolete]
-    Task ToggleAutoRandomMode();
+    [OperationContract]
+    Task StopEffects(CallContext context = default);
 
-    Task StopEffects();
+    //void SetColors(string[,] matrix);
 
-    void SetColors(string[,] matrix);
-    void SetColorsList(List<List<string>> matrix);
-    void Beat(double intensity);
+    //void SetColorsList(List<List<string>> matrix);
 
-    Task Disconnect();
+    [OperationContract]
+    void Beat(DoubleRequest value, CallContext context = default);
+
+    [OperationContract]
+    Task Disconnect(CallContext context = default);
   }
 }

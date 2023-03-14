@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using HueLightDJ.Blazor.Controls;
 using HueLightDJ.BlazorWeb.Client.Services;
 using HueLightDJ.Services;
+using Grpc.Net.Client;
+using Microsoft.AspNetCore.Components;
+using Grpc.Net.Client.Web;
+using ProtoBuf.Grpc.Client;
 
 namespace HueLightDJ.BlazorWeb.Client
 {
@@ -21,12 +25,41 @@ namespace HueLightDJ.BlazorWeb.Client
 
       builder.Services.AddHueLightDJBlazorControls();
 
-      builder.Services.AddTransient<ILightDJService, LightDJService>();
-      builder.Services.AddTransient<IHueSetupService, HueSetupService>();
-
-
       builder.Services.AddSingleton<IHubService, HubService>();
       builder.Services.Configure<List<GroupConfiguration>>(GetConfig);
+
+      builder.Services.AddHttpClient("ServerAPI",
+              client =>
+              {
+                client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+              })
+            //.AddHttpMessageHandler<CustomAuthorizationMessageHandler>()
+            .AddHttpMessageHandler(() => new GrpcWebHandler(GrpcWebMode.GrpcWeb));
+
+      builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
+      .CreateClient("ServerAPI")
+      );
+
+      builder.Services.AddSingleton(services =>
+      {
+        //var httpClient = new HttpClient(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
+        var httpFactory = services.GetRequiredService<IHttpClientFactory>();
+        var httpClient = httpFactory.CreateClient("ServerAPI");
+        var baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
+        var channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient });
+        return channel.CreateGrpcService<IHueSetupService>();
+      });
+
+      builder.Services.AddSingleton(services =>
+      {
+        //var httpClient = new HttpClient(new GrpcWebHandler(GrpcWebMode.GrpcWeb, new HttpClientHandler()));
+        var httpFactory = services.GetRequiredService<IHttpClientFactory>();
+        var httpClient = httpFactory.CreateClient("ServerAPI");
+        var baseUri = services.GetRequiredService<NavigationManager>().BaseUri;
+        var channel = GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient });
+        return channel.CreateGrpcService<ILightDJService>();
+      });
+
 
       await builder.Build().RunAsync();
     }

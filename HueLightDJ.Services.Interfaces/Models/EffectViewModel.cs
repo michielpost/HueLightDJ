@@ -1,3 +1,4 @@
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Services.Interfaces.Models
 {
+  [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
   public class EffectsVM
   {
     public Dictionary<string, List<EffectViewModel>> BaseEffects { get; set; } = new();
@@ -15,6 +17,7 @@ namespace HueLightDJ.Services.Interfaces.Models
 
   }
 
+  [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
   public class EffectViewModel
   {
     public required string Name { get; set; }

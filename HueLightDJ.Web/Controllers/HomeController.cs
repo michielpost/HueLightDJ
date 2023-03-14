@@ -46,7 +46,7 @@ namespace HueLightDJ.Services.Controllers
     public async Task<IActionResult> Setup()
     {
       var bridgeLocator = new HttpBridgeLocator();
-      IEnumerable<LocatedBridge> ips = new List<LocatedBridge>();
+      IEnumerable<HueApi.BridgeLocator.LocatedBridge> ips = new List<HueApi.BridgeLocator.LocatedBridge>();
 
       try
       {

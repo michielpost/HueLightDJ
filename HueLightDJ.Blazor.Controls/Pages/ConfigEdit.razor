@@ -5,7 +5,7 @@
 <MudText Typo="Typo.h3">@config?.Name</MudText>
 <MudTextField @bind-Value="titleEdit" Variant="Variant.Text"></MudTextField>
 
-@foreach (var connection in config?.Connections ?? new())
+@foreach (var connection in config?.Connections ?? Enumerable.Empty<ConnectionConfiguration>())
 {
     <MudCard>
         <MudCardContent>

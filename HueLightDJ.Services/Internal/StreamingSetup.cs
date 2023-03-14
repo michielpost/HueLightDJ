@@ -217,7 +217,11 @@ namespace HueLightDJ.Services
 
       Layers = new List<EntertainmentLayer>() { baseLayer, effectLayer };
       CurrentConnection = currentGroup;
-      EffectSettings.LocationCenter = currentGroup.LocationCenter ?? new HuePosition(0, 0, 0);
+      HuePosition? locationCenter = new HuePosition(0, 0, 0);
+      if(currentGroup.LocationCenter != null)
+        locationCenter = new HuePosition(currentGroup.LocationCenter.X, currentGroup.LocationCenter.Y, currentGroup.LocationCenter.Z);
+
+      EffectSettings.LocationCenter = locationCenter ?? new HuePosition(0, 0, 0);
 
       //Optional: calculated effects that are placed on this layer
       baseLayer.AutoCalculateEffectUpdate(_cts.Token);
@@ -298,7 +302,7 @@ namespace HueLightDJ.Services
     [Obsolete]
     public async Task<List<GroupConfiguration>> GetGroupConfigurationsAsync()
     {
-      IEnumerable<LocatedBridge> bridges = new List<LocatedBridge>();
+      IEnumerable<HueApi.BridgeLocator.LocatedBridge> bridges = new List<HueApi.BridgeLocator.LocatedBridge>();
       try
       {
         IBridgeLocator bridgeLocator = new HttpBridgeLocator();

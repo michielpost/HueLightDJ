@@ -2,14 +2,16 @@ using HueApi.Entertainment.Extensions;
 using HueLightDJ.Services;
 using HueLightDJ.Services.Interfaces;
 using HueLightDJ.Services.Interfaces.Models;
+using HueLightDJ.Services.Interfaces.Models.Requests;
 using HueLightDJ.Services.Models;
+using ProtoBuf.Grpc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HueLightDJ.Maui.Services
+namespace HueLightDJ.Services
 {
   public class LightDJService : ILightDJService
   {
@@ -22,14 +24,14 @@ namespace HueLightDJ.Maui.Services
       this.streamingSetup = streamingSetup;
     }
 
-    public Task Connect(GroupConfiguration config)
+    public Task Connect(GroupConfiguration config, CallContext context = default)
     {
       //Connect
       effectService.StopEffects();
       return streamingSetup.SetupAndReturnGroupAsync(config);
     }
 
-    public async Task<StatusModel> GetStatus()
+    public async Task<StatusModel> GetStatus(CallContext context = default)
     {
 
       StatusModel vm = new StatusModel();
@@ -48,92 +50,92 @@ namespace HueLightDJ.Maui.Services
       return vm;
     }
 
-    public Task<EffectsVM> GetEffects()
+    public Task<EffectsVM> GetEffects(CallContext context = default)
     {
       return Task.FromResult(EffectService.GetEffectViewModels());
     }
 
-    public void StartEffect(string typeName, string? colorHex)
+    public void StartEffect(StartEffectRequest request, CallContext context = default)
     {
-      effectService.StartEffect(typeName, colorHex);
+      effectService.StartEffect(request.TypeName, request.ColorHex);
     }
 
-    public void StartGroupEffect(string typeName, string? colorHex, string groupName, string iteratorMode, string secondaryIteratorMode)
+    public void StartGroupEffect(StartEffectRequest request, CallContext context = default)
     {
-      effectService.StartEffect(typeName, colorHex, groupName, Enum.Parse<IteratorEffectMode>(iteratorMode), Enum.Parse<IteratorEffectMode>(secondaryIteratorMode));
+      effectService.StartEffect(request.TypeName, request.ColorHex, request.GroupName, Enum.Parse<IteratorEffectMode>(request.IteratorMode!), Enum.Parse<IteratorEffectMode>(request.SecondaryIteratorMode!));
     }
 
-    public Task IncreaseBPM(int value)
+    public Task IncreaseBPM(IntRequest req, CallContext context = default)
     {
-      streamingSetup.IncreaseBPM(value);
+      streamingSetup.IncreaseBPM(req.Value);
       return GetStatus();
 
     }
 
-    public Task SetBPM(int value)
+    public Task SetBPM(IntRequest req, CallContext context = default)
     {
-      streamingSetup.SetBPM(value);
+      streamingSetup.SetBPM(req.Value);
       return GetStatus();
 
     }
 
-    public void SetBri(double value)
+    public void SetBri(DoubleRequest req, CallContext context = default)
     {
-      streamingSetup.SetBrightnessFilter(value);
+      streamingSetup.SetBrightnessFilter(req.Value);
     }
 
 
-    public void StartRandom()
+    public void StartRandom(CallContext context = default)
     {
       effectService.StartRandomEffect();
     }
 
-    public Task StartAutoMode()
+    public Task StartAutoMode(CallContext context = default)
     {
       effectService.StartAutoMode();
       return GetStatus();
     }
 
-    public Task StopAutoMode()
+    public Task StopAutoMode(CallContext context = default)
     {
       effectService.StopAutoMode();
       return Task.CompletedTask;
     }
 
-    public Task SetAutoRandomMode(bool value)
+    public Task SetAutoRandomMode(BoolRequest req, CallContext context = default)
     {
-      EffectService.AutoModeHasRandomEffects = value;
+      EffectService.AutoModeHasRandomEffects = req.Value;
       return Task.CompletedTask;
     }
 
     [Obsolete]
-    public Task ToggleAutoRandomMode()
+    public Task ToggleAutoRandomMode(CallContext context = default)
     {
       EffectService.AutoModeHasRandomEffects = !EffectService.AutoModeHasRandomEffects;
       return Task.CompletedTask;
     }
 
-    public Task StopEffects()
+    public Task StopEffects(CallContext context = default)
     {
       effectService.StopAutoMode();
       effectService.StopEffects();
       return Task.CompletedTask;
     }
 
-    public void SetColors(string[,] matrix)
+    //public void SetColors(string[,] matrix)
+    //{
+    //  ManualControlService.SetColors(matrix);
+    //}
+    //public void SetColorsList(List<List<string>> matrix)
+    //{
+    //  ManualControlService.SetColors(matrix);
+    //}
+    public void Beat(DoubleRequest req, CallContext context = default)
     {
-      ManualControlService.SetColors(matrix);
-    }
-    public void SetColorsList(List<List<string>> matrix)
-    {
-      ManualControlService.SetColors(matrix);
-    }
-    public void Beat(double intensity)
-    {
-      effectService.Beat(intensity);
+      effectService.Beat(req.Value);
     }
 
-    public Task Disconnect()
+    public Task Disconnect(CallContext context = default)
     {
       effectService.CancelAllEffects();
 

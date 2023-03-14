@@ -1,3 +1,4 @@
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Services.Interfaces.Models
 {
+  [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
   public class StatusModel
   {
     public string? Status { get; set; }
@@ -21,6 +23,7 @@ namespace HueLightDJ.Services.Interfaces.Models
     public bool IsConnected => !string.IsNullOrEmpty(CurrentGroup);
   }
 
+  [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
   public class GroupInfoViewModel
   {
     public required string Name { get; set; }

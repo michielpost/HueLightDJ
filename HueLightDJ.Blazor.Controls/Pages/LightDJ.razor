@@ -1,4 +1,5 @@
 @page "/lightdj/{Id:guid}"
+@using HueLightDJ.Services.Interfaces.Models.Requests;
 @inject StorageService LocalStorageService
 @inject ILightDJService LightDJService
 @inject IHubService HubService
@@ -17,19 +18,19 @@
 
     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Disconnect">Disconnect</MudButton>
 
-    <MudNumericField @bind-Value="statusModel.bpm" Label="BPM" Variant="Variant.Text" @onchange="@(() => LightDJService.SetBPM(statusModel.bpm))" Min="1" Max="1000" />
+    <MudNumericField @bind-Value="statusModel.bpm" Label="BPM" Variant="Variant.Text" @onchange="@(() => LightDJService.SetBPM(new IntRequest(statusModel.bpm)))" Min="1" Max="1000" />
 
-    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(120))">Reset BPM</MudButton>
-    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(20))">Slow</MudButton>
-    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(400))">Quick</MudButton>
-    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(600))">Super Quick</MudButton>
+    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(120)))">Reset BPM</MudButton>
+    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(20)))">Slow</MudButton>
+    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(400)))">Quick</MudButton>
+    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(600)))">Super Quick</MudButton>
 
 
     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StartRandom())">Random</MudButton>
 
     @if(statusModel.IsAutoMode)
 {
-        <MudCheckBox @bind-Checked="@statusModel.AutoModeHasRandomEffects" @onchange="@(() => LightDJService.SetAutoRandomMode(statusModel.AutoModeHasRandomEffects))" Label="Random effects"></MudCheckBox>
+        <MudCheckBox @bind-Checked="@statusModel.AutoModeHasRandomEffects" @onchange="@(() => LightDJService.SetAutoRandomMode(new BoolRequest(statusModel.AutoModeHasRandomEffects)))" Label="Random effects"></MudCheckBox>
 
         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StopAutoMode())">Stop Auto Mode</MudButton>
     }
@@ -38,9 +39,9 @@
         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StartAutoMode())">Start Auto Mode</MudButton>
     }
     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StopEffects())">Stop All Effects</MudButton>
-    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.Beat(1))">Beat</MudButton>
+    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.Beat(new DoubleRequest(1)))">Beat</MudButton>
 
-    <MudSlider Min="0" Max="100" ValueLabel="true" @bind-Value="@Brightness" @onchange="@(() => LightDJService.SetBri(Brightness))">Brightness</MudSlider>
+    <MudSlider Min="0" Max="100" ValueLabel="true" @bind-Value="@Brightness" @onchange="@(() => LightDJService.SetBri(new DoubleRequest(Brightness)))">Brightness</MudSlider>
 
     <MudText Typo="Typo.h5">Long Running</MudText>
     @foreach (var effectGroup in effectsVM.BaseEffects)
@@ -58,7 +59,7 @@
                     <MudColorPicker PickerVariant="PickerVariant.Inline" @bind-Text="effect.Color" Style="@($"color: {effect.Color};")" />
                 }
             }
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => LightDJService.StartEffect(effect.TypeName, effect.IsRandom ? null : effect.Color))">@effect.Name</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = effect.IsRandom ? null : effect.Color}))">@effect.Name</MudButton>
         }
     }
 
@@ -66,7 +67,7 @@
 
     @foreach (var effect in effectsVM.ShortEffects)
     {
-        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => LightDJService.StartEffect(effect.TypeName, ""))">@effect.Name</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = ""}))">@effect.Name</MudButton>
     }
 
 }

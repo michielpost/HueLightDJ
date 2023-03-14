@@ -1,5 +1,5 @@
-using HueApi.Models;
 using HueLightDJ.Services.Interfaces.Models;
+using HueLightDJ.Services.Interfaces.Models.Requests;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace HueLightDJ.Blazor.Controls.Pages
 
     GroupConfiguration? config;
     ConnectionConfiguration? bridge;
-    List<EntertainmentConfiguration>? groups;
+    IEnumerable<SimpleEntertainmentGroup>? groups;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -33,7 +33,7 @@ namespace HueLightDJ.Blazor.Controls.Pages
       if (bridge == null)
         return;
 
-      groups = await HueSetupService.GetEntertainmentGroupsAsync(bridge.Ip, bridge.Key);
+      groups = await HueSetupService.GetEntertainmentGroupsAsync(new HueSetupRequest { Ip = bridge.Ip, Key = bridge.Key });
 
       await base.OnParametersSetAsync();
     }

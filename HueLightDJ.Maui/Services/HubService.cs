@@ -18,17 +18,11 @@ namespace HueLightDJ.Maui.Services
       return Task.CompletedTask;
     }
 
-    public Task SendAsync(string method, object? arg1)
+    public Task SendAsync(string method, params object?[] arg1)
     {
       if (method == "StatusMsg")
-        LogMsgEvent?.Invoke(this, (string?)arg1);
+        LogMsgEvent?.Invoke(this, (string?)arg1.FirstOrDefault());
 
-      Console.WriteLine(method);
-      return Task.CompletedTask;
-    }
-
-    public Task SendAsync(string method, object? arg1, object? arg2)
-    {
       Console.WriteLine(method);
       return Task.CompletedTask;
     }

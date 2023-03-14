@@ -7,12 +7,7 @@ namespace HueLightDJ.BlazorWeb.Server.Services
     public event EventHandler<string?>? LogMsgEvent;
     public event EventHandler? StatusChangedEvent;
 
-    public Task SendAsync(string method, object? arg1)
-    {
-      throw new NotImplementedException();
-    }
-
-    public Task SendAsync(string method, object? arg1, object? arg2)
+    public Task SendAsync(string method, params object?[] arg1)
     {
       throw new NotImplementedException();
     }

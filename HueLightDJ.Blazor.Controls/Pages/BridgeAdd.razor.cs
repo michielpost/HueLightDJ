@@ -1,7 +1,6 @@
 using Blazored.LocalStorage;
-using HueApi.BridgeLocator;
-using HueApi.Models;
 using HueLightDJ.Services.Interfaces.Models;
+using HueLightDJ.Services.Interfaces.Models.Requests;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
@@ -39,7 +38,7 @@ namespace HueLightDJ.Blazor.Controls.Pages
         return;
 
       //Get key from hue bridge
-      var result = await HueSetupService.RegisterAsync(ipAdd);
+      var result = await HueSetupService.RegisterAsync(new HueSetupRequest() { Ip = ipAdd });
 
       if (result == null || result.Username == null || string.IsNullOrEmpty(result.StreamingClientKey))
         throw new Exception("No result from bridge");

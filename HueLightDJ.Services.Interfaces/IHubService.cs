@@ -14,8 +14,7 @@ namespace HueLightDJ.Services.Interfaces
 
     Task StatusChanged();
 
-    Task SendAsync(string method, object? arg1);
-    Task SendAsync(string method, object? arg1, object? arg2);
+    Task SendAsync(string method, params object?[] arg1);
 
   }
 }
