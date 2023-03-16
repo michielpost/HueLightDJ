@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Services.Interfaces.Models
 {
+  [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
   public class GroupConfiguration
   {
     public Guid Id { get; set; }

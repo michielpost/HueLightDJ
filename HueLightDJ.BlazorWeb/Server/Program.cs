@@ -4,6 +4,7 @@ using HueLightDJ.Services.Interfaces.Models;
 using HueLightDJ.Services.Interfaces;
 using HueLightDJ.BlazorWeb.Server.Services;
 using ProtoBuf.Grpc.Server;
+using HueLightDJ.BlazorWeb.Server.Hubs;
 
 namespace HueLightDJ.BlazorWeb
 {
@@ -17,6 +18,7 @@ namespace HueLightDJ.BlazorWeb
 
       builder.Services.AddControllersWithViews();
       builder.Services.AddRazorPages();
+      builder.Services.AddSignalR();
 
       builder.Services.AddGrpc();
       builder.Services.AddResponseCompression(opts =>
@@ -55,6 +57,8 @@ namespace HueLightDJ.BlazorWeb
       app.UseGrpcWeb();
       app.MapGrpcService<HueSetupService>().EnableGrpcWeb();
       app.MapGrpcService<LightDJService>().EnableGrpcWeb();
+
+      app.MapHub<PreviewHub>("/previewhub");
 
       app.MapRazorPages();
       app.MapControllers();

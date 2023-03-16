@@ -62,6 +62,7 @@ namespace HueLightDJ.BlazorWeb.Client
 
 
       await builder.Build().RunAsync();
+
     }
 
     //TODO: Remove

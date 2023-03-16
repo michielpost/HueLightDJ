@@ -1,3 +1,6 @@
+@using HueLightDJ.BlazorWeb.Client.Services;
+@using HueLightDJ.Services.Interfaces;
+@inject IHubService HubService
 <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="@(new[] { typeof(HueLightDJ.Blazor.Controls.Pages.Index).Assembly })">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -10,3 +13,11 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await((HubService)HubService).OnInitializedAsync();
+        await base.OnInitializedAsync();
+    }
+}
