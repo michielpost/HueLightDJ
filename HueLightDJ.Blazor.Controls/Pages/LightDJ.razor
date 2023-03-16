@@ -15,12 +15,12 @@
 
 <HueLightDJ.Blazor.Controls.Shared.Preview />
 
-@if (statusModel.IsConnected)
+@if (!string.IsNullOrEmpty(statusModel.CurrentGroup)) //statusModel.IsConnected
 {
 
     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Disconnect">Disconnect</MudButton>
 
-    <MudNumericField @bind-Value="statusModel.bpm" Label="BPM" Variant="Variant.Text" @onchange="@(() => LightDJService.SetBPM(new IntRequest(statusModel.bpm)))" Min="1" Max="1000" />
+    <MudNumericField @bind-Value="statusModel.Bpm" Label="BPM" Variant="Variant.Text" @onchange="@(() => LightDJService.SetBPM(new IntRequest(statusModel.Bpm)))" Min="1" Max="1000" />
 
     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(120)))">Reset BPM</MudButton>
     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(20)))">Slow</MudButton>

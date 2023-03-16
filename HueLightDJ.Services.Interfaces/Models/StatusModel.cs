@@ -11,7 +11,7 @@ namespace HueLightDJ.Services.Interfaces.Models
   public class StatusModel
   {
     public string? Status { get; set; }
-    public int bpm { get; set; }
+    public int Bpm { get; set; }
     public bool IsAutoMode { get; set; }
     public bool AutoModeHasRandomEffects { get; set; }
 
@@ -20,7 +20,7 @@ namespace HueLightDJ.Services.Interfaces.Models
 
     public List<GroupInfoViewModel> Groups { get; set; } = new();
 
-    public bool IsConnected => !string.IsNullOrEmpty(CurrentGroup);
+    //public bool IsConnected => !string.IsNullOrEmpty(CurrentGroup);
   }
 
   [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]

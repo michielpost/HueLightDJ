@@ -68,8 +68,4 @@
       <ProjectReference Include="..\HueLightDJ.Services\HueLightDJ.Services.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Services\" />
-    </ItemGroup>
-
 </Project>

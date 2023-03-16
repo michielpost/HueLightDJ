@@ -34,12 +34,13 @@ namespace HueLightDJ.BlazorWeb.Server.Services
 
     public Task SendPreview(IEnumerable<PreviewModel> list)
     {
-      return SendAsync("preview", list);
+      return _hub.Clients.All.SendAsync("preview", list.ToList());
+      //return SendAsync("preview", list);
     }
 
     public Task StatusChanged()
     {
-      return Task.CompletedTask;
+      return _hub.Clients.All.SendAsync("StatusChanged");
     }
   }
 }

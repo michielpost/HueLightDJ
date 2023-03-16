@@ -35,7 +35,7 @@ namespace HueLightDJ.Services
     {
 
       StatusModel vm = new StatusModel();
-      vm.bpm = StreamingSetup.GetBPM();
+      vm.Bpm = StreamingSetup.GetBPM();
       vm.IsAutoMode = EffectService.IsAutoModeRunning();
       vm.AutoModeHasRandomEffects = EffectService.AutoModeHasRandomEffects;
       vm.ShowDisconnect = !(StreamingSetup.CurrentConnection?.HideDisconnect ?? false);

@@ -17,7 +17,7 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        await((HubService)HubService).OnInitializedAsync();
+        await((SignalRClientHubService)HubService).OnInitializedAsync();
         await base.OnInitializedAsync();
     }
 }

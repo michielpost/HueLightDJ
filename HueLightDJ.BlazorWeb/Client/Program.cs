@@ -25,7 +25,7 @@ namespace HueLightDJ.BlazorWeb.Client
 
       builder.Services.AddHueLightDJBlazorControls();
 
-      builder.Services.AddSingleton<IHubService, HubService>();
+      builder.Services.AddSingleton<IHubService, SignalRClientHubService>();
       builder.Services.Configure<List<GroupConfiguration>>(GetConfig);
 
       builder.Services.AddHttpClient("ServerAPI",
