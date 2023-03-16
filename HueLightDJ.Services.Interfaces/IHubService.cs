@@ -1,3 +1,4 @@
+using HueLightDJ.Services.Interfaces.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,12 @@ namespace HueLightDJ.Services.Interfaces
 
     event EventHandler? StatusChangedEvent;
 
+    event EventHandler<IEnumerable<PreviewModel>>? PreviewEvent;
+
+
     Task StatusChanged();
 
     Task SendAsync(string method, params object?[] arg1);
-
+    Task SendPreview(IEnumerable<PreviewModel> list);
   }
 }

@@ -1,15 +1,17 @@
 using HueLightDJ.Services.Interfaces;
+using HueLightDJ.Services.Interfaces.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HueLightDJ.Maui.Services
+namespace HueLightDJ.Blazor.Controls.Services
 {
   public class HubService : IHubService
   {
     public event EventHandler<string?>? LogMsgEvent;
+    public event EventHandler<IEnumerable<PreviewModel>>? PreviewEvent;
     public event EventHandler? StatusChangedEvent;
 
     public Task StatusChanged()
@@ -27,5 +29,11 @@ namespace HueLightDJ.Maui.Services
       return Task.CompletedTask;
     }
 
+    public Task SendPreview(IEnumerable<PreviewModel> list)
+    {
+      PreviewEvent?.Invoke(this, list);
+      return Task.CompletedTask;
+
+    }
   }
 }

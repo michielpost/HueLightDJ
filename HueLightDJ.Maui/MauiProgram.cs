@@ -1,9 +1,7 @@
 using HueLightDJ.Blazor.Controls;
-using HueLightDJ.Maui.Services;
 using HueLightDJ.Services;
 using HueLightDJ.Services.Interfaces;
 using HueLightDJ.Services.Interfaces.Models;
-using HueLightDJ.Services.Models;
 using Microsoft.Extensions.Logging;
 
 namespace HueLightDJ.Maui
@@ -33,7 +31,6 @@ namespace HueLightDJ.Maui
       builder.Services.AddTransient<IHueSetupService, HueSetupService>();
 
 
-      builder.Services.AddSingleton<IHubService, HubService>();
       builder.Services.Configure<List<GroupConfiguration>>(GetConfig);
       builder.Services.AddHueLightDJServices();
 

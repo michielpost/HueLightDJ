@@ -1,4 +1,6 @@
+using HueLightDJ.Services.Interfaces.Models;
 using Microsoft.JSInterop;
+using System.ServiceModel.Channels;
 
 namespace HueLightDJ.Blazor.Controls
 {
@@ -9,20 +11,29 @@ namespace HueLightDJ.Blazor.Controls
   // This class can be registered as scoped DI service and then injected into Blazor
   // components for use.
 
-  public class ExampleJsInterop : IAsyncDisposable
+  public class HueJsInterop : IAsyncDisposable
   {
     private readonly Lazy<Task<IJSObjectReference>> moduleTask;
 
-    public ExampleJsInterop(IJSRuntime jsRuntime)
+    public HueJsInterop(IJSRuntime jsRuntime)
     {
-      moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
-          "import", "./_content/HueLightDJ.Blazor.Controls/exampleJsInterop.js").AsTask());
+      moduleTask = new(() =>
+      {
+        return jsRuntime.InvokeAsync<IJSObjectReference>(
+            "import", "./_content/HueLightDJ.Blazor.Controls/hueJsInterop.js").AsTask();
+          });
     }
 
     public async ValueTask<string> Prompt(string message)
     {
       var module = await moduleTask.Value;
       return await module.InvokeAsync<string>("showPrompt", message);
+    }
+
+    public async ValueTask InitializePreview()
+    {
+      var module = await moduleTask.Value;
+      await module.InvokeVoidAsync("initPreview");
     }
 
     public async ValueTask DisposeAsync()
@@ -32,6 +43,12 @@ namespace HueLightDJ.Blazor.Controls
         var module = await moduleTask.Value;
         await module.DisposeAsync();
       }
+    }
+
+    public async ValueTask ShowPreview(IEnumerable<PreviewModel> list)
+    {
+      var module = await moduleTask.Value;
+      await module.InvokeVoidAsync("showLights", list);
     }
   }
 }

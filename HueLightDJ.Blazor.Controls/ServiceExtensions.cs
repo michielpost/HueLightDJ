@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using HueLightDJ.Blazor.Controls.Services;
+using HueLightDJ.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using System;
@@ -19,6 +20,12 @@ namespace HueLightDJ.Blazor.Controls
       services.AddBlazoredLocalStorage();
 
       services.AddTransient<StorageService>();
+
+      services.AddTransient<HueJsInterop>();
+
+      services.AddSingleton<IHubService, HubService>();
+
+
 
     }
   }

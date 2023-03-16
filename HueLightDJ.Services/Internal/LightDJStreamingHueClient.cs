@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HueLightDJ.Services.Models;
 using HueLightDJ.Services.Interfaces;
+using HueLightDJ.Services.Interfaces.Models;
 
 namespace HueLightDJ.Services
 {
@@ -30,7 +31,7 @@ namespace HueLightDJ.Services
 
       var flatten = chunks.SelectMany(x => x);
 
-      _hub.SendAsync("preview", flatten.Select(x => new PreviewModel()
+      _hub.SendPreview(flatten.Select(x => new PreviewModel()
       {
         Bridge = _bridgeIp,
         Id = x.Id,
