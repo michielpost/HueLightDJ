@@ -23,7 +23,40 @@ namespace HueLightDJ.Blazor.Controls.Services
     public async ValueTask<List<GroupConfiguration>> GetAllAsync()
     {
       var result = await localStore.GetItemAsync<List<GroupConfiguration>>(key);
-      return result ?? new();
+      if (result == null)
+        result = new();
+
+      //Add demo group when list is empty
+      if(!result.Any())
+        result.Add(GetDemoGroupConfiguration());
+
+      return result;
+    }
+
+    public GroupConfiguration GetDemoGroupConfiguration()
+    {
+      return new GroupConfiguration
+      {
+        Id = Guid.Empty,
+        Name = "DEMO Group",
+        Connections = new List<ConnectionConfiguration>
+        {
+          new ConnectionConfiguration
+          {
+            EntertainmentKey = "demoLocations1",
+            Ip = "demoLocations1",
+            Key = "demoLocations1",
+            GroupId = Guid.Empty
+          },
+          new ConnectionConfiguration
+          {
+            EntertainmentKey = "demoLocations2",
+            Ip = "demoLocations2",
+            Key = "demoLocations2",
+            GroupId = Guid.Empty
+          }
+        }
+      };
     }
 
     public async ValueTask<GroupConfiguration?> Get(Guid Id)

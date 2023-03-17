@@ -7,6 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="demoLocations1_00000000-0000-0000-0000-000000000000.json" />
+    <None Remove="demoLocations2_00000000-0000-0000-0000-000000000000.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="demoLocations1_00000000-0000-0000-0000-000000000000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="demoLocations2_00000000-0000-0000-0000-000000000000.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HueApi" Version="1.0.0" />
     <PackageReference Include="HueApi.ColorConverters" Version="1.0.0" />
     <PackageReference Include="HueApi.Entertainment" Version="1.4.0" />

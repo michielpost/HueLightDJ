@@ -18,6 +18,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using HueLightDJ.Services.Interfaces;
 using HueLightDJ.Services.Interfaces.Models;
+using System.Reflection;
 
 namespace HueLightDJ.Services
 {
@@ -195,7 +196,7 @@ namespace HueLightDJ.Services
 
     public async Task SetupAndReturnGroupAsync(GroupConfiguration currentGroup)
     {
-      bool demoMode = currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
+      bool demoMode = currentGroup.Id == Guid.Empty || currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
       bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
 
       //Disconnect any current connections
@@ -248,7 +249,11 @@ namespace HueLightDJ.Services
         Dictionary<int, HuePosition>? locations = new Dictionary<int, HuePosition>();
         if (demoMode)
         {
-          string demoJson = await File.ReadAllTextAsync($"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json");
+          var dirPath = Assembly.GetExecutingAssembly().Location;
+          dirPath = Path.GetDirectoryName(dirPath) ?? string.Empty;
+          var filePath = Path.GetFullPath(Path.Combine(dirPath, $"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json"));
+
+          string demoJson = await File.ReadAllTextAsync(filePath);
           locations = JsonSerializer.Deserialize<Dictionary<int, HuePosition>>(demoJson);
           _groupId = bridgeConfig.GroupId.Value;
         }
