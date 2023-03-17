@@ -29,12 +29,6 @@
     <Content Update="demoLocations2_00000000-0000-0000-0000-000000000000.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="demoLocations1_00000000-0000-0000-0000-000000000000.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="sterDemoLocations1_00000000-0000-0000-0000-000000000000.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Update="Views\Home\Configure.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
