@@ -21,10 +21,10 @@ namespace HueLightDJ.Services.Interfaces
     Task<EffectsVM> GetEffects(CallContext context = default);
 
     [OperationContract]
-    void StartEffect(StartEffectRequest request, CallContext context = default);
+    Task StartEffect(StartEffectRequest request, CallContext context = default);
 
     [OperationContract]
-    void StartGroupEffect(StartEffectRequest request, CallContext context = default);
+    Task StartGroupEffect(StartEffectRequest request, CallContext context = default);
 
     [OperationContract]
     Task IncreaseBPM(IntRequest value, CallContext context = default);
@@ -33,10 +33,10 @@ namespace HueLightDJ.Services.Interfaces
     Task SetBPM(IntRequest value, CallContext context = default);
 
     [OperationContract]
-    void SetBri(DoubleRequest value, CallContext context = default);
+    Task SetBri(DoubleRequest value, CallContext context = default);
 
     [OperationContract]
-    void StartRandom(CallContext context = default);
+    Task StartRandom(CallContext context = default);
 
     [OperationContract]
     Task StartAutoMode(CallContext context = default);
@@ -55,7 +55,7 @@ namespace HueLightDJ.Services.Interfaces
     //void SetColorsList(List<List<string>> matrix);
 
     [OperationContract]
-    void Beat(DoubleRequest value, CallContext context = default);
+    Task Beat(DoubleRequest value, CallContext context = default);
 
     [OperationContract]
     Task Disconnect(CallContext context = default);

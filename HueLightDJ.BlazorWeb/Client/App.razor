@@ -1,6 +1,9 @@
 @using HueLightDJ.BlazorWeb.Client.Services;
 @using HueLightDJ.Services.Interfaces;
 @inject IHubService HubService
+@inject ILightDJService LightDJService
+@inject NavigationManager NavigationManager
+
 <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="@(new[] { typeof(HueLightDJ.Blazor.Controls.Pages.Index).Assembly })">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -18,6 +21,13 @@
     protected override async Task OnInitializedAsync()
     {
         await((SignalRClientHubService)HubService).OnInitializedAsync();
+
+        var status = await LightDJService.GetStatus();
+        if(status.CurrentGroup != null)
+        {
+            NavigationManager.NavigateTo($"/lightdj/{status.CurrentGroup.Id}");
+        }
+
         await base.OnInitializedAsync();
     }
 }

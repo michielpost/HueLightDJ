@@ -157,7 +157,7 @@ namespace HueLightDJ.Web.Hubs
     {
       effectService.CancelAllEffects();
 
-      streamingSetup.Disconnect();
+      streamingSetup.DisconnectAsync();
       await Clients.All.SendAsync("effects", new EffectsVM());
       await Clients.All.SendAsync("StatusMsg", "DISCONNECTED...");
       await GetStatus();

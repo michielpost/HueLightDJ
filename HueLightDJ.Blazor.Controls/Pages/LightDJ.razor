@@ -15,7 +15,7 @@
 
 <HueLightDJ.Blazor.Controls.Shared.Preview />
 
-@if (!string.IsNullOrEmpty(statusModel.CurrentGroup)) //statusModel.IsConnected
+@if (statusModel.CurrentGroup != null) //statusModel.IsConnected
 {
 
     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Disconnect">Disconnect</MudButton>

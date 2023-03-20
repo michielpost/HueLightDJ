@@ -201,7 +201,7 @@ namespace HueLightDJ.Services
 
       //Disconnect any current connections
 
-      this.Disconnect();
+      await this.DisconnectAsync();
       _cts = new CancellationTokenSource();
 
       List<Task> connectTasks = new List<Task>();
@@ -228,7 +228,7 @@ namespace HueLightDJ.Services
       baseLayer.AutoCalculateEffectUpdate(_cts.Token);
       effectLayer.AutoCalculateEffectUpdate(_cts.Token);
 
-      hub.StatusChanged();
+      await hub.StatusChanged();
     }
 
     private async Task Connect(bool demoMode, bool useSimulator, ConnectionConfiguration bridgeConfig)
@@ -281,6 +281,8 @@ namespace HueLightDJ.Services
         var stream = new StreamingGroup(locations);
         stream.IsForSimulator = useSimulator;
 
+        //Stop streaming to the group, to stop all previous streams
+        await client.LocalHueApi.SetStreamingAsync(_groupId, active: false);
 
         //Connect to the streaming group
         if (!demoMode)
@@ -347,7 +349,7 @@ namespace HueLightDJ.Services
       return layer;
     }
 
-    public void Disconnect()
+    public async Task DisconnectAsync()
     {
       if (_cts != null)
         _cts.Cancel();
@@ -356,7 +358,7 @@ namespace HueLightDJ.Services
       {
         try
         {
-          client.LocalHueApi.SetStreamingAsync(_groupId, active: false);
+          await client.LocalHueApi.SetStreamingAsync(_groupId, active: false);
           client.Close();
         }
         catch { }
@@ -367,8 +369,8 @@ namespace HueLightDJ.Services
       StreamingGroups.Clear();
       CurrentConnection = null;
 
-      hub.SendAsync("StatusMsg", "Disconnected");
-      hub.StatusChanged();
+      await hub.SendAsync("StatusMsg", "Disconnected");
+      await hub.StatusChanged();
     }
 
     public static EntertainmentLayer GetFirstLayer()

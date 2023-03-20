@@ -31,15 +31,14 @@ namespace HueLightDJ.Services
       return streamingSetup.SetupAndReturnGroupAsync(config);
     }
 
-    public async Task<StatusModel> GetStatus(CallContext context = default)
+    public Task<StatusModel> GetStatus(CallContext context = default)
     {
-
       StatusModel vm = new StatusModel();
       vm.Bpm = StreamingSetup.GetBPM();
       vm.IsAutoMode = EffectService.IsAutoModeRunning();
       vm.AutoModeHasRandomEffects = EffectService.AutoModeHasRandomEffects;
       vm.ShowDisconnect = !(StreamingSetup.CurrentConnection?.HideDisconnect ?? false);
-      vm.CurrentGroup = StreamingSetup.CurrentConnection?.Name;
+      vm.CurrentGroup = StreamingSetup.CurrentConnection;
 
       if (StreamingSetup.CurrentConnection != null)
       {
@@ -47,7 +46,7 @@ namespace HueLightDJ.Services
         vm.Groups = groups.Select(x => new GroupInfoViewModel() { Name = x.Name }).ToList();
       }
 
-      return vm;
+      return Task.FromResult(vm);
     }
 
     public Task<EffectsVM> GetEffects(CallContext context = default)
@@ -55,14 +54,16 @@ namespace HueLightDJ.Services
       return Task.FromResult(EffectService.GetEffectViewModels());
     }
 
-    public void StartEffect(StartEffectRequest request, CallContext context = default)
+    public Task StartEffect(StartEffectRequest request, CallContext context = default)
     {
       effectService.StartEffect(request.TypeName, request.ColorHex);
+      return Task.CompletedTask;
     }
 
-    public void StartGroupEffect(StartEffectRequest request, CallContext context = default)
+    public Task StartGroupEffect(StartEffectRequest request, CallContext context = default)
     {
       effectService.StartEffect(request.TypeName, request.ColorHex, request.GroupName, Enum.Parse<IteratorEffectMode>(request.IteratorMode!), Enum.Parse<IteratorEffectMode>(request.SecondaryIteratorMode!));
+      return Task.CompletedTask;
     }
 
     public Task IncreaseBPM(IntRequest req, CallContext context = default)
@@ -79,15 +80,17 @@ namespace HueLightDJ.Services
 
     }
 
-    public void SetBri(DoubleRequest req, CallContext context = default)
+    public Task SetBri(DoubleRequest req, CallContext context = default)
     {
       streamingSetup.SetBrightnessFilter(req.Value);
+      return Task.CompletedTask;
     }
 
 
-    public void StartRandom(CallContext context = default)
+    public Task StartRandom(CallContext context = default)
     {
       effectService.StartRandomEffect();
+      return Task.CompletedTask;
     }
 
     public Task StartAutoMode(CallContext context = default)
@@ -130,17 +133,17 @@ namespace HueLightDJ.Services
     //{
     //  ManualControlService.SetColors(matrix);
     //}
-    public void Beat(DoubleRequest req, CallContext context = default)
+    public Task Beat(DoubleRequest req, CallContext context = default)
     {
       effectService.Beat(req.Value);
+      return Task.CompletedTask;
     }
 
     public Task Disconnect(CallContext context = default)
     {
       effectService.CancelAllEffects();
 
-      streamingSetup.Disconnect();
-      return Task.CompletedTask;
+      return streamingSetup.DisconnectAsync();
     }
 
     

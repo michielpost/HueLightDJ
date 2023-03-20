@@ -19,8 +19,6 @@ namespace HueLightDJ.BlazorWeb.Server.Services
 
     public async Task SendAsync(string method, params object?[] arg1)
     {
-      await _hub.Clients.All.SendAsync("StatusMsg", "test 123");
-
       if (arg1.Length > 1)
       {
         await _hub.Clients.All.SendAsync(method, arg1[0], arg1[1]);

@@ -24,6 +24,18 @@ namespace HueLightDJ.Blazor.Controls.Pages
     protected override async Task OnParametersSetAsync()
     {
       config = await LocalStorageService.Get(Id);
+      statusModel = await LightDJService.GetStatus();
+
+      //Handle redirect and get config from server
+      if (config == null)
+      {
+        Console.WriteLine("Has group: " + statusModel.CurrentGroup != null);
+        if(Id == statusModel.CurrentGroup?.Id)
+        {
+          config = statusModel.CurrentGroup;
+        }
+      }
+
       effectsVM = await LightDJService.GetEffects();
 
       await base.OnParametersSetAsync();
@@ -54,6 +66,8 @@ namespace HueLightDJ.Blazor.Controls.Pages
     public async Task Connect()
     {
       await LightDJService.Connect(config);
+
+      statusModel = await LightDJService.GetStatus();
     }
 
     public async Task Disconnect()
