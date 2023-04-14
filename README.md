@@ -55,9 +55,9 @@ HueLightDJ is now available on port 8080
 - Support for a hardware controller using WebMidi
 
 ## Screenshots
-![Main](screenshots/screenshot01_main.png)
-![Setup](screenshots/screenshot02_setup.png)
-![Multi Bridge Location Editor](screenshots/screenshot03_location_editor.png)
+![Main](screenshots/v3_01_main.png)
+![Setup](screenshots/v3_02_setup.png)
+![Multi Bridge Location Editor (v2 version)](screenshots/screenshot03_location_editor.png)
 
 #### Disclaimer
 This app is not affiliated with the Light DJ series of light show apps by NRTHRNLIGHTS, LLC

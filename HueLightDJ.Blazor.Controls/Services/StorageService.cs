@@ -27,7 +27,7 @@ namespace HueLightDJ.Blazor.Controls.Services
         result = new();
 
       //Add demo group when list is empty
-      //if(!result.Any())
+      if(!result.Where(x => x.Id == Guid.Empty).Any())
         result.Add(GetDemoGroupConfiguration());
 
       return result;
