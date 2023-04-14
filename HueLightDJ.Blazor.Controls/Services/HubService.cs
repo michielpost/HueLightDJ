@@ -22,8 +22,7 @@ namespace HueLightDJ.Blazor.Controls.Services
 
     public Task SendAsync(string method, params object?[] arg1)
     {
-      if (method == "StatusMsg")
-        LogMsgEvent?.Invoke(this, (string?)arg1.FirstOrDefault());
+      LogMsgEvent?.Invoke(this, method + " " + (string?)arg1.FirstOrDefault());
 
       Console.WriteLine(method);
       return Task.CompletedTask;

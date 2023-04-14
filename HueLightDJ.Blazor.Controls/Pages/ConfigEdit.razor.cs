@@ -32,7 +32,7 @@ namespace HueLightDJ.Blazor.Controls.Pages
 
       config.Name = titleEdit;
       config = await LocalStorageService.Save(config);
-      NavManager.NavigateTo($"/configs");
+      NavManager.NavigateTo($"/");
     }
 
     public async Task Delete()
@@ -41,7 +41,7 @@ namespace HueLightDJ.Blazor.Controls.Pages
         return;
 
       await LocalStorageService.Delete(config.Id);
-      NavManager.NavigateTo($"/configs");
+      NavManager.NavigateTo($"/");
     }
   }
 }

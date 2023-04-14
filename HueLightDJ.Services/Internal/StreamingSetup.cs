@@ -38,6 +38,7 @@ namespace HueLightDJ.Services
 
     private static Guid _groupId;
     private static CancellationTokenSource _cts = new();
+    private bool demoMode;
     private readonly IHubService hub;
     private readonly List<GroupConfiguration> fullConfig;
 
@@ -196,7 +197,7 @@ namespace HueLightDJ.Services
 
     public async Task SetupAndReturnGroupAsync(GroupConfiguration currentGroup)
     {
-      bool demoMode = currentGroup.Id == Guid.Empty || currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
+      demoMode = currentGroup.Id == Guid.Empty || currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
       bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
 
       //Disconnect any current connections
@@ -281,12 +282,14 @@ namespace HueLightDJ.Services
         var stream = new StreamingGroup(locations);
         stream.IsForSimulator = useSimulator;
 
-        //Stop streaming to the group, to stop all previous streams
-        await client.LocalHueApi.SetStreamingAsync(_groupId, active: false);
-
-        //Connect to the streaming group
         if (!demoMode)
+        {
+          //Stop streaming to the group, to stop all previous streams
+          await client.LocalHueApi.SetStreamingAsync(_groupId, active: false);
+
+          //Connect to the streaming group
           await client.ConnectAsync(_groupId, simulator: useSimulator);
+        }
 
         //Start auto updating this entertainment group
         client.AutoUpdateAsync(stream, _cts.Token, 50, onlySendDirtyStates: false);
@@ -330,6 +333,12 @@ namespace HueLightDJ.Services
 
     public void SetBrightnessFilter(double value)
     {
+      if(value > 1)
+        value = value / 100;
+
+      if (value > 1)
+        return;
+
       foreach (var stream in StreamingGroups)
       {
         stream.BrightnessFilter = value;
@@ -354,14 +363,17 @@ namespace HueLightDJ.Services
       if (_cts != null)
         _cts.Cancel();
 
-      foreach (var client in StreamingHueClients)
+      if (!demoMode)
       {
-        try
+        foreach (var client in StreamingHueClients)
         {
-          await client.LocalHueApi.SetStreamingAsync(_groupId, active: false);
-          client.Close();
+          try
+          {
+            await client.LocalHueApi.SetStreamingAsync(_groupId, active: false);
+            client.Close();
+          }
+          catch { }
         }
-        catch { }
       }
 
       Layers = null;

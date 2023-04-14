@@ -1,6 +1,39 @@
 @page "/"
+@inject StorageService LocalStorageService
+@inject NavigationManager NavManager
 
-<h1>Hello, world!</h1>
+<MudText Typo="Typo.h3">Configs</MudText>
 
-Welcome to your new app.
+@foreach(var config in configs)
+{
+    <MudCard>
+      <MudCardContent>
+            <MudText>@config.Name</MudText>
+      </MudCardContent>
+      <MudCardActions>
+            @if (config.Connections.Any())
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/config-edit/{config.Id}")">Edit</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/bridge-add/{config.Id}")">Add bridge</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => Remove(config.Id))">Remove</MudButton>
+            }
 
+            @if (config.Connections.Where(x => x.GroupId.HasValue).Any())
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/lightdj/{config.Id}")">Start</MudButton>
+            }
+      </MudCardActions>
+  </MudCard>
+}
+
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="AddNew">Add</MudButton>
+@*<MudButton Variant="Variant.Text" Color="Color.Primary">Import</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Primary">Export</MudButton>*@
+
+
+@code {
+   
+}

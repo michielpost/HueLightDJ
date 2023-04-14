@@ -19,14 +19,14 @@ namespace HueLightDJ.BlazorWeb.Server.Services
 
     public async Task SendAsync(string method, params object?[] arg1)
     {
-      if (arg1.Length > 1)
+      if (arg1.Length >= 1)
       {
-        await _hub.Clients.All.SendAsync(method, arg1[0], arg1[1]);
+        await _hub.Clients.All.SendAsync("StatusMsg", method + " " + arg1[0]);
 
       }
       else
       {
-        await _hub.Clients.All.SendAsync(method, arg1[0]);
+        await _hub.Clients.All.SendAsync("StatusMsg", method);
       }
     }
 

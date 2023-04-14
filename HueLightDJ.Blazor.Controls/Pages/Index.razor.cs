@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Blazor.Controls.Pages
 {
-  public partial class Configs
+  public partial class Index
   {
     List<GroupConfiguration> configs = new List<GroupConfiguration>();
 

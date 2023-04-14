@@ -82,7 +82,9 @@ namespace HueLightDJ.Services
 
     public Task SetBri(DoubleRequest req, CallContext context = default)
     {
-      streamingSetup.SetBrightnessFilter(req.Value);
+      var filterValue = 100 - req.Value;
+
+      streamingSetup.SetBrightnessFilter(filterValue);
       return Task.CompletedTask;
     }
 

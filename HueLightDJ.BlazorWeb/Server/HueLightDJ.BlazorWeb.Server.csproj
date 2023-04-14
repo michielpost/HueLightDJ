@@ -11,7 +11,7 @@
     <PackageReference Include="Grpc.AspNetCore" Version="2.52.0" />
 	  <PackageReference Include="Grpc.AspNetCore.Web" Version="2.52.0" />
 	  <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="7.0.5" />
     <PackageReference Include="HueApi" Version="1.0.0" />
     <PackageReference Include="HueApi.ColorConverters" Version="1.0.0" />
     <PackageReference Include="HueApi.Entertainment" Version="1.4.0" />

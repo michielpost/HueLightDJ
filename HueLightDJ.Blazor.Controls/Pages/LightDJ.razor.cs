@@ -61,6 +61,7 @@ namespace HueLightDJ.Blazor.Controls.Pages
     private async Task GetStatusAsync()
     {
       statusModel = await LightDJService.GetStatus();
+      this.StateHasChanged();
     }
 
     public async Task Connect()
@@ -68,11 +69,14 @@ namespace HueLightDJ.Blazor.Controls.Pages
       await LightDJService.Connect(config);
 
       statusModel = await LightDJService.GetStatus();
+      this.StateHasChanged();
+
     }
 
     public async Task Disconnect()
     {
       await LightDJService.Disconnect();
+      this.StateHasChanged();
     }
 
     public void Dispose()
