@@ -13,21 +13,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="demoLocations1_00000000-0000-0000-0000-000000000000.json">
+    <EmbeddedResource Include="demoLocations1_00000000-0000-0000-0000-000000000000.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="demoLocations2_00000000-0000-0000-0000-000000000000.json">
+    </EmbeddedResource>
+    <EmbeddedResource Include="demoLocations2_00000000-0000-0000-0000-000000000000.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Include="sterDemoLocations1_00000000-0000-0000-0000-000000000000.json">
+    </EmbeddedResource>
+    <EmbeddedResource Include="sterDemoLocations1_00000000-0000-0000-0000-000000000000.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

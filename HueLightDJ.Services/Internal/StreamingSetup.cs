@@ -250,12 +250,22 @@ namespace HueLightDJ.Services
         Dictionary<int, HuePosition>? locations = new Dictionary<int, HuePosition>();
         if (demoMode)
         {
-          var dirPath = Assembly.GetExecutingAssembly().Location;
-          dirPath = Path.GetDirectoryName(dirPath) ?? string.Empty;
-          var filePath = Path.GetFullPath(Path.Combine(dirPath, $"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json"));
+          //var dirPath = Assembly.GetExecutingAssembly().Location;
+          //dirPath = Path.GetDirectoryName(dirPath) ?? string.Empty;
+          //var filePath = Path.GetFullPath(Path.Combine(dirPath, $"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json"));
 
-          string demoJson = await File.ReadAllTextAsync(filePath);
-          locations = JsonSerializer.Deserialize<Dictionary<int, HuePosition>>(demoJson);
+          //string demoJson = await File.ReadAllTextAsync(filePath);
+          //locations = JsonSerializer.Deserialize<Dictionary<int, HuePosition>>(demoJson);
+
+          var assembly = Assembly.GetExecutingAssembly();
+          var resourceName = "HueLightDJ.Services." + $"{bridgeConfig.Ip}_{bridgeConfig.GroupId}.json";
+
+          using (Stream? streamFile = assembly.GetManifestResourceStream(resourceName))
+          using (StreamReader reader = new StreamReader(streamFile!))
+          {
+            string demoJson = reader.ReadToEnd(); //Make string equal to full file
+            locations = JsonSerializer.Deserialize<Dictionary<int, HuePosition>>(demoJson);
+          }
           _groupId = bridgeConfig.GroupId.Value;
         }
         else

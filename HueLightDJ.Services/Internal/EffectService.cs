@@ -176,12 +176,6 @@ namespace HueLightDJ.Services
         }
       }, autoModeCts.Token);
 
-      Task.Run(async () =>
-      {
-        await Task.Delay(TimeSpan.FromHours(24), autoModeCts.Token);
-        StopEffects();
-        StopAutoMode();
-      }, autoModeCts.Token);
     }
 
     public void StopAutoMode()
