@@ -8,12 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
+    - name: Install maui workloads
+      run: dotnet workload install maui-android
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Debug
     - name: Publish Website
-      run: dotnet publish HueLightDJ.Web -o publish/HueLightDJ.Web -c Release
+      run: dotnet publish HueLightDJ.BlazorWeb/Server -o publish/HueLightDJ.BlazorWeb.Server -c Debug
+    - name: Publish Website (OLD)
+      run: dotnet publish HueLightDJ.Web -o publish/HueLightDJ.Web -c Debug

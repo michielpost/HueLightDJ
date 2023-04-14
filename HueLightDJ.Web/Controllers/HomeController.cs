@@ -14,6 +14,7 @@ using HueApi.Extensions.cs;
 using HueLightDJ.Web.Models;
 using HueLightDJ.Web;
 using Microsoft.Extensions.Configuration;
+using HueLightDJ.Services.Interfaces.Models;
 
 namespace HueLightDJ.Services.Controllers
 {
@@ -45,7 +46,7 @@ namespace HueLightDJ.Services.Controllers
     public async Task<IActionResult> Setup()
     {
       var bridgeLocator = new HttpBridgeLocator();
-      IEnumerable<LocatedBridge> ips = new List<LocatedBridge>();
+      IEnumerable<HueApi.BridgeLocator.LocatedBridge> ips = new List<HueApi.BridgeLocator.LocatedBridge>();
 
       try
       {
