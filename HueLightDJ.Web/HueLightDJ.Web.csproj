@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.6" />
-    <PackageReference Include="HueApi" Version="1.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.8" />
+    <PackageReference Include="HueApi" Version="1.3.0" />
     <PackageReference Include="HueApi.ColorConverters" Version="1.0.0" />
     <PackageReference Include="HueApi.Entertainment" Version="1.4.0" />
     </ItemGroup>

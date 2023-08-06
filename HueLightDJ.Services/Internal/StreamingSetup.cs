@@ -151,11 +151,10 @@ namespace HueLightDJ.Services
             continue;
 
           var client = new LocalHueApi(conn.Ip, conn.Key);
-          var allCommand = new LightCommand().TurnOn().SetColor(new RGBColor("0000FF")); //All blue
+          var allCommand = new UpdateLight().TurnOn().SetColor(new RGBColor("0000FF")); //All blue
 
           var result = await client.GetEntertainmentConfigurationAsync(conn.GroupId.Value);
 
-          //Turn all lights in this entertainment group on
           var entServices = result.Data.First().Locations.ServiceLocations.Select(x => x.Service?.Rid).ToList();
           var allResources = await client.GetResourcesAsync();
 
@@ -171,7 +170,7 @@ namespace HueLightDJ.Services
           //Only selected light red
           if (conn.Ip == light.Bridge)
           {
-            var alertCommand = new LightCommand().TurnOn().SetColor(new RGBColor("FF0000")); ;
+            var alertCommand = new UpdateLight().TurnOn().SetColor(new RGBColor("FF0000")); ;
             alertCommand.Alert = new UpdateAlert();
 
             var device = allResources.Data.Where(x => x.Id == light.Id).Select(x => x.Owner?.Rid).FirstOrDefault();
