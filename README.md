@@ -3,6 +3,12 @@ Hue Light DJ using Hue Entertainment API
 
 [![Build .NET](https://github.com/michielpost/HueLightDJ/actions/workflows/build.yml/badge.svg)](https://github.com/michielpost/HueLightDJ/actions/workflows/build.yml)
 
+# LIVE DEMO
+NOTE: You can't use this demo to connect to your own bridge. But you can use the DEMO GROUP to view a demo/simulation.  
+
+Click Start under Demo Group, then click Connect  
+DEMO:  [https://huelightdj.azurewebsites.net/](https://huelightdj.azurewebsites.net/)
+
 ## What is it?
 This web app connects to a Philips Hue Bridge over the local network. It uses the Hue Entertainment API to update the lights almost instantly.
 Hue Light DJ is meant for setups with 20+ Hue Lights. You can also use this for your personal setup with less than 5 lights, but things get interesting with 10+ lights, you can try it out. There is also a DEMO mode build in so you see how it would look like on a 20+ light setup.
