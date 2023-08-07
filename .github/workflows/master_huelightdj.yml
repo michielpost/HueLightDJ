@@ -22,9 +22,6 @@ jobs:
           dotnet-version: '7.x'
       - name: Install maui workloads
         run: dotnet workload install maui-android
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
-
       - name: dotnet publish
         run: dotnet publish HueLightDJ.BlazorWeb/Server -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
