@@ -43,6 +43,11 @@ namespace HueLightDJ.Services
 
     public async Task<Interfaces.Models.RegisterEntertainmentResult?> RegisterAsync(HueSetupRequest request, CallContext context = default)
     {
+      request.Ip = request.Ip.Trim();
+
+      if (request.Ip.Contains(":") || request.Ip.Contains("/"))
+        throw new Exception($"Not a valid ip: {request.Ip}");
+
       var result = await LocalHueApi.RegisterAsync(request.Ip, "HueLightDJ", "Web", generateClientKey: true);
       if (result == null)
         return null;

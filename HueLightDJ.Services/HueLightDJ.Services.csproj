@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HueApi" Version="1.3.0" />
+    <PackageReference Include="HueApi" Version="1.4.0" />
     <PackageReference Include="HueApi.ColorConverters" Version="1.0.0" />
     <PackageReference Include="HueApi.Entertainment" Version="1.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
