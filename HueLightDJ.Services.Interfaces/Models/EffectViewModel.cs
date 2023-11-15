@@ -27,7 +27,7 @@ namespace HueLightDJ.Services.Interfaces.Models
 
 
     //VueJS properties:
-    public string? Color { get; set; }
+    public string Color { get; set; } = default!;
 
     public bool IsRandom { get; set; } = true;
 
