@@ -9,12 +9,19 @@ namespace HueLightDJ.Services.Interfaces.Models
   [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
   public class EffectsVM
   {
-    public Dictionary<string, List<EffectViewModel>> BaseEffects { get; set; } = new();
+    public List<EffectList> BaseEffects { get; set; } = new();
     public List<EffectViewModel> ShortEffects { get; set; } = new();
     public List<EffectViewModel> GroupEffects { get; set; } = new();
     public List<string> IteratorModes { get; set; } = new();
     public List<string> SecondaryIteratorModes { get; set; } = new();
 
+  }
+
+  [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+  public class EffectList
+  {
+    public required string Title { get; set; }
+    public List<EffectViewModel> Effects { get; set; } = new();
   }
 
   [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
@@ -27,7 +34,7 @@ namespace HueLightDJ.Services.Interfaces.Models
 
 
     //VueJS properties:
-    public string Color { get; set; } = default!;
+    public string? Color { get; set; }
 
     public bool IsRandom { get; set; } = true;
 

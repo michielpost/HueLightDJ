@@ -8,8 +8,8 @@
 <MudText Typo="Typo.h3">@config?.Name</MudText>
 
 <MudPaper Class="d-flex flex-row flex-grow-1 gap-4" Elevation="0">
-  <MudText>Log msg:</MudText>
-  <MudText>@lastMsg</MudText>
+    <MudText>Log msg:</MudText>
+    <MudText>@lastMsg</MudText>
 </MudPaper>
 
 
@@ -55,9 +55,9 @@
     @foreach (var effectGroup in effectsVM.BaseEffects)
     {
         <MudPaper>
-            <MudText Typo="Typo.h6">@effectGroup.Key</MudText>
+            <MudText Typo="Typo.h6">@effectGroup.Title</MudText>
 
-            @foreach (var effect in effectGroup.Value)
+            @foreach (var effect in effectGroup.Effects)
             {
                 <MudPaper Class="d-flex flex-row flex-grow-1 gap-4" Elevation="0">
                     <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = effect.IsRandom ? null : effect.Color}))">@effect.Name</MudButton>
@@ -75,7 +75,7 @@
             }
 
         </MudPaper>
-       <br />
+        <br />
     }
 
     <MudText Typo="Typo.h5">Short Effects</MudText>

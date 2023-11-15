@@ -72,7 +72,7 @@ namespace HueLightDJ.Services
 
      
 
-      Dictionary<string, List<EffectViewModel>> baseEffects = new Dictionary<string, List<EffectViewModel>>();
+      List<EffectList> baseEffects = new();
       List<EffectViewModel> shortEffects = new List<EffectViewModel>();
       List<EffectViewModel> groupEffects = new List<EffectViewModel>();
       foreach (var type in all)
@@ -96,10 +96,11 @@ namespace HueLightDJ.Services
 
         if (hueEffectAtt.IsBaseEffect)
         {
-          if (!baseEffects.ContainsKey(hueEffectAtt.Group))
-            baseEffects.Add(hueEffectAtt.Group, new List<EffectViewModel>());
+          if (!baseEffects.Where(x => x.Title == hueEffectAtt.Group).Any())
+            baseEffects.Add(new EffectList { Title = hueEffectAtt.Group });
 
-          baseEffects[hueEffectAtt.Group].Add(effect);
+          var current = baseEffects.Where(x => x.Title == hueEffectAtt.Group).Select(x => x).Single();
+          current.Effects.Add(effect);
         }
         else
           shortEffects.Add(effect);
