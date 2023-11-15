@@ -287,8 +287,14 @@ namespace HueLightDJ.Services
         if (locations == null)
           throw new Exception("No locations found.");
 
+        //new locations
+        Dictionary<int, Tuple<HuePosition, List<Guid>>> newLocations = new Dictionary<int, Tuple<HuePosition, List<Guid>>>();
+        foreach (var location in locations)
+        {
+          newLocations.Add(location.Key, new Tuple<HuePosition, List<Guid>>(location.Value, new List<Guid>()));
+        }
         //Create a streaming group
-        var stream = new StreamingGroup(locations);
+        var stream = new StreamingGroup(newLocations);
         stream.IsForSimulator = useSimulator;
 
         if (!demoMode)
