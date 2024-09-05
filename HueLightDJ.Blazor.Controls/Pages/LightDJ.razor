@@ -35,7 +35,7 @@
 
     @if (statusModel.IsAutoMode)
     {
-        <MudCheckBox @bind-Checked="@statusModel.AutoModeHasRandomEffects" @onchange="@(() => LightDJService.SetAutoRandomMode(new BoolRequest(statusModel.AutoModeHasRandomEffects)))" Label="Random effects"></MudCheckBox>
+        <MudCheckBox T="bool" @bind-Checked="@statusModel.AutoModeHasRandomEffects" @onchange="@(() => LightDJService.SetAutoRandomMode(new BoolRequest(statusModel.AutoModeHasRandomEffects)))" Label="Random effects"></MudCheckBox>
 
         <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StopAutoMode())">Stop Auto Mode</MudButton>
     }
@@ -64,7 +64,7 @@
 
                     @if (effect.HasColorPicker)
                     {
-                        <MudCheckBox @bind-Checked="@effect.IsRandom" Label="Random"></MudCheckBox>
+                        <MudCheckBox T="bool" @bind-Checked="@effect.IsRandom" Label="Random"></MudCheckBox>
 
                         @if (!effect.IsRandom)
                         {
