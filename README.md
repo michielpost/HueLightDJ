@@ -33,7 +33,7 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - Bridge API key is stored in the browser's local storage
 
 ## Tech
-- ASP.Net Core 7.0 backend
+- ASP.Net Core 9.0 backend
 - SignalR for realtime communication from server to client
 - gRPC for client to server communication
 - [HueApi](https://github.com/michielpost/Q42.HueApi) for communicating with the Hue Bridge
@@ -41,7 +41,7 @@ NOTE: [Hue Entertainment](https://developers.meethue.com/entertainment-blog) sup
 - PixiJS for WebGL preview window
 
 ## **Build and Install Instructions**
-- Make sure to have [.Net 7.0](https://dotnet.microsoft.com/download) installed to build this project (`dotnet build`)
+- Make sure to have [.Net 9.0](https://dotnet.microsoft.com/download) installed to build this project (`dotnet build`)
 - Run the HueLightDJ.Web project(`cd HueLightDJ.BlazorWeb\Server && dotnet run`) 
 - Follow the instructions to link your bridge or use the DEMO setup
 
