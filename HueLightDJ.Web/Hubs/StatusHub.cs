@@ -9,6 +9,7 @@ using HueLightDJ.Services;
 using HueLightDJ.Web.Models;
 using Microsoft.Extensions.Configuration;
 using HueLightDJ.Services.Interfaces.Models;
+using Microsoft.Extensions.Options;
 
 namespace HueLightDJ.Web.Hubs
 {
@@ -16,11 +17,13 @@ namespace HueLightDJ.Web.Hubs
   {
     private readonly EffectService effectService;
     private readonly StreamingSetup streamingSetup;
+    private readonly List<GroupConfiguration> _groupConfigurations;
 
-    public StatusHub(EffectService effectService, StreamingSetup streamingSetup)
+    public StatusHub(EffectService effectService, StreamingSetup streamingSetup, IOptions<List<GroupConfiguration>> configOptions)
     {
       this.effectService = effectService;
       this.streamingSetup = streamingSetup;
+      this._groupConfigurations = configOptions.Value;
     }
 
     public async Task Connect(string groupName)
@@ -29,8 +32,15 @@ namespace HueLightDJ.Web.Hubs
 
       try
       {
+        var groupConfig = _groupConfigurations.FirstOrDefault(gc => gc.Name == groupName);
+        if (groupConfig == null)
+        {
+            await Clients.All.SendAsync("StatusMsg", $"Failed to connect: Group {groupName} not found.");
+            // Potentially throw or return early
+            return;
+        }
         //Connect
-        await streamingSetup.SetupAndReturnGroupAsync(groupName);
+        await streamingSetup.SetupAndReturnGroupAsync(groupConfig);
         await Clients.All.SendAsync("StatusMsg", "Connected to bridge");
 
         await GetEffects(true);
@@ -45,7 +55,7 @@ namespace HueLightDJ.Web.Hubs
 
     public async Task GetStatus()
     {
-      var configs = await streamingSetup.GetGroupConfigurationsAsync();
+      var configs = _groupConfigurations;
       StatusViewModel vm = new StatusViewModel();
       vm.bpm = StreamingSetup.GetBPM();
       vm.IsAutoMode = EffectService.IsAutoModeRunning();
@@ -157,7 +167,7 @@ namespace HueLightDJ.Web.Hubs
     {
       effectService.CancelAllEffects();
 
-      streamingSetup.DisconnectAsync();
+      await streamingSetup.DisconnectAsync();
       await Clients.All.SendAsync("effects", new EffectsVM());
       await Clients.All.SendAsync("StatusMsg", "DISCONNECTED...");
       await GetStatus();

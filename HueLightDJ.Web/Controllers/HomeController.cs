@@ -15,16 +15,19 @@ using HueLightDJ.Web.Models;
 using HueLightDJ.Web;
 using Microsoft.Extensions.Configuration;
 using HueLightDJ.Services.Interfaces.Models;
+using Microsoft.Extensions.Options;
 
 namespace HueLightDJ.Services.Controllers
 {
   public class HomeController : Controller
   {
     private readonly StreamingSetup streamingSetup;
+    private readonly List<GroupConfiguration> _groupConfigurations;
 
-    public HomeController(StreamingSetup streamingSetup)
+    public HomeController(StreamingSetup streamingSetup, IOptions<List<GroupConfiguration>> configOptions)
     {
       this.streamingSetup = streamingSetup;
+      this._groupConfigurations = configOptions.Value;
     }
 
     [HttpGet]
@@ -58,9 +61,9 @@ namespace HueLightDJ.Services.Controllers
 
     [HttpGet]
     [Route("Configure")]
-    public async Task<IActionResult> Configure()
+    public IActionResult Configure()
     {
-      var config = await streamingSetup.GetGroupConfigurationsAsync();
+      var config = _groupConfigurations;
       return View(config);
     }
 
@@ -68,7 +71,13 @@ namespace HueLightDJ.Services.Controllers
     [Route("export/{groupName}")]
     public async Task<List<Dictionary<Guid, HuePosition>>> ExportJson([FromRoute]string groupName)
     {
-      var locations = await streamingSetup.GetLocationsAsync(groupName);
+      var groupConfig = _groupConfigurations.FirstOrDefault(gc => gc.Name == groupName);
+      if (groupConfig == null)
+      {
+          // Or handle as appropriate, e.g., return NotFound() or an empty list
+          return new List<Dictionary<Guid, HuePosition>>();
+      }
+      var locations = await streamingSetup.GetLocationsAsync(groupConfig);
 
       return locations.GroupBy(x => x.Bridge)
         .Select(x => x.ToDictionary(l => l.Id, loc => new HuePosition(loc.X, loc.Y, 0))).ToList();
@@ -77,9 +86,14 @@ namespace HueLightDJ.Services.Controllers
 
     [HttpGet]
     [Route("fullexport/{groupName}")]
-    public Task<List<MultiBridgeHuePosition>> FullExportJson([FromRoute]string groupName)
+    public async Task<List<MultiBridgeHuePosition>> FullExportJson([FromRoute]string groupName)
     {
-      return streamingSetup.GetLocationsAsync(groupName);
+      var groupConfig = _groupConfigurations.FirstOrDefault(gc => gc.Name == groupName);
+      if (groupConfig == null)
+      {
+          return new List<MultiBridgeHuePosition>();
+      }
+      return await streamingSetup.GetLocationsAsync(groupConfig);
     }
 
     [HttpPost]
