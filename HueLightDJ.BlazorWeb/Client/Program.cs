@@ -10,6 +10,7 @@ using Grpc.Net.Client;
 using Microsoft.AspNetCore.Components;
 using Grpc.Net.Client.Web;
 using ProtoBuf.Grpc.Client;
+using HueLightDJ.Blazor.Controls.Services;
 
 namespace HueLightDJ.BlazorWeb.Client
 {
@@ -24,6 +25,8 @@ namespace HueLightDJ.BlazorWeb.Client
       builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
       builder.Services.AddHueLightDJBlazorControls();
+      builder.Services.AddSingleton<SelectedConfigState>();
+      builder.Services.AddSingleton<ThemeState>(); // Added ThemeState
 
       builder.Services.AddSingleton<IHubService, SignalRClientHubService>();
       builder.Services.Configure<List<GroupConfiguration>>(GetConfig);

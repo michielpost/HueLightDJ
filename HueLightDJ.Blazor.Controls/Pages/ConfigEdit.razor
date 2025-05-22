@@ -1,28 +1,6 @@
-@page "/config-edit/{Id:guid}"
-@inject StorageService LocalStorageService
-@inject NavigationManager NavManager
-
-<MudText Typo="Typo.h3">@config?.Name</MudText>
-<MudTextField @bind-Value="titleEdit" Variant="Variant.Text"></MudTextField>
-
-@foreach (var connection in config?.Connections ?? Enumerable.Empty<ConnectionConfiguration>())
-{
-    <MudCard>
-        <MudCardContent>
-            <MudText>@connection.Ip</MudText>
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/bridge-edit/{config!.Id}/{connection.Ip}")">Edit</MudButton>
-        </MudCardActions>
-    </MudCard>
-}
-
-
-<MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/bridge-add/{config?.Id}")">Add Bridge</MudButton>
-<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Save</MudButton>
-<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Delete">Delete</MudButton>
-
+@* Content moved to ConfigEditDialog.razor *@
+@* @page "/config-edit/{Id:guid}" *@
 
 @code {
-    
+    // This page is no longer used. Functionality moved to ConfigEditDialog.razor
 }

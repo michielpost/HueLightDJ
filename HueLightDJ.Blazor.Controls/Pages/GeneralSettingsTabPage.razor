@@ -1,0 +1,20 @@
+@inject HueLightDJ.Blazor.Controls.Services.ThemeState ThemeState
+@using HueLightDJ.Blazor.Controls.Styling
+@using MudBlazor
+
+<MudText Typo="Typo.h5" Class="mb-4">Theme Settings</MudText>
+
+<MudRadioGroup T="MudTheme" SelectedOption="ThemeState.CurrentTheme" SelectedOptionChanged="(MudTheme newTheme) => SetTheme(newTheme)">
+    <MudRadio Option="AppThemes.LightModeTheme" Color="Color.Primary" Dense="true">Light Mode</MudRadio>
+    <MudRadio Option="AppThemes.DarkModeTheme" Color="Color.Primary" Dense="true">Dark Mode (Default)</MudRadio>
+    <MudRadio Option="AppThemes.OceanTheme" Color="Color.Primary" Dense="true">Ocean Theme</MudRadio>
+    <MudRadio Option="AppThemes.ForestTheme" Color="Color.Primary" Dense="true">Forest Theme (Dark)</MudRadio>
+    <MudRadio Option="AppThemes.SunsetTheme" Color="Color.Primary" Dense="true">Sunset Theme</MudRadio>
+</MudRadioGroup>
+
+@code {
+    private void SetTheme(MudTheme theme)
+    {
+        ThemeState.SetTheme(theme);
+    }
+}

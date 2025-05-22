@@ -1,0 +1,130 @@
+@inject StorageService LocalStorageService
+@* @inject NavigationManager NavManager // Not needed for dialog *@
+@inject IHueSetupService HueSetupService
+@inject ISnackbar Snackbar
+
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Edit Bridge: @BridgeIp</MudText>
+        <MudText Typo="Typo.body1">For Configuration: @(config?.Name ?? ConfigId.ToString())</MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (bridgeConnection != null)
+        {
+            <MudText Class="mb-2">Current Entertainment Group: @(groups?.FirstOrDefault(g => g.Id == bridgeConnection.GroupId)?.Name ?? "Not Set")</MudText>
+
+            @if (groups == null)
+            {
+                <MudProgressCircular Indeterminate="true" />
+                <MudText>Loading entertainment groups...</MudText>
+            }
+            else if (!groups.Any())
+            {
+                <MudText>No entertainment groups found on this bridge. Please create one using the official Hue app.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.caption">Select an Entertainment Group:</MudText>
+                <MudList Clickable="true" @bind-SelectedValue="selectedGroupId" Dense="true">
+                    @foreach (var group in groups)
+                    {
+                        <MudListItem Value="@group.Id" Disabled="group.Id == bridgeConnection.GroupId">
+                            <MudText>@group.Name (Lights: @group.LightCount)</MudText>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+        }
+        else
+        {
+            <MudText Color="Color.Error">Bridge connection details not found for IP @BridgeIp in configuration @config?.Name.</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Color="Color.Secondary">Cancel</MudButton>
+        <MudButton OnClick="RemoveAndClose" Color="Color.Error" Disabled="@(bridgeConnection == null)">Remove Bridge</MudButton>
+        <MudButton OnClick="SaveAndClose" Color="Color.Primary" Disabled="@(bridgeConnection == null || selectedGroupId == Guid.Empty || selectedGroupId == bridgeConnection.GroupId)">Save Changes</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public Guid ConfigId { get; set; }
+    [Parameter] public string BridgeIp { get; set; } = string.Empty;
+
+    private LightDJConfigViewModel? config;
+    private ConnectionConfiguration? bridgeConnection;
+    private List<LightDJConfigViewModel> allConfigs = new();
+    private List<SimpleEntertainmentGroup> groups = new();
+    private Guid selectedGroupId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        allConfigs = await LocalStorageService.GetItem<List<LightDJConfigViewModel>>("configs") ?? new List<LightDJConfigViewModel>();
+        config = allConfigs.FirstOrDefault(c => c.Id == ConfigId);
+
+        if (config != null)
+        {
+            bridgeConnection = config.Connections.FirstOrDefault(conn => conn.Ip == BridgeIp);
+            if (bridgeConnection != null)
+            {
+                selectedGroupId = bridgeConnection.GroupId ?? Guid.Empty;
+                await LoadEntertainmentGroups();
+            }
+            else
+            {
+                Snackbar.Add($"Bridge with IP {BridgeIp} not found in this configuration.", Severity.Error);
+                MudDialog.Cancel();
+            }
+        }
+        else
+        {
+            Snackbar.Add("Configuration not found.", Severity.Error);
+            MudDialog.Cancel();
+        }
+    }
+
+    private async Task LoadEntertainmentGroups()
+    {
+        if (bridgeConnection == null) return;
+        try
+        {
+            groups = await HueSetupService.GetEntertainmentGroups(new GetEntertainmentGroupsRequest(bridgeConnection.Ip, bridgeConnection.Key));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading entertainment groups: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task SaveAndClose()
+    {
+        if (config != null && bridgeConnection != null && selectedGroupId != Guid.Empty)
+        {
+            bridgeConnection.GroupId = selectedGroupId;
+            await LocalStorageService.SetItem("configs", allConfigs);
+            Snackbar.Add("Bridge configuration saved.", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+             Snackbar.Add("Cannot save. Ensure a group is selected.", Severity.Warning);
+        }
+    }
+
+    private async Task RemoveAndClose()
+    {
+        if (config != null && bridgeConnection != null)
+        {
+            config.Connections.Remove(bridgeConnection);
+            await LocalStorageService.SetItem("configs", allConfigs);
+            Snackbar.Add("Bridge removed from configuration.", Severity.Info);
+            MudDialog.Close(DialogResult.Ok("removed"));
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

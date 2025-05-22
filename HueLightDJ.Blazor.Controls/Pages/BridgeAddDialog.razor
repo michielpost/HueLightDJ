@@ -1,0 +1,117 @@
+@inject StorageService LocalStorageService
+@* @inject NavigationManager NavManager // Not needed for dialog directly, parent handles navigation/refresh *@
+@inject IHueSetupService HueSetupService
+@inject ISnackbar Snackbar
+
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Add New Bridge to @(config?.Name ?? ConfigId.ToString())</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.caption" Class="mb-2">Discovered Bridges (click to select, then click bridge button):</MudText>
+        @if (bridges.Any())
+        {
+            foreach (var bridge in bridges)
+            {
+                <MudCard Class="mb-1">
+                    <MudCardContent Class="pa-2">
+                        <MudText>@bridge.IpAddress</MudText>
+                    </MudCardContent>
+                    <MudCardActions Class="pa-1">
+                        <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="() => Select(bridge.IpAddress)">Select this Bridge &amp; Press Button</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            }
+        }
+        else
+        {
+            <MudText>No bridges discovered automatically. You can manually enter an IP below.</MudText>
+        }
+
+        <MudTextField @bind-Value="ipAdd" Label="Bridge IP Address" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mt-4"></MudTextField>
+        <MudText Typo="Typo.caption" Color="Color.Warning" Class="mt-1">Important: After selecting or entering an IP, you MUST press the physical link button on the Hue bridge before clicking 'Connect & Save'.</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Color="Color.Secondary">Cancel</MudButton>
+        <MudButton OnClick="ConnectAndSave" Color="Color.Primary" Disabled="string.IsNullOrWhiteSpace(ipAdd)">Connect & Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public Guid ConfigId { get; set; }
+
+    private LightDJConfigViewModel? config;
+    private List<LightDJConfigViewModel> allConfigs = new();
+    private List<HueBridgeViewModel> bridges = new();
+    private string ipAdd = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        allConfigs = await LocalStorageService.GetItem<List<LightDJConfigViewModel>>("configs") ?? new List<LightDJConfigViewModel>();
+        config = allConfigs.FirstOrDefault(c => c.Id == ConfigId);
+
+        if (config == null)
+        {
+            Snackbar.Add("Error: Configuration not found.", Severity.Error);
+            MudDialog.Cancel();
+            return;
+        }
+
+        try
+        {
+            bridges = await HueSetupService.Discover(new EmptyRequest());
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error discovering bridges: {ex.Message}", Severity.Warning);
+        }
+    }
+
+    private void Select(string ip)
+    {
+        ipAdd = ip;
+        Snackbar.Add($"Selected bridge IP: {ip}. Now press the link button on the Hue bridge.", Severity.Info);
+    }
+
+    private async Task ConnectAndSave()
+    {
+        if (config == null || string.IsNullOrWhiteSpace(ipAdd))
+        {
+            Snackbar.Add("Configuration or IP address is missing.", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            var result = await HueSetupService.Register(new RegisterRequest(ipAdd, config.Name, "browser"));
+            if (result != null && !string.IsNullOrWhiteSpace(result.Key) && !string.IsNullOrWhiteSpace(result.EntertainmentKey))
+            {
+                var newConnection = new ConnectionConfiguration
+                {
+                    Ip = ipAdd,
+                    Key = result.Key,
+                    EntertainmentKey = result.EntertainmentKey
+                };
+
+                config.Connections.Add(newConnection);
+                await LocalStorageService.SetItem<List<LightDJConfigViewModel>>("configs", allConfigs);
+                Snackbar.Add("Bridge connected and saved successfully!", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                Snackbar.Add("Failed to register bridge. Ensure the link button was pressed.", Severity.Error);
+            }
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add($"Error: {e.Message}", Severity.Error);
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

@@ -1,0 +1,174 @@
+@inject StorageService LocalStorageService
+@* @inject NavigationManager NavManager // Not using Hrefs anymore for these actions *@
+@inject IDialogService DialogService // Added for nested dialogs
+@inject ISnackbar Snackbar // Added for feedback
+
+@* @page "/config-edit/{Id:guid}" // Removed for dialog *@
+
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Edit Configuration: @config?.Name</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="titleEdit" Label="Configuration Name" Variant="Variant.Text" Class="mb-3"></MudTextField>
+
+        @if (config != null)
+        {
+            foreach (var connection in config.Connections ?? Enumerable.Empty<ConnectionConfiguration>())
+            {
+                <MudCard Class="mb-2">
+                    <MudCardContent>
+                        <MudText>Bridge IP: @connection.Ip</MudText>
+                        <MudText Typo="Typo.caption">Group Set: @(connection.GroupId.HasValue && connection.GroupId != Guid.Empty ? "Yes" : "No")</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => OpenEditBridgeDialog(connection.Ip)">Edit Bridge</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            }
+             @if (config?.Connections?.Any() == false)
+            {
+                <MudText Typo="Typo.body2" Class="mt-2">No bridges added to this configuration yet.</MudText>
+            }
+        }
+        else
+        {
+            <MudText>Loading configuration details...</MudText>
+        }
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OpenAddBridgeDialog" Disabled="@(config == null)">Add Bridge</MudButton>
+        <MudButton OnClick="Cancel" Color="Color.Secondary">Cancel</MudButton>
+        <MudButton OnClick="DeleteAndClose" Color="Color.Error" Disabled="@(config == null)">Delete</MudButton>
+        <MudButton OnClick="SaveAndClose" Color="Color.Primary" Disabled="@(config == null)">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter] public Guid Id { get; set; }
+
+    private LightDJConfigViewModel? config;
+    private string titleEdit = string.Empty;
+    private List<LightDJConfigViewModel> configs = new List<LightDJConfigViewModel>(); // To manage the list for delete/save
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadConfigData();
+    }
+
+    private async Task LoadConfigData()
+    {
+        configs = await LocalStorageService.GetItem<List<LightDJConfigViewModel>>("configs") ?? new List<LightDJConfigViewModel>();
+        var currentConfig = configs.FirstOrDefault(c => c.Id == Id);
+
+        if (currentConfig != null)
+        {
+            // Clone the config object to avoid modifying the original list item directly
+            // if the user cancels. For deep cloning, a more robust method might be needed if ConnectionConfiguration has complex types.
+            // For this use case, a shallow copy of the list of connections is probably fine if ConnectionConfiguration is a class.
+            config = new LightDJConfigViewModel
+            {
+                Id = currentConfig.Id,
+                Name = currentConfig.Name,
+                Connections = new List<ConnectionConfiguration>(currentConfig.Connections.Select(conn => new ConnectionConfiguration { Ip = conn.Ip, Key = conn.Key, EntertainmentKey = conn.EntertainmentKey, GroupId = conn.GroupId }))
+            };
+            titleEdit = config.Name;
+        }
+        else
+        {
+            Snackbar.Add("Configuration not found.", Severity.Error);
+            MudDialog.Cancel();
+        }
+        StateHasChanged(); // Ensure UI updates with loaded connections
+    }
+
+
+    private async Task OpenAddBridgeDialog()
+    {
+        if (config == null) return;
+
+        var parameters = new DialogParameters { ["ConfigId"] = config.Id };
+        var dialog = await DialogService.ShowAsync<BridgeAddDialog>("Add New Bridge", parameters);
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled && result.Data is true)
+        {
+            await LoadConfigData(); // Reload config to see new bridge
+            Snackbar.Add("Bridge added successfully.", Severity.Success);
+        }
+    }
+
+    private async Task OpenEditBridgeDialog(string bridgeIp)
+    {
+        if (config == null) return;
+
+        var parameters = new DialogParameters { ["ConfigId"] = config.Id, ["BridgeIp"] = bridgeIp };
+        var dialog = await DialogService.ShowAsync<BridgeEditDialog>("Edit Bridge", parameters);
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled) // result.Data could be true (saved) or "removed"
+        {
+            await LoadConfigData(); // Reload config to see changes
+            if (result.Data is "removed")
+            {
+                Snackbar.Add("Bridge removed.", Severity.Info);
+            }
+            else if (result.Data is true)
+            {
+                Snackbar.Add("Bridge details saved.", Severity.Success);
+            }
+        }
+    }
+
+    private async Task SaveAndClose()
+    {
+        if (config != null)
+        {
+            config.Name = titleEdit;
+            // Update the original config in the 'configs' list
+            var originalConfig = configs.FirstOrDefault(c => c.Id == Id);
+            if (originalConfig != null)
+            {
+                originalConfig.Name = titleEdit;
+                originalConfig.Connections = config.Connections; // Assign the (potentially) modified list of connections
+                await LocalStorageService.SetItem<List<LightDJConfigViewModel>>("configs", configs);
+                Snackbar.Add("Configuration saved.", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                 Snackbar.Add("Error: Original configuration not found on save.", Severity.Error);
+                 MudDialog.Cancel();
+            }
+        }
+        else
+        {
+            MudDialog.Cancel();
+        }
+    }
+
+    private async Task DeleteAndClose()
+    {
+        if (config != null)
+        {
+            configs.RemoveAll(x => x.Id == Id);
+            await LocalStorageService.SetItem<List<LightDJConfigViewModel>>("configs", configs);
+            await LocalStorageService.SetItem<List<LightDJConfigViewModel>>("configs", configs);
+            Snackbar.Add("Configuration deleted.", Severity.Info);
+            MudDialog.Close(DialogResult.Ok("deleted")); // Parent (HueConfigTabPage) handles SelectedConfigState
+        }
+        else
+        {
+            MudDialog.Cancel();
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

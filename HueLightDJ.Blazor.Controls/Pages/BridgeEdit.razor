@@ -1,27 +1,6 @@
-@page "/bridge-edit/{Id:guid}/{Ip}"
-@inject StorageService LocalStorageService
-@inject NavigationManager NavManager
-@inject IHueSetupService HueSetupService
-
-<MudText Typo="Typo.h3">Bridge: @bridge?.Ip</MudText>
-<MudText>Current group: @groups?.Where(x => x.Id == bridge?.GroupId).FirstOrDefault()?.Name</MudText>
-
-@foreach (var group in groups ?? Enumerable.Empty<SimpleEntertainmentGroup>())
-{
-    <MudCard>
-        <MudCardContent>
-            <MudText>@group!.Name</MudText>
-            <MudText>Lights: @group!.LightCount</MudText>
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => Select(group.Id))">Select</MudButton>
-        </MudCardActions>
-    </MudCard>
-}
-
-<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Save</MudButton>
-<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Remove">Remove</MudButton>
+@* Content moved to BridgeEditDialog.razor *@
+@* @page "/bridge-edit/{Id:guid}/{Ip}" *@
 
 @code {
-    
+    // This page is no longer used. Functionality moved to BridgeEditDialog.razor
 }

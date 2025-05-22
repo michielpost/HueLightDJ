@@ -1,0 +1,325 @@
+@using HueLightDJ.Services.Interfaces.Models.Requests
+@implements IDisposable
+@inject StorageService LocalStorageService
+@inject ILightDJService LightDJService
+@inject IHubService HubService
+@inject NavigationManager NavManager
+@inject HueLightDJ.Blazor.Controls.Services.SelectedConfigState SelectedConfigState
+
+<MudExpansionPanels MultiExpansion="true">
+    @foreach (var panelKey in _panelKeys)
+    {
+        var currentIndex = _panelKeys.IndexOf(panelKey);
+        switch (panelKey)
+        {
+            case "Connection":
+                <MudExpansionPanel Text="Connection & Status" IsInitiallyExpanded="true">
+                    <Content>
+                        <MudText Typo="Typo.h3" Class="mb-2">@config?.Name</MudText>
+                        <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 pa-2 mb-2" Elevation="0">
+                            <MudText>Log msg:</MudText>
+                            <MudText>@lastMsg</MudText>
+                        </MudPaper>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Connect" Disabled="statusModel.CurrentGroup != null || CurrentConfigId == Guid.Empty">Connect</MudButton>
+                        @if (statusModel.CurrentGroup != null)
+                        {
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Disconnect">Disconnect</MudButton>
+                        }
+                    </Content>
+                    <HeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(() => MovePanelUp(panelKey))" Disabled="@(currentIndex == 0)" />
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(() => MovePanelDown(panelKey))" Disabled="@(currentIndex == _panelKeys.Count - 1)" />
+                    </HeaderActions>
+                </MudExpansionPanel>
+                break;
+            case "Preview":
+                <MudExpansionPanel Text="Live Preview" IsInitiallyExpanded="true">
+                    <Content>
+                        @if (statusModel.CurrentGroup != null)
+                        {
+                            <HueLightDJ.Blazor.Controls.Shared.Preview />
+                        }
+                        else
+                        {
+                            <MudText>Connect to a group to see the preview.</MudText>
+                        }
+                    </Content>
+                    <HeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(() => MovePanelUp(panelKey))" Disabled="@(currentIndex == 0)" />
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(() => MovePanelDown(panelKey))" Disabled="@(currentIndex == _panelKeys.Count - 1)" />
+                    </HeaderActions>
+                </MudExpansionPanel>
+                break;
+            case "BPM":
+                <MudExpansionPanel Text="BPM Controls">
+                    <Content>
+                        @if (statusModel.CurrentGroup != null)
+                        {
+                            <MudText Typo="Typo.h5">BPM</MudText>
+                            <MudNumericField @bind-Value="statusModel.Bpm" Label="BPM" Variant="Variant.Text" @onchange="@(() => LightDJService.SetBPM(new IntRequest(statusModel.Bpm)))" Min="1" Max="1000" />
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(120)))">Reset BPM</MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(20)))">Slow</MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(400)))">Quick</MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.SetBPM(new IntRequest(600)))">Super Quick</MudButton>
+                        }
+                        else
+                        {
+                             <MudText>Connect to a group to control BPM.</MudText>
+                        }
+                    </Content>
+                    <HeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(() => MovePanelUp(panelKey))" Disabled="@(currentIndex == 0)" />
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(() => MovePanelDown(panelKey))" Disabled="@(currentIndex == _panelKeys.Count - 1)" />
+                    </HeaderActions>
+                </MudExpansionPanel>
+                break;
+            case "Playback":
+                 <MudExpansionPanel Text="Playback & Master Controls">
+                    <Content>
+                        @if (statusModel.CurrentGroup != null)
+                        {
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StartRandom())">Random Effect</MudButton>
+                            @if (statusModel.IsAutoMode)
+                            {
+                                <MudCheckBox T="bool" @bind-Checked="@statusModel.AutoModeHasRandomEffects" @onchange="@(() => LightDJService.SetAutoRandomMode(new BoolRequest(statusModel.AutoModeHasRandomEffects)))" Label="Random effects"></MudCheckBox>
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StopAutoMode())">Stop Auto Mode</MudButton>
+                            }
+                            else
+                            {
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StartAutoMode())">Start Auto Mode</MudButton>
+                            }
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.StopEffects())">Stop All Effects</MudButton>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => LightDJService.Beat(new DoubleRequest(1)))">Beat</MudButton>
+                        }
+                        else
+                        {
+                             <MudText>Connect to a group for playback controls.</MudText>
+                        }
+                    </Content>
+                    <HeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(() => MovePanelUp(panelKey))" Disabled="@(currentIndex == 0)" />
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(() => MovePanelDown(panelKey))" Disabled="@(currentIndex == _panelKeys.Count - 1)" />
+                    </HeaderActions>
+                </MudExpansionPanel>
+                break;
+            case "Brightness":
+                <MudExpansionPanel Text="Master Brightness">
+                    <Content>
+                        @if (statusModel.CurrentGroup != null)
+                        {
+                            <MudSlider Min="0" Max="100" ValueLabel="true" @bind-Value="@Brightness" @onchange="@(() => LightDJService.SetBri(new DoubleRequest(Brightness)))">Brightness</MudSlider>
+                        }
+                        else
+                        {
+                             <MudText>Connect to a group to control brightness.</MudText>
+                        }
+                    </Content>
+                    <HeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(() => MovePanelUp(panelKey))" Disabled="@(currentIndex == 0)" />
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(() => MovePanelDown(panelKey))" Disabled="@(currentIndex == _panelKeys.Count - 1)" />
+                    </HeaderActions>
+                </MudExpansionPanel>
+                break;
+            case "LongRunning":
+                <MudExpansionPanel Text="Long Running Effects">
+                    <Content>
+                        @if (statusModel.CurrentGroup != null)
+                        {
+                            <MudText Typo="Typo.h5" Class="mb-2">Long Running</MudText>
+                            @foreach (var effectGroup in effectsVM.BaseEffects)
+                            {
+                                <MudPaper Class="pa-2 mb-2">
+                                    <MudText Typo="Typo.h6">@effectGroup.Title</MudText>
+                                    @foreach (var effect in effectGroup.Effects)
+                                    {
+                                        <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 pa-1" Elevation="0">
+                                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = effect.IsRandom ? null : effect.Color}))">@effect.Name</MudButton>
+                                            @if (effect.HasColorPicker)
+                                            {
+                                                <MudCheckBox T="bool" @bind-Checked="@effect.IsRandom" Label="Random"></MudCheckBox>
+                                                @if (!effect.IsRandom)
+                                                {
+                                                    <MudColorPicker PickerVariant="PickerVariant.Inline" @bind-Text="effect.Color" Style="@($"color: {effect.Color};")" />
+                                                }
+                                            }
+                                        </MudPaper>
+                                    }
+                                </MudPaper>
+                            }
+                        }
+                        else
+                        {
+                             <MudText>Connect to a group to see long running effects.</MudText>
+                        }
+                    </Content>
+                    <HeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(() => MovePanelUp(panelKey))" Disabled="@(currentIndex == 0)" />
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(() => MovePanelDown(panelKey))" Disabled="@(currentIndex == _panelKeys.Count - 1)" />
+                    </HeaderActions>
+                </MudExpansionPanel>
+                break;
+            case "ShortEffects":
+                <MudExpansionPanel Text="Short Effects">
+                    <Content>
+                        @if (statusModel.CurrentGroup != null)
+                        {
+                            <MudText Typo="Typo.h5" Class="mb-2">Short Effects</MudText>
+                            @foreach (var effect in effectsVM.ShortEffects)
+                            {
+                                <MudPaper Class="d-flex flex-row flex-grow-1 gap-4 pa-1 mb-1" Elevation="0">
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = ""}))">@effect.Name</MudButton>
+                                </MudPaper>
+                            }
+                        }
+                        else
+                        {
+                            <MudText>Connect to a group to see short effects.</MudText>
+                        }
+                    </Content>
+                    <HeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Size="Size.Small" OnClick="@(() => MovePanelUp(panelKey))" Disabled="@(currentIndex == 0)" />
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Size="Size.Small" OnClick="@(() => MovePanelDown(panelKey))" Disabled="@(currentIndex == _panelKeys.Count - 1)" />
+                    </HeaderActions>
+                </MudExpansionPanel>
+                break;
+        }
+    }
+</MudExpansionPanels>
+
+@code {
+    //[Parameter] // Id is now managed by SelectedConfigState
+    //public Guid Id { get; set; }
+
+    private Guid CurrentConfigId; // Store current Id to compare with new Id from state
+    private LightDJConfigViewModel? config;
+    private EffectsViewModel effectsVM = new();
+    private LightDJStatusViewModel statusModel = new();
+    private string lastMsg = string.Empty;
+    private double Brightness = 0;
+
+    private List<string> _panelKeys = new List<string> { "Connection", "Preview", "BPM", "Playback", "Brightness", "LongRunning", "ShortEffects" };
+
+    private void MovePanelUp(string panelKey)
+    {
+        var index = _panelKeys.IndexOf(panelKey);
+        if (index > 0)
+        {
+            _panelKeys.RemoveAt(index);
+            _panelKeys.Insert(index - 1, panelKey);
+            StateHasChanged();
+        }
+    }
+
+    private void MovePanelDown(string panelKey)
+    {
+        var index = _panelKeys.IndexOf(panelKey);
+        if (index < _panelKeys.Count - 1)
+        {
+            _panelKeys.RemoveAt(index);
+            _panelKeys.Insert(index + 1, panelKey);
+            StateHasChanged();
+        }
+    }
+
+    {
+        await base.OnInitializedAsync();
+        SelectedConfigState.OnChange += HandleConfigChangeAsync;
+        await HandleConfigChangeAsync(); // Initial load
+    }
+
+    private async Task HandleConfigChangeAsync()
+    {
+        var newConfigId = SelectedConfigState.SelectedConfigId;
+
+        // If configId changed, clean up old state
+        if (CurrentConfigId != Guid.Empty && CurrentConfigId != newConfigId)
+        {
+            HubService.EffectsChanged -= EffectsChanged;
+            HubService.StatusChanged -= StatusChanged;
+            HubService.LogAdded -= LogAdded;
+            // Consider HubService.Unregister(CurrentConfigId.ToString()) if applicable
+            config = null; // Clear old config
+            statusModel = new(); // Reset status model
+            effectsVM = new(); // Reset effects model
+            lastMsg = string.Empty;
+        }
+        
+        CurrentConfigId = newConfigId;
+
+        if (CurrentConfigId == Guid.Empty)
+        {
+            lastMsg = "No configuration selected. Please select a configuration from the 'Hue Configuration' tab.";
+            config = null; // Ensure UI reflects no config
+            statusModel = new(); // Reset status model
+            effectsVM = new(); // Reset effects model
+            StateHasChanged();
+            return;
+        }
+
+        config = await LocalStorageService.GetItem<LightDJConfigViewModel>(CurrentConfigId.ToString());
+        if (config == null)
+        {
+            lastMsg = $"Configuration with ID '{CurrentConfigId}' not found.";
+            CurrentConfigId = Guid.Empty; // Reset to prevent further issues with this ID
+            StateHasChanged();
+            return;
+        }
+
+        effectsVM = await LightDJService.GetEffectsVM(new GuidRequest(CurrentConfigId));
+        statusModel = await LightDJService.GetStatus(new GuidRequest(CurrentConfigId));
+        Brightness = statusModel.CurrentBrightness;
+
+        // Subscribe to hub events for the new config ID
+        HubService.EffectsChanged += EffectsChanged;
+        HubService.StatusChanged += StatusChanged;
+        HubService.LogAdded += LogAdded;
+        await HubService.Register(CurrentConfigId.ToString());
+        
+        lastMsg = $"Configuration '{config.Name}' loaded."; // Update status message
+        StateHasChanged();
+    }
+
+    private async void Connect()
+    {
+        if (CurrentConfigId == Guid.Empty) return;
+        await LightDJService.Connect(new GuidRequest(CurrentConfigId));
+    }
+
+    private async void Disconnect()
+    {
+        if (CurrentConfigId == Guid.Empty) return;
+        await LightDJService.Disconnect(new GuidRequest(CurrentConfigId));
+    }
+
+    private void LogAdded(object? sender, string e)
+    {
+        lastMsg = e;
+        StateHasChanged();
+    }
+
+    private void StatusChanged(object? sender, LightDJStatusViewModel e)
+    {
+        if (CurrentConfigId == Guid.Empty && config == null) return; 
+        statusModel = e;
+        StateHasChanged();
+    }
+
+    private void EffectsChanged(object? sender, EffectsViewModel e)
+    {
+        if (CurrentConfigId == Guid.Empty && config == null) return; 
+        effectsVM = e;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        SelectedConfigState.OnChange -= HandleConfigChangeAsync;
+        if (CurrentConfigId != Guid.Empty)
+        {
+            HubService.EffectsChanged -= EffectsChanged;
+            HubService.StatusChanged -= StatusChanged;
+            HubService.LogAdded -= LogAdded;
+            // Consider HubService.Unregister(CurrentConfigId.ToString()) if applicable.
+        }
+    }
+}

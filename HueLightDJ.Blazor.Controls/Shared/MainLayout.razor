@@ -1,5 +1,10 @@
 @inherits LayoutComponentBase
-<MudThemeProvider IsDarkMode=true />
+@implements IDisposable
+@using HueLightDJ.Blazor.Controls.Pages
+@using HueLightDJ.Blazor.Controls.Services
+@inject ThemeState ThemeState
+
+<MudThemeProvider @ref="_themeProvider" Theme="ThemeState.CurrentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -16,7 +21,20 @@
     </MudDrawer>*@
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Medium">
-            @Body
+            @*@Body*@
+            <MudTabs Elevation="2" Rounded="true" Centered="true" PanelClass="mt-6">
+                <MudTabPanel Text="Main">
+                    <MainTabPage />
+                </MudTabPanel>
+                <MudTabPanel Text="Hue Configuration">
+                    <HueConfigTabPage />
+                </MudTabPanel>
+                <MudTabPanel Text="General Settings">
+                    <GeneralSettingsTabPage />
+                </MudTabPanel>
+            </MudTabs>
+
+            @* @Body *@
 
             <br />
             <br />
@@ -30,10 +48,32 @@
     </MudMainContent>
 </MudLayout>
 @code {
-    bool _drawerOpen = true;
+    private MudThemeProvider _themeProvider = null!;
+    bool _drawerOpen = true; // Keep this if it's used, or remove if not.
 
-    void DrawerToggle()
+    void DrawerToggle() // Keep this if it's used, or remove if not.
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized(); // Good practice to call base.
+        ThemeState.OnThemeChanged += ApplyTheme;
+    }
+
+    void ApplyTheme()
+    {
+        // This is called when the theme changes in ThemeState.
+        // The MudThemeProvider's Theme parameter is already bound to ThemeState.CurrentTheme,
+        // so MudBlazor should reactively update.
+        // If direct manipulation of _themeProvider is needed, it can be done here.
+        // Forcing a StateHasChanged on the layout might be necessary if changes don't propagate.
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ThemeState.OnThemeChanged -= ApplyTheme;
     }
 }

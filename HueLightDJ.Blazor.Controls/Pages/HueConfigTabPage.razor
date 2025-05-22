@@ -1,0 +1,132 @@
+@using HueLightDJ.Blazor.Controls.Pages // Added for ConfigEditDialog
+@inject StorageService LocalStorageService
+@inject NavigationManager NavManager
+@inject HueLightDJ.Blazor.Controls.Services.SelectedConfigState SelectedConfigState
+@inject MudBlazor.ISnackbar Snackbar
+@inject MudBlazor.IDialogService DialogService // Added for dialogs
+
+<MudText Typo="Typo.h3">Configs</MudText>
+
+@foreach (var config in configs)
+{
+    <MudCard>
+        <MudCardContent>
+            <MudText>@config.Name</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            @if (config.Id != Guid.Empty)
+            {
+                @if (config.Connections.Any())
+                {
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => OpenEditDialog(config.Id)">Edit</MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => OpenAddBridgeDialogForEmptyConfig(config.Id)">Add bridge</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => Remove(config.Id))">Remove</MudButton>
+                }
+            }
+
+            @if (config.Connections.Where(x => x.GroupId.HasValue).Any())
+            {
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => LoadConfig(config)">Start</MudButton>
+            }
+        </MudCardActions>
+    </MudCard>
+}
+
+<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="OpenAddConfigDialog">Add Configuration</MudButton>
+@*<MudButton Variant="Variant.Text" Color="Color.Primary">Import</MudButton>
+<MudButton Variant="Variant.Text" Color="Color.Primary">Export</MudButton>*@
+
+
+@code {
+    private List<LightDJConfigViewModel> configs = new List<LightDJConfigViewModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await LoadConfigs();
+    }
+
+    private async Task LoadConfigs()
+    {
+        configs = await LocalStorageService.GetItem<List<LightDJConfigViewModel>>("configs") ?? new List<LightDJConfigViewModel>();
+    }
+
+    private async Task OpenEditDialog(Guid configId)
+    {
+        var parameters = new DialogParameters { ["Id"] = configId };
+        var dialog = await DialogService.ShowAsync<ConfigEditDialog>("Edit Configuration", parameters);
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled)
+        {
+            await LoadConfigs(); // Refresh data
+            if (result.Data is string dataString && dataString == "deleted")
+            {
+                Snackbar.Add("Configuration deleted.", Severity.Info);
+                if(SelectedConfigState.SelectedConfigId == configId)
+                {
+                    SelectedConfigState.SetSelectedConfig(Guid.Empty); // Clear selection if deleted
+                }
+            }
+            else
+            {
+                Snackbar.Add("Configuration saved.", Severity.Success);
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async Task OpenAddConfigDialog()
+    {
+        var dialog = await DialogService.ShowAsync<ConfigAddDialog>("Add New Configuration");
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled && result.Data is Guid newConfigId && newConfigId != Guid.Empty)
+        {
+            await LoadConfigs(); // Refresh data
+            Snackbar.Add("New configuration added.", Severity.Success);
+            // Optionally, directly open the AddBridgeDialog for the new config
+            // await OpenAddBridgeDialogForEmptyConfig(newConfigId);
+            StateHasChanged();
+        }
+    }
+    
+    private async Task OpenAddBridgeDialogForEmptyConfig(Guid configId)
+    {
+        var parameters = new DialogParameters { ["ConfigId"] = configId };
+        var dialog = await DialogService.ShowAsync<BridgeAddDialog>("Add New Bridge", parameters);
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled && result.Data is true)
+        {
+            await LoadConfigs(); // Refresh config to show new bridge count / enable Start button etc.
+            Snackbar.Add("Bridge added successfully. You may need to edit the configuration to set an entertainment group.", Severity.Info, options => { options.VisibleStateDuration = 5000; });
+            StateHasChanged();
+        }
+    }
+
+
+    private async void Remove(Guid id)
+    {
+        // This method is called from the "Remove" button on configs without connections.
+        // Deletion for configs with connections should be handled via the dialog's delete button.
+        configs.RemoveAll(x => x.Id == id);
+        await LocalStorageService.SetItem<List<LightDJConfigViewModel>>("configs", configs);
+        if(SelectedConfigState.SelectedConfigId == id)
+        {
+            SelectedConfigState.SetSelectedConfig(Guid.Empty); // Clear selection if removed
+        }
+        Snackbar.Add("Configuration removed.", Severity.Info);
+        await LoadConfigs(); // Refresh the list
+        StateHasChanged();
+    }
+
+    private void LoadConfig(LightDJConfigViewModel config)
+    {
+        SelectedConfigState.SetSelectedConfig(config.Id);
+        Snackbar.Add($"Configuration '{config.Name}' loaded. Go to 'Main' tab.", Severity.Info);
+    }
+}

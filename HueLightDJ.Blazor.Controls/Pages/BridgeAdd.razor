@@ -1,27 +1,6 @@
-@page "/bridge-add/{Id:guid}"
-@inject StorageService LocalStorageService
-@inject NavigationManager NavManager
-@inject IHueSetupService HueSetupService
-
-<MudText Typo="Typo.h3">Add bridge to @config?.Name</MudText>
-
-@foreach (var bridge in bridges)
-{
-    <MudCard>
-        <MudCardContent>
-            <MudText>@bridge.IpAddress</MudText>
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="(() => Select(bridge.IpAddress))">Select</MudButton>
-        </MudCardActions>
-    </MudCard>
-}
-
-<MudTextField @bind-Value="ipAdd" Variant="Variant.Text"></MudTextField>
-<MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Save">Add (click the bridge button first!)</MudButton>
-
+@* Content moved to BridgeAddDialog.razor *@
+@* @page "/bridge-add/{Id:guid}" *@
 
 @code {
-  
-
+    // This page is no longer used. Functionality moved to BridgeAddDialog.razor
 }

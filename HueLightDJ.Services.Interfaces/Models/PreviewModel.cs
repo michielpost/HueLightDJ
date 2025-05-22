@@ -13,5 +13,6 @@ namespace HueLightDJ.Services.Interfaces.Models
     public double Y { get; set; }
     public required string Hex { get; set; }
     public double Bri { get; set; }
+    public string? Name { get; set; }
   }
 }

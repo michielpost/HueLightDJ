@@ -1,0 +1,57 @@
+@inject StorageService LocalStorageService
+@inject ISnackbar Snackbar
+
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Add New Configuration</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="newConfigName" Label="Configuration Name" Variant="Variant.Outlined" Margin="Margin.Dense" Required="true" RequiredError="Name is required!"></MudTextField>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Color="Color.Secondary">Cancel</MudButton>
+        <MudButton OnClick="SaveNewConfig" Color="Color.Primary" Disabled="string.IsNullOrWhiteSpace(newConfigName)">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
+    
+    private string newConfigName = "New Configuration"; // Default name
+
+    private async Task SaveNewConfig()
+    {
+        if (string.IsNullOrWhiteSpace(newConfigName))
+        {
+            Snackbar.Add("Configuration name cannot be empty.", Severity.Warning);
+            return;
+        }
+
+        var configs = await LocalStorageService.GetItem<List<LightDJConfigViewModel>>("configs") ?? new List<LightDJConfigViewModel>();
+        
+        // Check for duplicate names
+        if (configs.Any(c => c.Name.Equals(newConfigName, StringComparison.OrdinalIgnoreCase)))
+        {
+            Snackbar.Add($"A configuration with the name '{newConfigName}' already exists.", Severity.Error);
+            return;
+        }
+
+        var newConfig = new LightDJConfigViewModel()
+        {
+            Id = Guid.NewGuid(),
+            Name = newConfigName,
+            Connections = new List<ConnectionConfiguration>() // Initialize with empty connections list
+        };
+
+        configs.Add(newConfig);
+        await LocalStorageService.SetItem<List<LightDJConfigViewModel>>("configs", configs);
+        
+        Snackbar.Add($"Configuration '{newConfigName}' created.", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(newConfig.Id)); // Return the new Guid so parent can use it.
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}
