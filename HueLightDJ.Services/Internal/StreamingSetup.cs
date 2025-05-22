@@ -51,7 +51,7 @@ namespace HueLightDJ.Services
     [Obsolete]
     public async Task<List<MultiBridgeHuePosition>> GetLocationsAsync(string groupName)
     {
-      var configSection = await GetGroupConfigurationsAsync();
+      var configSection = this.fullConfig;
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
 
       if(currentGroup == null)
@@ -101,7 +101,7 @@ namespace HueLightDJ.Services
 
     public async Task SetLocations(List<MultiBridgeHuePosition> locations)
     {
-      var configSection = await GetGroupConfigurationsAsync();
+      var configSection = this.fullConfig;
 
       var grouped = locations.GroupBy(x => x.Bridge);
 
@@ -140,7 +140,7 @@ namespace HueLightDJ.Services
 
     public async Task AlertLight(MultiBridgeHuePosition light)
     {
-      var configSection = await GetGroupConfigurationsAsync();
+      var configSection = this.fullConfig;
 
       var config = configSection.Where(x => x.Connections.Any(c => c.Ip == light.Bridge)).FirstOrDefault();
       if (config != null)
@@ -186,7 +186,7 @@ namespace HueLightDJ.Services
     [Obsolete]
     public async Task SetupAndReturnGroupAsync(string groupName)
     {
-      var configSection = await GetGroupConfigurationsAsync();
+      var configSection = this.fullConfig;
       var currentGroup = configSection.Where(x => x.Name == groupName).FirstOrDefault();
       if (currentGroup == null)
         throw new ArgumentNullException($"Group not found ({groupName})", nameof(groupName));
@@ -307,7 +307,7 @@ namespace HueLightDJ.Services
         }
 
         //Start auto updating this entertainment group
-        client.AutoUpdateAsync(stream, _cts.Token, 50, onlySendDirtyStates: false);
+        _ = client.AutoUpdateAsync(stream, _cts.Token, 50, onlySendDirtyStates: false);
 
         StreamingHueClients.Add(client);
         StreamingGroups.Add(stream);

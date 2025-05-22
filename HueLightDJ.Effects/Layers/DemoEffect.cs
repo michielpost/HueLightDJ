@@ -31,17 +31,17 @@ namespace HueLightDJ.Effects.Layers
       {
         SetBPM(75);
 
-        new HsbLoopEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new HsbLoopEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
         ResetCts();
 
-        new RandomColorRangeEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new RandomColorRangeEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
         ResetCts();
 
         SetBPM(20);
 
-        new RotatingEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new RotatingEffect().Start(layer, () => WaitTime, color, _cts.Token);
 
         await Task.Delay(TimeSpan.FromSeconds(1));
         for (int i = 0; i < 25; i++)
@@ -54,35 +54,35 @@ namespace HueLightDJ.Effects.Layers
         ResetCts();
 
         SetBPM(75);
-        new RandomPulseEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new RandomPulseEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(8), cancellationToken);
         ResetCts();
 
-        new GradientWheelEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new GradientWheelEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
         ResetCts();
 
-        new RandomPulseRetraceEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new RandomPulseRetraceEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
         ResetCts();
 
-        new RainbowWheelEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new RainbowWheelEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
         ResetCts();
 
-        new RandomSingleRowBottomTopEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new RandomSingleRowBottomTopEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
         ResetCts();
 
-        new RandomPulseTopBottomEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new RandomPulseTopBottomEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(8), cancellationToken);
         ResetCts();
 
-        new RainbowBottomTopEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new RainbowBottomTopEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(12), cancellationToken);
         ResetCts();
 
-        new QuickFlashFrontBackEffect().Start(layer, () => WaitTime, color, _cts.Token);
+        _ = new QuickFlashFrontBackEffect().Start(layer, () => WaitTime, color, _cts.Token);
         await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
         ResetCts();
       }

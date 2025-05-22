@@ -34,7 +34,7 @@ namespace HueLightDJ.Effects.Layers
 
         foreach (var light in orderedLayer)
         {
-          Task.Run(async () =>
+          _ = Task.Run(async () =>
           {
             var distance = 1 + light.LightLocation.Y;
             var timeSpan = waitTime() / 2 * distance;

@@ -37,7 +37,7 @@ namespace HueLightDJ.Effects
           else
           {
             group.SelectMany(x => x).SetBrightness(cancellationToken, 0);
-            group.FlashQuick(tempCancel.Token, null, IteratorEffectMode.AllIndividual, IteratorEffectMode.Random);
+            _ = group.FlashQuick(tempCancel.Token, null, IteratorEffectMode.AllIndividual, IteratorEffectMode.Random);
           }
           skip = !skip;
         }

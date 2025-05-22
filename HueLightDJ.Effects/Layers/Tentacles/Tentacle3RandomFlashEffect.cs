@@ -30,7 +30,7 @@ namespace HueLightDJ.Effects
         foreach (var group in grouped)
         {
           var nextColor = RGBColor.Random();
-          group.To2DGroup().FlashQuick(cancellationToken, null, IteratorEffectMode.All, IteratorEffectMode.All, waitTime, transitionTimeOff: waitTime, duration: waitTime());
+          _ = group.To2DGroup().FlashQuick(cancellationToken, null, IteratorEffectMode.All, IteratorEffectMode.All, waitTime, transitionTimeOff: waitTime, duration: waitTime());
           await Task.Delay(waitTime(), cancellationToken);
         }
 

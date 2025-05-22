@@ -29,7 +29,7 @@ namespace HueLightDJ.Effects.Layers
 
         foreach (var light in orderedLayer)
         {
-          Task.Run(async () =>
+          _ = Task.Run(async () =>
           {
             var angle = light.LightLocation.Angle(center.X, center.Y).Move360(90);
             var timeSpan = waitTime() / 360 * angle;

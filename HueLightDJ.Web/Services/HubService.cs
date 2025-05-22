@@ -18,9 +18,15 @@ namespace HueLightDJ.Web.Services
       _hub = hub;
     }
 
+#pragma warning disable CS0067 // Event is required by IHubService interface
     public event EventHandler<string?>? LogMsgEvent;
+#pragma warning restore CS0067
+#pragma warning disable CS0067 // Event is required by IHubService interface
     public event EventHandler? StatusChangedEvent;
+#pragma warning restore CS0067
+#pragma warning disable CS0067 // Event is required by IHubService interface
     public event EventHandler<IEnumerable<PreviewModel>>? PreviewEvent;
+#pragma warning restore CS0067
 
     public Task SendAsync(string method, params object?[] arg1)
     {
