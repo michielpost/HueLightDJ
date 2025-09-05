@@ -19,11 +19,16 @@
 else
 {
     <FluentDataGrid Id="bridgegrid" Items="@bridges" GridTemplateColumns="2fr 2fr 2fr" TGridItem="Bridge">
-        <PropertyColumn Title="Name" Property="@(b => b.Name)" Sortable="true" Align="Align.Start">
-                @* <FluentAnchor @onclick="() => NavigateToBridgeDetails(b.Id)">@b.Name</FluentAnchor> *@
-        </PropertyColumn>
-        <PropertyColumn Title="IP" Property="@(b => b.Ip)" Sortable="true" Align="Align.Center" />
-        <PropertyColumn Title="Id" Property="@(b => b.Id)" Sortable="true" Align="Align.End" />
+        <TemplateColumn Title="Name" Sortable="true" Align="Align.Start">
+            <NavLink href="@($"/bridge/{context.Id}")">@context.Name</NavLink>
+        </TemplateColumn>
+        <PropertyColumn Title="IP" Property="@(b => b.Ip)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Id" Property="@(b => b.Id)" Sortable="true" Align="Align.Start" />
+        <TemplateColumn Title="" Align="Align.Start">
+            <NavLink href="@($"/bridge/{context.Id}")">
+                <FluentIcon Value="@(new Icons.Regular.Size16.Pen())" />
+            </NavLink>
+        </TemplateColumn>
     </FluentDataGrid>
 }
 

@@ -32,10 +32,7 @@
                              Placeholder="e.g., 192.168.1.100"
                              Disabled="@(!EditIp)" />
 
-            <FluentTextField Label="Name"
-                             @bind-Value="@BridgeConfig.Name"
-                             Placeholder="Name to identity the bridge" />
-
+          
            
                 <FluentCheckbox @bind-Value="@ShowSecrets"
                                 Label="Manually enter username and key"
@@ -50,6 +47,11 @@
                                      @bind-Value="@BridgeConfig.ApiKey"
                                      Placeholder="e.g., your-api-key" />
                 }
+
+            <FluentTextField Label="Name (optional)"
+                             @bind-Value="@BridgeConfig.Name"
+                             Placeholder="Name to identity the bridge" />
+
 
             <FluentLabel Weight="FontWeight.Bold" Style="color: var(--error); margin-top: 8px;">
                 @ErrorMessage
@@ -114,6 +116,8 @@
     private async Task OnBridgeIdSelected(string bridgeId)
     {
         var selected = DiscoveredIps.FirstOrDefault(b => b.BridgeId == bridgeId);
+        if (selected == null)
+            return;
 
         BridgeConfig.IpAddress = selected.IpAddress;
         BridgeConfig.BridgeId = selected.BridgeId;
@@ -137,7 +141,7 @@
 
                 if (setup == null || string.IsNullOrEmpty(setup.Username) || string.IsNullOrEmpty(setup.StreamingClientKey))
                 {
-                    ErrorMessage = "Failed to register with bridge. Ensure the bridge button was pressed.";
+                    ErrorMessage = "Failed to register with bridge. Did you press the button on the bridge?";
                     StateHasChanged();
                     return;
                 }
@@ -175,6 +179,7 @@
             {
                 Ip = BridgeConfig.IpAddress,
                 BridgeId = BridgeConfig.BridgeId,
+                Name = !string.IsNullOrEmpty(BridgeConfig.Name) ? BridgeConfig.Name : BridgeConfig.BridgeId,
                 StreamingClientKey = BridgeConfig.ApiKey,
                 Username = BridgeConfig.Username
             });
@@ -196,8 +201,6 @@
 
     private void CloseDialog()
     {
-        Console.WriteLine("Closing dialog");
-        Console.WriteLine("Null?" + Dialog == null);
         Dialog?.CloseAsync();
     }
 }

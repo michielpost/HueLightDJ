@@ -1,6 +1,8 @@
 using HueEntertainmentPro.Database;
 using HueEntertainmentPro.Database.Models;
+using HueEntertainmentPro.Services.Extensions;
 using HueEntertainmentPro.Shared.Interfaces;
+using HueEntertainmentPro.Shared.Models.Requests;
 using Microsoft.EntityFrameworkCore;
 using ProtoBuf.Grpc;
 
@@ -19,7 +21,8 @@ namespace HueEntertainmentPro.Services
           Ip = req.Ip,
           Username = req.Username,
           StreamingClientKey = req.StreamingClientKey,
-          Name = req.Name
+          Name = req.Name,
+           BridgeId = req.BridgeId
         };
         dbContext.Bridges.Add(bridge);
       }
@@ -33,12 +36,7 @@ namespace HueEntertainmentPro.Services
 
       await dbContext.SaveChangesAsync();
 
-     return new Shared.Models.Bridge()
-      {
-        Id = bridge.Id,
-        Ip = bridge.Ip,
-        Name = bridge.Name
-      };
+      return bridge.ToApiModel();
 
     }
 
@@ -58,23 +56,27 @@ namespace HueEntertainmentPro.Services
       if(bridge == null)
         return null;
 
-      return new Shared.Models.Bridge()
-      {
-        Id = bridge.Id,
-        Ip = bridge.Ip,
-        Name = bridge.Name
-      };
+      return bridge.ToApiModel();
     }
 
     public async Task<IEnumerable<Shared.Models.Bridge>> GetBridges(CallContext context = default)
     {
       var all = await dbContext.Bridges.ToListAsync();
-      return all.Select(bridge => new Shared.Models.Bridge()
+      return all.Select(bridge => bridge.ToApiModel());
+    }
+
+    public async Task<Shared.Models.Bridge?> UpdateBridge(UpdateBridgeRequest req, CallContext context = default)
+    {
+      var existing = await dbContext.Bridges.Where(x => x.Id == req.Id).FirstOrDefaultAsync();
+      if (existing != null)
       {
-        Id = bridge.Id,
-        Ip = bridge.Ip,
-        Name = bridge.Name
-      });
+        existing.Name = req.Name;
+        await dbContext.SaveChangesAsync();
+      }
+      else
+        return null;
+
+      return existing.ToApiModel();
     }
   }
 }

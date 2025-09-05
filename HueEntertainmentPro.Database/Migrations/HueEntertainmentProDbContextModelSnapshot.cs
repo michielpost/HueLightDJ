@@ -23,6 +23,10 @@ namespace HueEntertainmentPro.Database.Migrations
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
+                    b.Property<string>("BridgeId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Ip")
                         .IsRequired()
                         .HasColumnType("TEXT");

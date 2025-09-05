@@ -5,6 +5,7 @@ namespace HueEntertainmentPro.Database.Models
     public Guid Id { get; set; }
     public string? Name { get; set; }
     public required string Ip { get; set; }
+    public required string BridgeId { get; set; }
 
     public required string Username { get; set; }
 
