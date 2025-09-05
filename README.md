@@ -1,5 +1,5 @@
-# HueLightDJ
-Hue Light DJ using Hue Entertainment API
+# Hue Entertainment Pro
+Old name: Hue Light DJ
 
 [![Build .NET](https://github.com/michielpost/HueLightDJ/actions/workflows/build.yml/badge.svg)](https://github.com/michielpost/HueLightDJ/actions/workflows/build.yml)
 
@@ -53,6 +53,16 @@ docker run -d -p 8080:80 michielpost/huelightdj
 ```
 HueLightDJ is now available on port 8080
 
+
+### SQL / Entity Framework Migrations
+
+Execute in `src`:
+
+```ps
+dotnet ef --startup-project HueEntertainmentPro --project HueEntertainmentPro.Database migrations add MIGRATION_NAME
+```
+
+
 ## Feature Wishlist
 - Multi Bridge light location configuration (use the Hue App to configure your light positions)
 - Keyboard shortcuts
@@ -65,5 +75,4 @@ HueLightDJ is now available on port 8080
 ![Setup](screenshots/v3_02_setup.png)
 ![Multi Bridge Location Editor (v2 version)](screenshots/screenshot03_location_editor.png)
 
-#### Disclaimer
-This app is not affiliated with the Light DJ series of light show apps by NRTHRNLIGHTS, LLC
+
