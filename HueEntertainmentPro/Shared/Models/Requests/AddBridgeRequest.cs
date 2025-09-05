@@ -11,6 +11,7 @@ namespace HueEntertainmentPro.Shared.Models.Requests
   public class AddBridgeRequest
   {
     public string? Name { get; set; }
+    public required string BridgeId { get; set; }
     public required string Ip { get; set; }
 
     public required string Username { get; set; }

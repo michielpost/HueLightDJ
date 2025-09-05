@@ -4,6 +4,7 @@
 @using HueEntertainmentPro.Shared.Interfaces
 @inject IBridgeDataService BridgeDataService
 @inject NavigationManager Navigation
+@inject IDialogService DialogService
 
 <PageTitle>Bridges</PageTitle>
 
@@ -26,24 +27,9 @@ else
     </FluentDataGrid>
 }
 
-@* <FluentDialog @bind-Open="showAddDialog">
-    <FluentDialogTitle>Add New Bridge</FluentDialogTitle>
-    <FluentDialogContent>
-        <FluentTextField Label="Name" @bind-Value="newBridge.Name" />
-        <FluentTextField Label="IP" @bind-Value="newBridge.Ip" />
-        <FluentTextField Label="Username" @bind-Value="newBridge.Username" />
-        <FluentTextField Label="Streaming Client Key" @bind-Value="newBridge.StreamingClientKey" />
-    </FluentDialogContent>
-    <FluentDialogActions>
-        <FluentButton @onclick="AddBridge">Add</FluentButton>
-        <FluentButton @onclick="CloseAddDialog">Cancel</FluentButton>
-    </FluentDialogActions>
-</FluentDialog> *@
 
 @code {
     private IQueryable<Bridge>? bridges;
-    private bool showAddDialog = false;
-    private AddBridgeRequest newBridge = new() { Ip = string.Empty, Username = string.Empty, StreamingClientKey = string.Empty };
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,24 +37,15 @@ else
         bridges = result.AsQueryable();
     }
 
-    private void OpenAddDialog()
+    private async Task OpenAddDialog()
     {
-        newBridge = new AddBridgeRequest { Ip = string.Empty, Username = string.Empty, StreamingClientKey = string.Empty };
-        showAddDialog = true;
+        var dialog = await DialogService.ShowDialogAsync<AddBridgeDialog>(new DialogParameters()
+        {
+            Title = $"Add a bridge",
+        });
+
     }
 
-    private void CloseAddDialog()
-    {
-        showAddDialog = false;
-    }
-
-    private async Task AddBridge()
-    {
-        var added = await BridgeDataService.AddBridge(newBridge);
-        bridges = bridges?.Append(added).AsQueryable();
-        showAddDialog = false;
-        StateHasChanged();
-    }
 
     private void NavigateToBridgeDetails(Guid id)
     {
