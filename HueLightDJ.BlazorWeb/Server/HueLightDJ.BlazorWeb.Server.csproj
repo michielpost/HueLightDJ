@@ -12,12 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
-	  <PackageReference Include="Grpc.AspNetCore.Web" Version="2.67.0" />
-	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
+	  <PackageReference Include="Grpc.AspNetCore.Web" Version="2.71.0" />
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
 	  <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0" />
-    <PackageReference Include="HueApi" Version="1.7.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.8" />
+    <PackageReference Include="HueApi" Version="1.9.0" />
     <PackageReference Include="HueApi.ColorConverters" Version="1.7.1" />
     <PackageReference Include="HueApi.Entertainment" Version="1.7.0" />
   </ItemGroup>
