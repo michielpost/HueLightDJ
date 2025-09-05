@@ -1,0 +1,78 @@
+@page "/bridges"
+@using HueEntertainmentPro.Shared.Models
+@using HueEntertainmentPro.Shared.Models.Requests
+@using HueEntertainmentPro.Shared.Interfaces
+@inject IBridgeDataService BridgeDataService
+@inject NavigationManager Navigation
+
+<PageTitle>Bridges</PageTitle>
+
+<h1>Bridges</h1>
+
+<FluentButton @onclick="OpenAddDialog">Add Bridge</FluentButton>
+
+@if (bridges == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <FluentDataGrid Id="bridgegrid" Items="@bridges" GridTemplateColumns="2fr 2fr 2fr" TGridItem="Bridge">
+        <PropertyColumn Title="Name" Property="@(b => b.Name)" Sortable="true" Align="Align.Start">
+                @* <FluentAnchor @onclick="() => NavigateToBridgeDetails(b.Id)">@b.Name</FluentAnchor> *@
+        </PropertyColumn>
+        <PropertyColumn Title="IP" Property="@(b => b.Ip)" Sortable="true" Align="Align.Center" />
+        <PropertyColumn Title="Id" Property="@(b => b.Id)" Sortable="true" Align="Align.End" />
+    </FluentDataGrid>
+}
+
+@* <FluentDialog @bind-Open="showAddDialog">
+    <FluentDialogTitle>Add New Bridge</FluentDialogTitle>
+    <FluentDialogContent>
+        <FluentTextField Label="Name" @bind-Value="newBridge.Name" />
+        <FluentTextField Label="IP" @bind-Value="newBridge.Ip" />
+        <FluentTextField Label="Username" @bind-Value="newBridge.Username" />
+        <FluentTextField Label="Streaming Client Key" @bind-Value="newBridge.StreamingClientKey" />
+    </FluentDialogContent>
+    <FluentDialogActions>
+        <FluentButton @onclick="AddBridge">Add</FluentButton>
+        <FluentButton @onclick="CloseAddDialog">Cancel</FluentButton>
+    </FluentDialogActions>
+</FluentDialog> *@
+
+@code {
+    private IQueryable<Bridge>? bridges;
+    private bool showAddDialog = false;
+    private AddBridgeRequest newBridge = new() { Ip = string.Empty, Username = string.Empty, StreamingClientKey = string.Empty };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await BridgeDataService.GetBridges();
+        bridges = result.AsQueryable();
+    }
+
+    private void OpenAddDialog()
+    {
+        newBridge = new AddBridgeRequest { Ip = string.Empty, Username = string.Empty, StreamingClientKey = string.Empty };
+        showAddDialog = true;
+    }
+
+    private void CloseAddDialog()
+    {
+        showAddDialog = false;
+    }
+
+    private async Task AddBridge()
+    {
+        var added = await BridgeDataService.AddBridge(newBridge);
+        bridges = bridges?.Append(added).AsQueryable();
+        showAddDialog = false;
+        StateHasChanged();
+    }
+
+    private void NavigateToBridgeDetails(Guid id)
+    {
+        Navigation.NavigateTo($"/bridge/{id}");
+    }
+}
+

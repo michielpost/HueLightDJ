@@ -10,6 +10,12 @@ namespace HueEntertainmentPro.Database
     public DbSet<ProArea> ProAreas { get; set; } = default!;
     public DbSet<ProAreaBridgeGroup> ProAreaGroups { get; set; } = default!;
 
+    public HueEntertainmentProDbContext(DbContextOptions<HueEntertainmentProDbContext> options)
+       : base(options)
+    {
+
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
       if (Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")

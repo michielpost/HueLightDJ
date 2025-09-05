@@ -56,7 +56,7 @@ HueLightDJ is now available on port 8080
 
 ### SQL / Entity Framework Migrations
 
-Execute in `src`:
+Execute in `.`:
 
 ```ps
 dotnet ef --startup-project HueEntertainmentPro --project HueEntertainmentPro.Database migrations add MIGRATION_NAME
