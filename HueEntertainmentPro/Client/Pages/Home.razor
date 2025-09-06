@@ -1,14 +1,110 @@
 @page "/"
+@using HueEntertainmentPro.Shared.Interfaces
+@using HueEntertainmentPro.Shared.Models
+@inject IBridgeDataService BridgeDataService
+@inject IProAreaDataService ProAreaDataService
+@inject IDialogService DialogService
 
 <PageTitle>Hue Entertainment Pro</PageTitle>
 
-<h1>Setup</h1>
+@if (bridges == null || proAreas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!bridges.Any() || !proAreas.Any())
+{
 
-Combine entertainment area's from multiple bridges into one entertainment area.
-Display effects and visualize your room in 3d.
+    <text>
+        <h1>Setup</h1>
+        <p>
+            Combine entertainment area's from multiple bridges into one entertainment area.
+            Display effects and visualize your room in 3d.
+        </p>
 
-<h2>1) Start by adding some bridges.</h2>
-Use the "Add Bridge" button below to add your Hue Bridges. You can add multiple bridges.
+        <h2>1) Start by adding some bridges.</h2>
 
-<h2>2) Combine multiple entertainment area's into one</h2>
-Don't worry, you can also start with 1 bridge and 1 area.
+        @if (bridges.Any())
+        {
+            <p>You have already added @bridges.Count() bridge(s). You can add more.</p>
+
+            <FluentButton @onclick="OpenAddBridgeDialog">Add Another Bridge</FluentButton>
+
+        }
+        else
+        {
+            <p>You haven't added any bridges yet.</p>
+            <p>Use the "Add Bridge" button below to add your Hue Bridges. You can add multiple bridges.</p>
+
+            <FluentButton @onclick="OpenAddBridgeDialog" Appearance="Appearance.Accent">Add Bridge</FluentButton>
+
+        }
+
+        <br />
+        <br />
+        <h2>2) Combine multiple entertainment area's into one</h2>
+        <p>
+            Don't worry, you can also start with 1 bridge and 1 area to see what Hue Entertainment Pro can do.
+        </p>
+
+        @if (bridges.Any())
+        {
+            <p>You have added @bridges.Count() bridge(s). Now you can create entertainment area's by combining entertainment groups from your bridges.</p>
+            <FluentButton @onclick="OpenAddAreaDialog" Appearance="Appearance.Accent">Add Area</FluentButton>
+        }
+        else
+        {
+            <p>Once you have added some bridges, you can create entertainment area's by combining entertainment groups from your bridges.</p>
+        }
+
+    </text>
+
+
+}
+else if (proAreas.Any())
+{
+    <h1>Entertainment Area's</h1>
+
+    <FluentButton @onclick="OpenAddAreaDialog">Add Area</FluentButton>
+
+    foreach (var area in proAreas)
+    {
+        <FluentCard Style="margin-bottom: 16px;">
+            <FluentStack Orientation="Orientation.Vertical" Gap="10">
+                <FluentLabel Typo="Typography.Header">@area.Name</FluentLabel>
+                <FluentLabel>Entertainment Groups: @string.Join(", ", area.Connections.Select(b => b.Name))</FluentLabel>
+            </FluentStack>
+        </FluentCard>
+    }
+}
+
+
+@code {
+    private IEnumerable<Bridge>? bridges;
+    private IEnumerable<ProArea>? proAreas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        bridges = await BridgeDataService.GetBridges();
+        proAreas = await ProAreaDataService.GetProAreas();
+    }
+
+    private async Task OpenAddBridgeDialog()
+    {
+        var dialog = await DialogService.ShowDialogAsync<AddBridgeDialog>(new DialogParameters()
+        {
+            Title = $"Add a bridge",
+        });
+
+    }
+
+    private async Task OpenAddAreaDialog()
+    {
+        var dialog = await DialogService.ShowDialogAsync<AddBridgeDialog>(new DialogParameters()
+        {
+            Title = $"Add an area",
+        });
+
+    }
+
+
+}
