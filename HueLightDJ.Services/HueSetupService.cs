@@ -13,17 +13,39 @@ namespace HueLightDJ.Services
 {
   public class HueSetupService : IHueSetupService
   {
-    public async Task<IEnumerable<SimpleEntertainmentGroup>> GetEntertainmentGroupsAsync(HueSetupRequest request, CallContext context = default)
+    public async Task<EntertainmentGroupResult> GetEntertainmentGroupsAsync(HueSetupRequest request, CallContext context = default)
     {
-      var hueClient = new LocalHueApi(request.Ip, request.Key);
-      var entConfigsResult = await hueClient.GetEntertainmentConfigurationsAsync();
-
-      return entConfigsResult.Data.Select(x => new SimpleEntertainmentGroup()
+      try
       {
-        Id = x.Id,
-        Name = x.Metadata?.Name,
-        LightCount = x.Locations.ServiceLocations.Count()
-      });
+        var hueClient = new LocalHueApi(request.Ip, request.Key);
+        var entConfigsResult = await hueClient.GetEntertainmentConfigurationsAsync();
+
+        var groups =  entConfigsResult.Data.Select(x => new SimpleEntertainmentGroup()
+        {
+          Id = x.Id,
+          Name = x.Metadata?.Name,
+          LightCount = x.Locations.ServiceLocations.Count()
+        });
+
+        return new EntertainmentGroupResult
+        {
+          Groups = groups
+        };
+      }
+      catch(UnauthorizedAccessException)
+      {
+        return new EntertainmentGroupResult
+        {
+          ErrorMessage = "Unauthorized. Please check if your key is correct."
+        };
+      }
+      catch (Exception ex)
+      {
+        return new EntertainmentGroupResult()
+        {
+          ErrorMessage = $"Could not connect to {request.Ip}"
+        };
+      }
     }
 
     public async Task<IEnumerable<LocatedBridge>> LocateBridgesAsync(CallContext context = default)
@@ -48,16 +70,36 @@ namespace HueLightDJ.Services
       if (request.Ip.Contains(":") || request.Ip.Contains("/"))
         throw new Exception($"Not a valid ip: {request.Ip}");
 
-      var result = await LocalHueApi.RegisterAsync(request.Ip, "HueLightDJ", "Web", generateClientKey: true);
-      if (result == null)
-        return null;
-
-      return new Interfaces.Models.RegisterEntertainmentResult()
+      try
       {
-        Ip = request.Ip,
-        StreamingClientKey = result.StreamingClientKey,
-        Username = result.Username
-      };
+
+        var result = await LocalHueApi.RegisterAsync(request.Ip, "HueLightDJ", "Web", generateClientKey: true);
+        if (result == null)
+          return null;
+
+        return new Interfaces.Models.RegisterEntertainmentResult()
+        {
+          Ip = request.Ip,
+          StreamingClientKey = result.StreamingClientKey,
+          Username = result.Username
+        };
+      }
+      catch(Exception ex) when (ex.Message.Contains("link button not pressed", StringComparison.InvariantCultureIgnoreCase))
+      {
+        return new Interfaces.Models.RegisterEntertainmentResult()
+        {
+          Ip = request.Ip,
+          ErrorMessage = "Link button not pressed. Please press the link button on the bridge and try again."
+        };
+      }
+      catch(Exception ex)
+      {
+        return new Interfaces.Models.RegisterEntertainmentResult()
+        {
+          Ip = request.Ip,
+          ErrorMessage = $"Could not connect to {request.Ip}"
+        };
+      }
     }
   }
 }

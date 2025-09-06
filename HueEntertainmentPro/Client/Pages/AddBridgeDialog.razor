@@ -139,6 +139,13 @@
                         Ip = BridgeConfig.IpAddress
                     });
 
+                if(!string.IsNullOrEmpty(setup?.ErrorMessage))
+                {
+                    ErrorMessage = setup.ErrorMessage;
+                    StateHasChanged();
+                    return;
+                }
+
                 if (setup == null || string.IsNullOrEmpty(setup.Username) || string.IsNullOrEmpty(setup.StreamingClientKey))
                 {
                     ErrorMessage = "Failed to register with bridge. Did you press the button on the bridge?";
@@ -165,6 +172,13 @@
                             Ip = BridgeConfig.IpAddress,
                             Key = BridgeConfig.ApiKey
                         });
+
+                    if (!string.IsNullOrEmpty(setup?.ErrorMessage))
+                    {
+                        ErrorMessage = setup.ErrorMessage;
+                        StateHasChanged();
+                        return;
+                    }
                 }
                 catch (Exception ex)
                 {

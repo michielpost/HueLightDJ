@@ -15,5 +15,7 @@ namespace HueLightDJ.Services.Interfaces.Models
     public string? Username { get; set; }
 
     public string? StreamingClientKey { get; set; }
+
+    public string? ErrorMessage { get; set; }
   }
 }
