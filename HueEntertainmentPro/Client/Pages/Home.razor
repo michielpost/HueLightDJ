@@ -4,6 +4,7 @@
 @inject IBridgeDataService BridgeDataService
 @inject IProAreaDataService ProAreaDataService
 @inject IDialogService DialogService
+@inject NavigationManager Navigation
 
 <PageTitle>Hue Entertainment Pro</PageTitle>
 
@@ -66,15 +67,35 @@ else if (proAreas.Any())
 
     <FluentButton @onclick="OpenAddAreaDialog">Add Area</FluentButton>
 
-    foreach (var area in proAreas)
+    <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
+
+    @foreach (var area in proAreas)
     {
-        <FluentCard Style="margin-bottom: 16px;">
-            <FluentStack Orientation="Orientation.Vertical" Gap="10">
-                <FluentLabel Typo="Typography.Header">@area.Name</FluentLabel>
-                <FluentLabel>Entertainment Groups: @string.Join(", ", area.Connections.Select(b => b.Name))</FluentLabel>
-            </FluentStack>
-        </FluentCard>
+        <FluentGridItem xs="6" sm="3">
+            <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
+                <FluentStack Orientation="Orientation.Vertical" Gap="10">
+                    <FluentLabel Typo="Typography.Header">@area.Name</FluentLabel>
+                    @if(area.Connections.Any())
+                    {
+                            <FluentLabel>Entertainment Groups:</FluentLabel>
+
+                            @foreach (var conn in area.Connections)
+                            {
+                                <FluentLabel> - @conn.Name (@conn.Bridge.Ip / @conn.Bridge.Name)</FluentLabel>
+                            }
+                    }
+                    else
+                    {
+                        <FluentLabel>No bridges connected</FluentLabel>
+                    }
+                    <FluentButton @onclick="() => NavigateToArea(area.Id)">Edit</FluentButton>
+
+                </FluentStack>
+            </FluentCard>
+        </FluentGridItem>
     }
+
+    </FluentGrid>
 }
 
 
@@ -93,18 +114,32 @@ else if (proAreas.Any())
         var dialog = await DialogService.ShowDialogAsync<AddBridgeDialog>(new DialogParameters()
         {
             Title = $"Add a bridge",
+            OnDialogResult = DialogService.CreateDialogCallback(this, HandleDialog),
         });
 
     }
 
     private async Task OpenAddAreaDialog()
     {
-        var dialog = await DialogService.ShowDialogAsync<AddBridgeDialog>(new DialogParameters()
+        var number = proAreas?.Count() + 1;
+
+        var area = await ProAreaDataService.CreateProArea(new Shared.Models.Requests.CreateProAreaRequest
         {
-            Title = $"Add an area",
+            Name = $"Pro Entertainment Area {number}"
         });
 
+        NavigateToArea(area.Id);
     }
 
+    private async Task HandleDialog(DialogResult result)
+    {
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    private void NavigateToArea(Guid id)
+    {
+        Navigation.NavigateTo($"/proarea/{id}");
+    }
 
 }

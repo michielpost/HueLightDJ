@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -19,7 +20,8 @@ namespace HueEntertainmentPro.Database.Migrations
                     Ip = table.Column<string>(type: "TEXT", nullable: false),
                     BridgeId = table.Column<string>(type: "TEXT", nullable: false),
                     Username = table.Column<string>(type: "TEXT", nullable: false),
-                    StreamingClientKey = table.Column<string>(type: "TEXT", nullable: false)
+                    StreamingClientKey = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,7 +33,8 @@ namespace HueEntertainmentPro.Database.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,7 +49,8 @@ namespace HueEntertainmentPro.Database.Migrations
                     ProAreaId = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     BridgeId = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     GroupId = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
-                    Name = table.Column<string>(type: "TEXT", nullable: true)
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

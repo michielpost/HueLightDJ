@@ -15,5 +15,23 @@ namespace HueEntertainmentPro.Services.Extensions
         Username = input.Username
       };
     }
+
+    public static Shared.Models.ProArea ToApiModel(this ProArea area)
+    {
+      return new HueEntertainmentPro.Shared.Models.ProArea
+      {
+        Id = area.Id,
+        Name = area.Name,
+        Connections = area.ProAreaBridgeGroups
+           .Select(pg => new HueEntertainmentPro.Shared.Models.BridgeGroupConnection
+           {
+             Id = pg.Id,
+             Bridge = pg.Bridge?.ToApiModel() ?? new(),
+             GroupId = pg.GroupId,
+             Name = pg.Name
+           })
+           .ToList()
+      };
+    }
   }
 }

@@ -22,7 +22,8 @@ namespace HueEntertainmentPro.Services
           Username = req.Username,
           StreamingClientKey = req.StreamingClientKey,
           Name = req.Name,
-           BridgeId = req.BridgeId
+           BridgeId = req.BridgeId,
+           CreatedDate = DateTime.UtcNow
         };
         dbContext.Bridges.Add(bridge);
       }

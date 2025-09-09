@@ -6,6 +6,6 @@ namespace HueEntertainmentPro.Client.Models
     public string Name { get; set; } = string.Empty;
     public string BridgeId { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
-    public string ApiKey { get; set; } = string.Empty;
+    public string StreamingClientKey { get; set; } = string.Empty;
   }
 }

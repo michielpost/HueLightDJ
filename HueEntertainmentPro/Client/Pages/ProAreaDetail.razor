@@ -1,0 +1,224 @@
+@page "/proarea/{Id}"
+@using HueEntertainmentPro.Shared.Interfaces
+@using HueEntertainmentPro.Shared.Models
+@using HueEntertainmentPro.Shared.Models.Requests
+@using HueLightDJ.Services.Interfaces
+@using HueLightDJ.Services.Interfaces.Models
+@inject IBridgeDataService BridgeService
+@inject IProAreaDataService ProAreaDataService
+@inject IHueSetupService HueSetupService
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject IToastService ToastService
+
+<h3>Pro Entertainment Area</h3>
+
+@if (errorMessage != null)
+{
+    <FluentMessageBar Intent="MessageIntent.Error" Style="margin-bottom: 16px;">
+        @errorMessage
+    </FluentMessageBar>
+}
+
+@if (proArea != null)
+{
+    <FluentStack Orientation="Orientation.Vertical" Gap="10">
+        <FluentLabel Typo="Typography.Header">Name: @proArea.Name</FluentLabel>
+        <FluentStack Orientation="Orientation.Horizontal" Gap="10">
+            <FluentButton Appearance="Appearance.Accent" @onclick="ShowEditNameDialog">Edit Name</FluentButton>
+            <FluentButton Appearance="Appearance.Neutral" @onclick="ShowDeleteConfirmation">Delete Area</FluentButton>
+        </FluentStack>
+    </FluentStack>
+
+    <h4 style="margin-top: 20px;">Entertainment Groups</h4>
+    @if (proArea.Connections.Any())
+    {
+        <FluentDataGrid Items="@proArea.Connections.AsQueryable()" GridTemplateColumns="1fr 1fr" TGridItem="BridgeGroupConnection">
+            <PropertyColumn Title="IP" Property="@(g => g.Bridge.Ip)" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Bridge" Property="@(g => g.Bridge.Name)" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Entertainment Group" Property="@(g => g.Name)" Sortable="true" Align="Align.Start" />
+        </FluentDataGrid>
+    }
+    else
+    {
+        <FluentLabel>No entertainment groups found for this area.</FluentLabel>
+    }
+
+    <FluentDivider Style="width: 100%;" Role="DividerRole.Presentation"></FluentDivider>
+
+    <h4 style="margin-top: 20px;">Add Entertainment Groups</h4>
+
+    <FluentListbox Items=@bridgeOptions
+                   TOption="Option<Bridge>"
+                   OptionText="@(i => i.Text)"
+                   OptionDisabled="@(i => i.Disabled)"
+                   OptionValue="@(i => i.Value.Id.ToString())"
+                   @bind-SelectedOption="@selectedBridge"
+                   ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" />
+
+    @if (selectedBridge?.Value != null)
+    {
+        <h4 style="margin-top: 20px;">Entertainment Groups for bridge @selectedBridge.Value.Name</h4>
+        @if (entertainmentGroups == null)
+        {
+            <FluentProgressRing>Loading entertainment groups...</FluentProgressRing>
+        }
+        else if (entertainmentGroups.Any())
+        {
+            <FluentDataGrid Items="@entertainmentGroups" GridTemplateColumns="1fr 1fr" TGridItem="SimpleEntertainmentGroup">
+                <TemplateColumn Title="" Align="Align.Start">
+                    <FluentButton @onclick="() => AddToArea(selectedBridge.Value.Id, context.Id, context.Name)">Add</FluentButton>
+                </TemplateColumn>
+                <PropertyColumn Title="Name" Property="@(g => g.Name)" Sortable="true" Align="Align.Start" />
+                <PropertyColumn Title="Lights" Property="@(g => g.LightCount)" Sortable="true" Align="Align.Start" />
+            </FluentDataGrid>
+        }
+        else
+        {
+            <FluentLabel>No entertainment groups found for this bridge.</FluentLabel>
+        }
+    }
+
+}
+else
+{
+    <FluentProgressRing>Loading area details...</FluentProgressRing>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private ProArea? proArea;
+    private string? errorMessage;
+
+    private IQueryable<SimpleEntertainmentGroup>? entertainmentGroups;
+    private IEnumerable<Bridge>? bridges;
+
+    private List<Option<Bridge>>? bridgeOptions;
+    private Option<Bridge>? selectedBridge;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            selectedBridge = null;
+            entertainmentGroups = null;
+            bridgeOptions = null;
+            bridges = null;
+
+            // Load bridge details
+            proArea = await ProAreaDataService.GetProArea(new GuidRequest() { Id = Guid.Parse(Id) });
+            if (proArea == null)
+            {
+                errorMessage = "Area not found.";
+                return;
+            }
+
+            bridges = await BridgeService.GetBridges();
+            bridgeOptions = bridges.Select(b => new Option<Bridge>
+            {
+                Value = b,
+                Text = $"{b.Name} ({b.Ip})",
+                Disabled = false
+            }).ToList();
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load area details: {ex.Message}";
+        }
+    }
+
+    private async Task ShowEditNameDialog()
+    {
+        var dialogParameters = new DialogParameters
+        {
+            Title = "Edit Area Name",
+            PrimaryAction = "Save",
+            SecondaryAction = "Cancel",
+            Width = "400px",
+            Modal = true
+        };
+
+        var dialog = await DialogService.ShowDialogAsync<EditNameDialog>(proArea.Name, dialogParameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled && result.Data is string newName && !string.IsNullOrWhiteSpace(newName))
+        {
+            try
+            {
+                //Console.WriteLine("Cancelled:" + result.Cancelled);
+
+                var proAreaResult = await ProAreaDataService.UpdateProArea(new UpdateProAreaRequest() { Id = proArea.Id, Name = newName });
+                proArea = proAreaResult;
+                ToastService.ShowSuccess("Name updated successfully.");
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                ToastService.ShowError($"Failed to update name: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task ShowDeleteConfirmation()
+    {
+        if (proArea == null)
+            return;
+
+        var dialog = await DialogService.ShowConfirmationAsync(
+            "Are you sure you want to delete this area?"
+            , "Delete", "Cancel", "Confirm Delete");
+
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            try
+            {
+                await ProAreaDataService.DeleteProArea(new GuidRequest { Id = proArea.Id });
+                ToastService.ShowSuccess("Area deleted successfully.");
+                Navigation.NavigateTo("/");
+            }
+            catch (Exception ex)
+            {
+                ToastService.ShowError($"Failed to delete area: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task OnBridgeIdSelected(string bridgeId)
+    {
+        entertainmentGroups = null;
+        StateHasChanged();
+
+        var id = Guid.Parse(bridgeId);
+        var bridge = bridges.FirstOrDefault(b => b.Id == id);
+
+        // Load entertainment groups
+        var result = await HueSetupService.GetEntertainmentGroupsAsync(new HueLightDJ.Services.Interfaces.Models.Requests.HueSetupRequest()
+        {
+            Ip = bridge.Ip,
+            Key = bridge.Username
+        });
+        entertainmentGroups = result.Groups.AsQueryable();
+
+        StateHasChanged();
+    }
+
+    private async Task AddToArea(Guid bridgeId, Guid groupId, string? name)
+    {
+        var result = await ProAreaDataService.AddBridgeGroup(new AddBridgeGroupRequest
+        {
+            ProAreaId = proArea.Id,
+            BridgeId = bridgeId,
+            GroupId = groupId,
+            Name = name
+        });
+
+        await OnInitializedAsync();
+
+        StateHasChanged();
+    }
+}

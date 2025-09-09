@@ -10,5 +10,7 @@ namespace HueEntertainmentPro.Database.Models
     public required string Username { get; set; }
 
     public required string StreamingClientKey { get; set; }
+
+    public DateTime CreatedDate { get; set; }
   }
 }

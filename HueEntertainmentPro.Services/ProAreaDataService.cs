@@ -1,5 +1,6 @@
 using HueEntertainmentPro.Database;
 using HueEntertainmentPro.Database.Models;
+using HueEntertainmentPro.Services.Extensions;
 using HueEntertainmentPro.Shared.Interfaces;
 using HueEntertainmentPro.Shared.Models.Requests;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,8 @@ namespace HueEntertainmentPro.Services
         ProAreaId = proArea.Id,
         BridgeId = bridge.Id,
         GroupId = req.GroupId.Value,
-        Name = req.Name
+        Name = req.Name,
+        CreatedDate = DateTime.UtcNow
       };
       dbContext.ProAreaGroups.Add(newGroup);
 
@@ -64,6 +66,34 @@ namespace HueEntertainmentPro.Services
       }
     }
 
+    public async Task<HueEntertainmentPro.Shared.Models.ProArea> UpdateProArea(UpdateProAreaRequest req, CallContext context = default)
+    {
+      var existing = await dbContext.ProAreas.Where(x => x.Id == req.Id).FirstOrDefaultAsync();
+      if (existing != null)
+      {
+        existing.Name = req.Name;
+        await dbContext.SaveChangesAsync();
+      }
+
+      return await GetProArea(new GuidRequest { Id = req.Id }, context);
+    }
+
+    public async Task<HueEntertainmentPro.Shared.Models.ProArea> CreateProArea(CreateProAreaRequest req, CallContext context = default)
+    {
+      var newArea = new ProArea
+      {
+        Id = Guid.NewGuid(),
+        Name = req.Name,
+        CreatedDate = DateTime.UtcNow
+      };
+
+      dbContext.ProAreas.Add(newArea);
+      await dbContext.SaveChangesAsync();
+
+      return await GetProArea(new GuidRequest {  Id = newArea.Id}, context);
+
+    }
+
     public async Task<HueEntertainmentPro.Shared.Models.ProArea> GetProArea(GuidRequest req, CallContext context = default)
     {
       var area = await dbContext.ProAreas
@@ -72,27 +102,7 @@ namespace HueEntertainmentPro.Services
       if (area == null)
         return null!;
 
-      var connections = area.ProAreaBridgeGroups
-        .Select(pg => new HueEntertainmentPro.Shared.Models.BridgeGroupConnection
-        {
-          Id = pg.Id,
-          Bridge = new HueEntertainmentPro.Shared.Models.Bridge
-          {
-            Id = pg.Bridge!.Id,
-            Name = pg.Bridge.Name,
-            Ip = pg.Bridge.Ip
-          },
-          GroupId = pg.GroupId,
-          Name = pg.Name
-        })
-        .ToList();
-
-      return new HueEntertainmentPro.Shared.Models.ProArea
-      {
-        Id = area.Id,
-        Name = area.Name,
-        Connections = connections
-      };
+      return area.ToApiModel();
     }
 
     public async Task<IEnumerable<HueEntertainmentPro.Shared.Models.ProArea>> GetProAreas(CallContext context = default)
@@ -101,30 +111,7 @@ namespace HueEntertainmentPro.Services
         .Include(x => x.ProAreaBridgeGroups).ThenInclude(bg => bg.Bridge)
         .ToListAsync();
 
-      var connectionsByArea = areas.SelectMany(area => area.ProAreaBridgeGroups)
-        .GroupBy(pg => pg.ProAreaId)
-        .ToDictionary(
-          g => g.Key,
-          g => g.Select(pg => new HueEntertainmentPro.Shared.Models.BridgeGroupConnection
-          {
-            Id = pg.Id,
-            Bridge = new HueEntertainmentPro.Shared.Models.Bridge
-            {
-              Id = pg.Bridge!.Id,
-              Name = pg.Bridge.Name,
-              Ip = pg.Bridge.Ip
-            },
-            GroupId = pg.GroupId,
-            Name = pg.Name
-          }).ToList()
-        );
-
-      return areas.Select(area => new HueEntertainmentPro.Shared.Models.ProArea
-      {
-        Id = area.Id,
-        Name = area.Name,
-        Connections = connectionsByArea.TryGetValue(area.Id, out var conns) ? conns : new()
-      });
+      return areas.Select(area => area.ToApiModel());
     }
   }
 }

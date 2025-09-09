@@ -2,7 +2,7 @@
 
 <FluentDialogHeader>Edit Bridge Name</FluentDialogHeader>
 <FluentDialogBody>
-    <FluentTextField Label="Bridge Name" @bind-Value="Name" Style="width: 100%;" />
+    <FluentTextField Label="Bridge Name" @bind-Value="Content" Style="width: 100%;" />
 </FluentDialogBody>
 <FluentDialogFooter>
     <FluentButton Appearance="Appearance.Accent" @onclick="Submit">Save</FluentButton>
@@ -10,15 +10,15 @@
 </FluentDialogFooter>
 
 @code {
-    [Parameter]
-    public string Name { get; set; }
-
     [CascadingParameter]
     private FluentDialog Dialog { get; set; }
 
+    [Parameter]
+    public string Content { get; set; } = string.Empty;
+
     private async Task Submit()
     {
-        await Dialog.CloseAsync(Name);
+        await Dialog.CloseAsync(Content);
     }
 
     private async Task Cancel()

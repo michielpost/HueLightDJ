@@ -1,5 +1,5 @@
 @implements IDialogContentComponent
-
+@inject IToastService ToastService
 @inject IHueSetupService HueSetupService
 @inject IBridgeDataService BridgeDataService
 @using HueEntertainmentPro.Client.Models
@@ -43,9 +43,9 @@
                     <FluentTextField Label="Username"
                                      @bind-Value="@BridgeConfig.Username"
                                      Placeholder="e.g., 1028d66426293e821ecfd9ef1a0731df" />
-                    <FluentTextField Label="API Key"
-                                     @bind-Value="@BridgeConfig.ApiKey"
-                                     Placeholder="e.g., your-api-key" />
+                    <FluentTextField Label="Streaming Client Key"
+                                     @bind-Value="@BridgeConfig.StreamingClientKey"
+                                     Placeholder="Streaming Client Key" />
                 }
 
             <FluentTextField Label="Name (optional)"
@@ -59,11 +59,23 @@
 
             <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right" Style="margin-top: 16px;">
                 <FluentButton Appearance="Appearance.Neutral" OnClick="@CloseDialog">Cancel</FluentButton>
-                <FluentButton Appearance="Appearance.Accent"
-                              OnClick="@AddBridge"
-                              Disabled="@(!IsFormValid)">
-                    Push Bridge Button and Click Save
-                </FluentButton>
+                @if (ShowSecrets)
+                {
+                    <FluentButton Appearance="Appearance.Accent"
+                                  OnClick="@AddBridge"
+                                  Disabled="@(!IsFormValid)">
+                        Save
+                    </FluentButton>
+                }
+                else
+                {
+                    <FluentButton Appearance="Appearance.Accent"
+                                  OnClick="@AddBridge"
+                                  Disabled="@(!IsFormValid)">
+                        Push Bridge Button and Click Save
+                    </FluentButton>
+                }
+               
             </FluentStack>
         </FluentStack>
     </FluentCard>
@@ -82,7 +94,7 @@
     private bool IsFormValid =>
         !string.IsNullOrEmpty(BridgeConfig.IpAddress) &&
         (EditIp == false || !ShowSecrets ||
-         (!string.IsNullOrEmpty(BridgeConfig.Username) && !string.IsNullOrEmpty(BridgeConfig.ApiKey)));
+         (!string.IsNullOrEmpty(BridgeConfig.Username) && !string.IsNullOrEmpty(BridgeConfig.StreamingClientKey)));
 
     protected override async Task OnInitializedAsync()
     {
@@ -122,7 +134,7 @@
         BridgeConfig.IpAddress = selected.IpAddress;
         BridgeConfig.BridgeId = selected.BridgeId;
         BridgeConfig.Username = string.Empty;
-        BridgeConfig.ApiKey = string.Empty;
+        BridgeConfig.StreamingClientKey = string.Empty;
 
         StateHasChanged();
     }
@@ -154,11 +166,11 @@
                 }
 
                 BridgeConfig.Username = setup.Username;
-                BridgeConfig.ApiKey = setup.StreamingClientKey;
+                BridgeConfig.StreamingClientKey = setup.StreamingClientKey;
             }
             else
             {
-                if (string.IsNullOrEmpty(BridgeConfig.Username) || string.IsNullOrEmpty(BridgeConfig.ApiKey))
+                if (string.IsNullOrEmpty(BridgeConfig.Username) || string.IsNullOrEmpty(BridgeConfig.StreamingClientKey))
                 {
                     ErrorMessage = "Username and API Key are required.";
                     StateHasChanged();
@@ -170,7 +182,7 @@
                     var setup = await HueSetupService.GetEntertainmentGroupsAsync(new HueLightDJ.Services.Interfaces.Models.Requests.HueSetupRequest
                         {
                             Ip = BridgeConfig.IpAddress,
-                            Key = BridgeConfig.ApiKey
+                            Key = BridgeConfig.Username
                         });
 
                     if (!string.IsNullOrEmpty(setup?.ErrorMessage))
@@ -194,11 +206,12 @@
                 Ip = BridgeConfig.IpAddress,
                 BridgeId = BridgeConfig.BridgeId,
                 Name = !string.IsNullOrEmpty(BridgeConfig.Name) ? BridgeConfig.Name : BridgeConfig.BridgeId,
-                StreamingClientKey = BridgeConfig.ApiKey,
+                StreamingClientKey = BridgeConfig.StreamingClientKey,
                 Username = BridgeConfig.Username
             });
             if (result != null)
             {
+                ToastService.ShowSuccess($"Added bridge {BridgeConfig.IpAddress} successfully.");
                 CloseDialog();
             }
             else

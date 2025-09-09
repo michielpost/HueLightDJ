@@ -16,6 +16,12 @@ namespace HueEntertainmentPro.Shared.Interfaces
 
 
     [OperationContract]
+    Task<ProArea> CreateProArea(CreateProAreaRequest req, CallContext context = default);
+
+    [OperationContract]
+    Task<ProArea> UpdateProArea(UpdateProAreaRequest req, CallContext context = default);
+
+    [OperationContract]
     Task DeleteProArea(GuidRequest req, CallContext context = default);
 
     [OperationContract]
