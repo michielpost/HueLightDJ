@@ -37,6 +37,9 @@
             <PropertyColumn Title="IP" Property="@(g => g.Bridge.Ip)" Sortable="true" Align="Align.Start" />
             <PropertyColumn Title="Bridge" Property="@(g => g.Bridge.Name)" Sortable="true" Align="Align.Start" />
             <PropertyColumn Title="Entertainment Group" Property="@(g => g.Name)" Sortable="true" Align="Align.Start" />
+            <TemplateColumn Title="" Align="Align.Start">
+                <FluentButton Appearance="Appearance.Accent" @onclick="() => RemoveConnection(context.Id)">Remove</FluentButton>
+            </TemplateColumn>
         </FluentDataGrid>
     }
     else
@@ -48,34 +51,54 @@
 
     <h4 style="margin-top: 20px;">Add Entertainment Groups</h4>
 
-    <FluentListbox Items=@bridgeOptions
-                   TOption="Option<Bridge>"
-                   OptionText="@(i => i.Text)"
-                   OptionDisabled="@(i => i.Disabled)"
-                   OptionValue="@(i => i.Value.Id.ToString())"
-                   @bind-SelectedOption="@selectedBridge"
-                   ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" />
+    var disabled = bridgeOptions.Where(x => x.Disabled).Any();
+    var enabled = bridgeOptions.Where(x => !x.Disabled).Any();
 
-    @if (selectedBridge?.Value != null)
+    @if (enabled && disabled)
     {
-        <h4 style="margin-top: 20px;">Entertainment Groups for bridge @selectedBridge.Value.Name</h4>
-        @if (entertainmentGroups == null)
+        <FluentMessageBar Intent="MessageIntent.Warning" Style="margin-bottom: 16px;">
+            Some bridges are disabled because they are already connected to this area.
+        </FluentMessageBar>
+    }
+    else if (!enabled)
+    {
+        <FluentMessageBar Intent="MessageIntent.Warning" Style="margin-bottom: 16px;">
+            All bridges are already connected to this area. Add more bridges to add more entertainment groups.
+            <FluentNavLink href="/bridges">Go to Bridges</FluentNavLink>
+        </FluentMessageBar>
+    }
+
+    @if (enabled)
+    {
+        <FluentListbox Items=@bridgeOptions
+                       TOption="Option<Bridge>"
+                       OptionText="@(i => i.Text)"
+                       OptionDisabled="@(i => i.Disabled)"
+                       OptionValue="@(i => i.Value.Id.ToString())"
+                       @bind-SelectedOption="@selectedBridge"
+                       ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" />
+
+        @if (selectedBridge?.Value != null)
         {
-            <FluentProgressRing>Loading entertainment groups...</FluentProgressRing>
-        }
-        else if (entertainmentGroups.Any())
-        {
-            <FluentDataGrid Items="@entertainmentGroups" GridTemplateColumns="1fr 1fr" TGridItem="SimpleEntertainmentGroup">
-                <TemplateColumn Title="" Align="Align.Start">
-                    <FluentButton @onclick="() => AddToArea(selectedBridge.Value.Id, context.Id, context.Name)">Add</FluentButton>
-                </TemplateColumn>
-                <PropertyColumn Title="Name" Property="@(g => g.Name)" Sortable="true" Align="Align.Start" />
-                <PropertyColumn Title="Lights" Property="@(g => g.LightCount)" Sortable="true" Align="Align.Start" />
-            </FluentDataGrid>
-        }
-        else
-        {
-            <FluentLabel>No entertainment groups found for this bridge.</FluentLabel>
+            <h4 style="margin-top: 20px;">Entertainment Groups for bridge @selectedBridge.Value.Name</h4>
+            @if (entertainmentGroups == null)
+            {
+                <FluentProgressRing>Loading entertainment groups...</FluentProgressRing>
+            }
+            else if (entertainmentGroups.Any())
+            {
+                <FluentDataGrid Items="@entertainmentGroups" GridTemplateColumns="1fr 1fr" TGridItem="SimpleEntertainmentGroup">
+                    <TemplateColumn Title="" Align="Align.Start">
+                        <FluentButton @onclick="() => AddToArea(selectedBridge.Value.Id, context.Id, context.Name)">Add</FluentButton>
+                    </TemplateColumn>
+                    <PropertyColumn Title="Name" Property="@(g => g.Name)" Sortable="true" Align="Align.Start" />
+                    <PropertyColumn Title="Lights" Property="@(g => g.LightCount)" Sortable="true" Align="Align.Start" />
+                </FluentDataGrid>
+            }
+            else
+            {
+                <FluentLabel>No entertainment groups found for this bridge.</FluentLabel>
+            }
         }
     }
 
@@ -120,7 +143,7 @@ else
             {
                 Value = b,
                 Text = $"{b.Name} ({b.Ip})",
-                Disabled = false
+                Disabled = proArea.Connections.Select(x => x.Bridge.Id).Contains(b.Id)
             }).ToList();
 
         }
@@ -215,6 +238,18 @@ else
             BridgeId = bridgeId,
             GroupId = groupId,
             Name = name
+        });
+
+        await OnInitializedAsync();
+
+        StateHasChanged();
+    }
+
+    private async Task RemoveConnection(Guid connectionId)
+    {
+        await ProAreaDataService.DeleteBridgeGroup(new GuidRequest
+        {
+            Id = connectionId,
         });
 
         await OnInitializedAsync();
