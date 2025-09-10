@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /HueEntertainmentPro/Server/App_Data/*.db-shm
 /HueEntertainmentPro/Server/App_Data/*.db-wal
+/HueEntertainmentPro/Server/App_Data/HueEntertainmentPro.db
