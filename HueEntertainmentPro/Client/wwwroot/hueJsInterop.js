@@ -2,8 +2,8 @@
 // functions, and may import other JavaScript modules if required.
 
 export function initPreview() {
-  var size = Math.min(document.documentElement.clientHeight, document.documentElement.clientWidth) - 6;
-  renderPreviewGrid(size);
+  //var size = Math.min(document.documentElement.clientHeight, document.documentElement.clientWidth) - 6;
+  renderPreviewGrid(false);
 
   //placeLight("a", 1, 0.3, 0.3, "0FF00", 0.5);
   //placeLight("b", 2, 0.8, 0.8, "0FF00", 1);

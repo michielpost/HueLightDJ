@@ -7,10 +7,11 @@
 //  .catch(err => console.error(err.toString()));
 
 var lights = [];
-var WIDTH = 0;
 var cellSize = 0;
 var allowEdit = false;
 var lightContainer = new PIXI.Container();
+var app; // Global reference to Pixi application
+var container; // Global reference to container
 
 function placeLight(bridgeIp, lightId, x, y, hex, bri, groupId, positionIndex) {
   var bridgeArray = lights[bridgeIp];
@@ -29,7 +30,6 @@ function placeLight(bridgeIp, lightId, x, y, hex, bri, groupId, positionIndex) {
   var current = lights[bridgeIp][id];
 
   if (current === undefined || current == null) {
-
     lights[bridgeIp][id] = {
       glow: createGlowRing(xPos, yPos),
       label: createLightLabel(xPos, yPos, id, bridgeIp),
@@ -39,46 +39,49 @@ function placeLight(bridgeIp, lightId, x, y, hex, bri, groupId, positionIndex) {
     };
     updateGlowRing(bridgeIp, id, hex, bri);
     addLightToContainer(lights[bridgeIp][id]);
-  }
-  else {
+  } else {
     updateGlowRing(bridgeIp, id, hex, bri);
+    // Update positions on resize
+    lights[bridgeIp][id].glow.position.set(xPos, yPos);
+    lights[bridgeIp][id].label.position.set(xPos, yPos);
   }
 }
 
-function xyToPosition(x) {
-  return (WIDTH / 2 + x * WIDTH / 2)
+function xyToPosition(coord) {
+  const size = Math.min(container.clientWidth, container.clientHeight);
+  return (size / 2 + coord * size / 2);
 }
 
-
-function renderPreviewGrid(size, allowEditParam) {
-  allowEdit = allowEditParam;
-  WIDTH = size;
-  var HEIGHT = WIDTH;
-  cellSize = WIDTH / 20;
-
-  const container = document.getElementById("pixiPreview");
+function renderPreviewGrid(allowEditParam) {
+  allowEdit = false;
+  container = document.getElementById("pixiPreview");
 
   // Create Pixi application with resizeTo option
-  const app = new PIXI.Application({
-    resizeTo: container, // Automatically resize to container
+  app = new PIXI.Application({
+    resizeTo: container,
     backgroundColor: 0x191D21,
-    antialias: true // Optional: for smoother rendering
+    antialias: true
   });
   container.appendChild(app.view);
   container.style.width = '100%';
-  container.style.height = '100%'; // Adjust height as needed
+  container.style.height = '100%';
 
-  // Optional: Handle window resize explicitly (usually not needed with resizeTo)
+  // Handle window resize
   window.addEventListener('resize', () => {
-    app.renderer.resize(container.clientWidth, container.clientHeight);
+    const size = Math.min(container.clientWidth, container.clientHeight);
+    cellSize = size / 20;
+    app.renderer.resize(size, size); // Maintain square aspect ratio
+    updateAllElements();
   });
 
-  //create the stage instead of container
+  // Initial size calculation
+  const size = Math.min(container.clientWidth, container.clientHeight);
+  cellSize = size / 20;
+  app.renderer.resize(size, size);
+
+  // Create the stage
   app.stage = new PIXI.display.Stage();
-
   addGridLines(app.stage, allowEdit);
-
-  //var lightContainer = new PIXI.Container();
   app.stage.addChild(lightContainer);
 
   if (allowEdit) {
@@ -89,13 +92,8 @@ function renderPreviewGrid(size, allowEditParam) {
     //    placeLight(light.bridge, light.id, light.x, light.y, light.hex, light.bri, light.groupId, light.positionIndex)
     //  }
     //});
-  }
-  else {
+  } else {
     app.renderer.plugins.interaction.on('pointerdown', touch);
-
-    //placeLight("a", 1, 0.3, 0.3, "0FF00", 0.5);
-    //placeLight("b", 2, 0.1, 0.1, "0FF00", 1);
-
     //previewConnection.on("preview", (preview) => {
     //  for (var i = 0; i < preview.length; i++) {
     //    var light = preview[i];
@@ -105,54 +103,45 @@ function renderPreviewGrid(size, allowEditParam) {
   }
 
   function addGridLines(stage, drawGrid) {
-
     var graphics = new PIXI.Graphics();
     var stepSize = cellSize * 2;
+    const size = Math.min(container.clientWidth, container.clientHeight);
 
-    // set a fill and line style
     graphics.lineStyle(1, 0xffffff, 1);
-
-    // draw a shape
     graphics.moveTo(1, 0);
-    graphics.lineTo(0, WIDTH);
-
+    graphics.lineTo(0, size);
     graphics.moveTo(0, 1);
-    graphics.lineTo(WIDTH, 0);
+    graphics.lineTo(size, 0);
 
     if (drawGrid) {
-      var middle = WIDTH / 2;
-
+      var middle = size / 2;
       graphics.moveTo(0, 0);
-      graphics.lineTo(WIDTH, WIDTH);
-      graphics.moveTo(0, WIDTH);
-      graphics.lineTo(WIDTH, 0);
+      graphics.lineTo(size, size);
+      graphics.moveTo(0, size);
+      graphics.lineTo(size, 0);
 
-      for (var i = stepSize; i <= WIDTH; i = i + stepSize) {
+      for (var i = stepSize; i <= size; i += stepSize) {
         graphics.moveTo(i, 0);
-        graphics.lineTo(i, WIDTH);
-
+        graphics.lineTo(i, size);
         graphics.moveTo(middle, middle);
-        graphics.lineTo(i, WIDTH);
+        graphics.lineTo(i, size);
         graphics.moveTo(middle, middle);
         graphics.lineTo(i, 0);
-
         graphics.moveTo(0, i);
-        graphics.lineTo(WIDTH, i);
-
+        graphics.lineTo(size, i);
         graphics.moveTo(middle, middle);
-        graphics.lineTo(WIDTH, i);
+        graphics.lineTo(size, i);
         graphics.moveTo(middle, middle);
         graphics.lineTo(0, i);
       }
     }
 
-    graphics.moveTo(WIDTH-1, 0);
-    graphics.lineTo(WIDTH, WIDTH);
+    graphics.moveTo(size - 1, 0);
+    graphics.lineTo(size, size);
+    graphics.moveTo(0, size - 1);
+    graphics.lineTo(size, size - 1);
 
-    graphics.moveTo(0, WIDTH - 1);
-    graphics.lineTo(WIDTH, WIDTH - 1);
-
-    app.stage.addChild(graphics);
+    stage.addChild(graphics);
   }
 
   function saveLocations() {
@@ -174,36 +163,42 @@ function renderPreviewGrid(size, allowEditParam) {
         }
       }
     }
-  
-
     //previewConnection.invoke("SetLocations", result).catch(err => console.error(err.toString()));
-
   }
 
   function touch(event) {
     var pos = event.data.getLocalPosition(app.stage);
-    //previewConnection.invoke("touch", positionToXY(pos.x), positionToXY(WIDTH - pos.y)).catch(err => console.error(err.toString()));
-
-    if (window.console) {
-      console.log('Pointer at: ' + positionToXY(pos.x) + ',' + positionToXY(WIDTH - pos.y));
-    }
+    //previewConnection.invoke("touch", positionToXY(pos.x), positionToXY(app.renderer.height - pos.y)).catch(err => console.error(err.toString()));
+    console.log('Pointer at: ' + positionToXY(pos.x) + ',' + positionToXY(app.renderer.height - pos.y));
   }
 
   function getXYPosition(obj) {
-    var xypos = {};
-    xypos.x = positionToXY(obj.x);
-    xypos.y = positionToXY(WIDTH - obj.y);
-
-    return xypos;
+    const size = Math.min(container.clientWidth, container.clientHeight);
+    return {
+      x: positionToXY(obj.x),
+      y: positionToXY(size - obj.y)
+    };
   }
 
   function positionToXY(x) {
-    return (x / (WIDTH / 2) - 1)
+    const size = Math.min(container.clientWidth, container.clientHeight);
+    return (x / (size / 2) - 1);
   }
 
- 
+  function updateAllElements() {
+    for (const [bridgeIp, values] of Object.entries(lights)) {
+      for (const [id, light] of Object.entries(values)) {
+        const pos = getXYPosition(light.label);
+        const xPos = xyToPosition(pos.x);
+        const yPos = xyToPosition(pos.y * -1);
+        light.glow.position.set(xPos, yPos);
+        light.label.position.set(xPos, yPos);
+        light.glow.width = cellSize * 5 * (light.glow.width / (cellSize * 5));
+        light.glow.height = cellSize * 5 * (light.glow.height / (cellSize * 5));
+      }
+    }
+  }
 }
-
 
 function addLightToContainer(light) {
   lightContainer.addChild(light.glow);
@@ -253,10 +248,6 @@ function createLightLabel(x, y, id, bridgeIp) {
 
 function onDragStart(event) {
   //previewConnection.invoke("Locate", { id: this.lightId, bridge: this.bridgeIp }).catch(err => console.error(err.toString()));
-
-  // store a reference to the data
-  // the reason for this is because of multitouch
-  // we want to track the movement of this particular touch
   this.data = event.data;
   this.alpha = 0.5;
   this.dragging = true;
@@ -265,7 +256,6 @@ function onDragStart(event) {
 function onDragEnd() {
   this.alpha = 1;
   this.dragging = false;
-  // set the interaction data to null
   this.data = null;
 }
 
@@ -274,6 +264,6 @@ function onDragMove() {
     var newPosition = this.data.getLocalPosition(this.parent);
     this.x = newPosition.x;
     this.y = newPosition.y;
+    this.parent.getChildAt(this.parent.getChildIndex(this) - 1).position.set(newPosition.x, newPosition.y);
   }
 }
-
