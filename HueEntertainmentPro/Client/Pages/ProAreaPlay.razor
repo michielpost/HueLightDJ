@@ -6,12 +6,7 @@
 @using HueLightDJ.Services.Interfaces.Models
 @using HueLightDJ.Services.Interfaces.Models.Requests;
 
-@inject IBridgeDataService BridgeService
 @inject IProAreaDataService ProAreaDataService
-@inject IHueSetupService HueSetupService
-@inject NavigationManager Navigation
-@inject IDialogService DialogService
-@inject IToastService ToastService
 @inject ILightDJService LightDJService
 @inject IHubService HubService
 
@@ -181,6 +176,9 @@ else
     private EffectsVM effectsVM = new();
     private double Brightness = 100;
 
+    public static Guid demo1Id = Guid.Parse("00000000-0000-0000-0000-000000000001");
+    public static Guid demo2Id = Guid.Parse("00000000-0000-0000-0000-000000000002");
+
 
     protected override async Task OnParametersSetAsync()
     {
@@ -211,6 +209,7 @@ else
                 errorMessage = "No entertainment groups connected to this area. Please add some in the area details page.";
             }
 
+            var useSimulator = Id == demo1Id || Id == demo2Id;
             config = new GroupConfiguration
             {
                 Name = proArea.Name,
@@ -221,7 +220,7 @@ else
                     GroupId = x.GroupId,
                     Ip = x.Bridge.Ip,
                     Key = x.Bridge.Username,
-                    UseSimulator = false
+                    UseSimulator = useSimulator
                 }).ToList()
             };
 

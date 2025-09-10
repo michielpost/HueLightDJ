@@ -10,6 +10,9 @@ namespace HueEntertainmentPro.Services
 {
   public class ProAreaDataService(HueEntertainmentProDbContext dbContext) : IProAreaDataService
   {
+    public static Guid demo1Id = Guid.Parse("00000000-0000-0000-0000-000000000001");
+    public static Guid demo2Id = Guid.Parse("00000000-0000-0000-0000-000000000002");
+
     public async Task<HueEntertainmentPro.Shared.Models.ProArea> AddBridgeGroup(AddBridgeGroupRequest req, CallContext context = default)
     {
       if (req.BridgeId == null || req.GroupId == null || req.ProAreaId == null)
@@ -90,12 +93,69 @@ namespace HueEntertainmentPro.Services
       dbContext.ProAreas.Add(newArea);
       await dbContext.SaveChangesAsync();
 
-      return await GetProArea(new GuidRequest {  Id = newArea.Id}, context);
+      return await GetProArea(new GuidRequest { Id = newArea.Id }, context);
 
     }
 
     public async Task<HueEntertainmentPro.Shared.Models.ProArea> GetProArea(GuidRequest req, CallContext context = default)
     {
+      if (req.Id == demo1Id)
+      {
+        return new HueEntertainmentPro.Shared.Models.ProArea
+        {
+          Id = demo1Id,
+          Name = "Demo Area",
+          Connections = new List<HueEntertainmentPro.Shared.Models.BridgeGroupConnection>
+           {
+              new Shared.Models.BridgeGroupConnection
+              {
+                Bridge =  new Shared.Models.Bridge
+                {
+                  Id = Guid.Empty,
+                  Name = "Demo Bridge 1",
+                  Ip = "demoLocations1",
+                  StreamingClientKey = "demoLocations1",
+                  Username = "demoLocations1"
+                }
+              },
+              new Shared.Models.BridgeGroupConnection
+              {
+                Bridge =  new Shared.Models.Bridge
+                {
+                  Id = Guid.Empty,
+                  Name = "Demo Bridge 2",
+                  Ip = "demoLocations2",
+                  StreamingClientKey = "demoLocations2",
+                  Username = "demoLocations2"
+                }
+              }
+          }
+        };
+      }
+
+      if (req.Id == demo2Id)
+      {
+        return new HueEntertainmentPro.Shared.Models.ProArea
+        {
+          Id = demo1Id,
+          Name = "Q42 Star Demo",
+          Connections = new List<HueEntertainmentPro.Shared.Models.BridgeGroupConnection>
+           {
+              new Shared.Models.BridgeGroupConnection
+              {
+                Bridge =  new Shared.Models.Bridge
+                {
+                  Id = Guid.Empty,
+                  Name = "Q42 Star Demo",
+                  Ip = "sterDemoLocations1",
+                  StreamingClientKey = "sterDemoLocations1",
+                  Username = "sterDemoLocations1"
+                }
+              },
+          }
+        };
+      }
+
       var area = await dbContext.ProAreas
         .Include(x => x.ProAreaBridgeGroups).ThenInclude(bg => bg.Bridge)
         .FirstOrDefaultAsync(pa => pa.Id == req.Id);

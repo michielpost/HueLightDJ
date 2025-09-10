@@ -24,6 +24,9 @@ namespace HueLightDJ.Services
 {
   public class StreamingSetup
   {
+    public static Guid demo1Id = Guid.Parse("00000000-0000-0000-0000-000000000001");
+    public static Guid demo2Id = Guid.Parse("00000000-0000-0000-0000-000000000002");
+
     private static List<StreamingGroup> StreamingGroups { get; set; } = new List<StreamingGroup>();
     private static List<LightDJStreamingHueClient> StreamingHueClients { get; set; } = new List<LightDJStreamingHueClient>();
     public static List<EntertainmentLayer>? Layers { get; set; }
@@ -196,7 +199,10 @@ namespace HueLightDJ.Services
 
     public async Task SetupAndReturnGroupAsync(GroupConfiguration currentGroup)
     {
-      demoMode = currentGroup.Id == Guid.Empty || currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
+      demoMode = currentGroup.Id == Guid.Empty
+        || currentGroup.Id == demo1Id
+        || currentGroup.Id == demo2Id
+        || currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
       bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
 
       //Disconnect any current connections
