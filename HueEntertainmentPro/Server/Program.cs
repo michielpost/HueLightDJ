@@ -1,7 +1,7 @@
 using HueEntertainmentPro.Database;
 using HueEntertainmentPro.Server.Hubs;
+using HueEntertainmentPro.Server.Services;
 using HueEntertainmentPro.Services;
-using HueEntertainmentPro.Shared.Services;
 using HueLightDJ.Services;
 using HueLightDJ.Services.Interfaces;
 using Microsoft.AspNetCore.ResponseCompression;

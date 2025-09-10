@@ -1,12 +1,7 @@
 using HueLightDJ.Services.Interfaces;
 using HueLightDJ.Services.Interfaces.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HueEntertainmentPro.Shared.Services
+namespace HueEntertainmentPro.Client.Services
 {
   public class HubService : IHubService
   {
