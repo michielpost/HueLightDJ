@@ -1,4 +1,4 @@
-@page "/bridge/{Id}"
+@page "/bridge/{Id:guid}"
 @using HueEntertainmentPro.Shared.Interfaces
 @using HueEntertainmentPro.Shared.Models
 @using HueEntertainmentPro.Shared.Models.Requests
@@ -55,7 +55,7 @@ else
 
 @code {
     [Parameter]
-    public string Id { get; set; }
+    public Guid Id { get; set; }
 
     private Bridge? bridge;
     private IQueryable<SimpleEntertainmentGroup>? entertainmentGroups;
@@ -66,7 +66,7 @@ else
         try
         {
             // Load bridge details
-            bridge = await BridgeService.GetBridge(new GuidRequest() { Id = Guid.Parse(Id) });
+            bridge = await BridgeService.GetBridge(new GuidRequest() { Id = Id });
             if (bridge == null)
             {
                 errorMessage = "Bridge not found.";

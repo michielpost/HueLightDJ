@@ -1,4 +1,4 @@
-@page "/proarea/{Id}"
+@page "/proarea/{Id:guid}"
 @using HueEntertainmentPro.Shared.Interfaces
 @using HueEntertainmentPro.Shared.Models
 @using HueEntertainmentPro.Shared.Models.Requests
@@ -110,7 +110,7 @@ else
 
 @code {
     [Parameter]
-    public string Id { get; set; }
+    public Guid Id { get; set; }
 
     private ProArea? proArea;
     private string? errorMessage;
@@ -131,7 +131,7 @@ else
             bridges = null;
 
             // Load bridge details
-            proArea = await ProAreaDataService.GetProArea(new GuidRequest() { Id = Guid.Parse(Id) });
+            proArea = await ProAreaDataService.GetProArea(new GuidRequest() { Id = Id });
             if (proArea == null)
             {
                 errorMessage = "Area not found.";

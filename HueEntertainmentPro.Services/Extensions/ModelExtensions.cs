@@ -12,7 +12,8 @@ namespace HueEntertainmentPro.Services.Extensions
         BridgeId = input.BridgeId,
         Ip = input.Ip,
         Name = input.Name,
-        Username = input.Username
+        Username = input.Username,
+        StreamingClientKey = input.StreamingClientKey
       };
     }
 

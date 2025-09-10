@@ -1,3 +1,9 @@
+@using HueEntertainmentPro.Client.Services
+@using HueLightDJ.Services.Interfaces
+@inject IHubService HubService
+@inject ILightDJService LightDJService
+@inject NavigationManager NavigationManager
+
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -9,3 +15,18 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await ((SignalRClientHubService)HubService).OnInitializedAsync();
+
+        var status = await LightDJService.GetStatus();
+        if (status.CurrentGroup != null)
+        {
+            NavigationManager.NavigateTo($"/play/{status.CurrentGroup.Id}");
+        }
+
+        await base.OnInitializedAsync();
+    }
+}

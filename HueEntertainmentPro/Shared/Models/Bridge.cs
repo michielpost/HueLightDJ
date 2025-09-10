@@ -11,6 +11,6 @@ namespace HueEntertainmentPro.Shared.Models
     public string Ip { get; set; } = string.Empty;
 
     public string Username { get; set; } = string.Empty;
-
+    public string StreamingClientKey { get; set; } = string.Empty;
   }
 }

@@ -69,31 +69,37 @@ else if (proAreas.Any())
 
     <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
 
-    @foreach (var area in proAreas)
-    {
-        <FluentGridItem xs="6" sm="3">
-            <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
-                <FluentStack Orientation="Orientation.Vertical" Gap="10">
-                    <FluentLabel Typo="Typography.Header">@area.Name</FluentLabel>
-                    @if(area.Connections.Any())
-                    {
+        @foreach (var area in proAreas)
+        {
+            <FluentGridItem xs="6" sm="3">
+                <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
+                    <FluentStack Orientation="Orientation.Vertical" Gap="10">
+                        <FluentLabel Typo="Typography.Header">@area.Name</FluentLabel>
+                        @if (area.Connections.Any())
+                        {
                             <FluentLabel>Entertainment Groups:</FluentLabel>
 
                             @foreach (var conn in area.Connections)
                             {
                                 <FluentLabel> - @conn.Name (@conn.Bridge.Ip / @conn.Bridge.Name)</FluentLabel>
                             }
-                    }
-                    else
-                    {
-                        <FluentLabel>No bridges connected</FluentLabel>
-                    }
-                    <FluentButton @onclick="() => NavigateToArea(area.Id)">Edit</FluentButton>
+                        }
+                        else
+                        {
+                            <FluentLabel>No bridges connected</FluentLabel>
+                        }
+                        <FluentButton @onclick="() => NavigateToArea(area.Id)">Edit</FluentButton>
 
-                </FluentStack>
-            </FluentCard>
-        </FluentGridItem>
-    }
+                        @if (area.Connections.Any())
+                        {
+                            <FluentButton @onclick="() => NavigateToPlay(area.Id)">Start</FluentButton>
+
+                        }
+
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+        }
 
     </FluentGrid>
 }
@@ -140,6 +146,11 @@ else if (proAreas.Any())
     private void NavigateToArea(Guid id)
     {
         Navigation.NavigateTo($"/proarea/{id}");
+    }
+
+    private void NavigateToPlay(Guid id)
+    {
+        Navigation.NavigateTo($"/play/{id}");
     }
 
 }
