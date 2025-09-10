@@ -21,7 +21,7 @@
 
 @if (proArea != null)
 {
-    <FluentStack Orientation="Orientation.Vertical" Gap="10">
+    <FluentStack Orientation="Orientation.Vertical" Gap="16">
         <FluentLabel Typo="Typography.Header">Name: @proArea.Name</FluentLabel>
         <FluentStack Orientation="Orientation.Horizontal" Gap="10">
             @*   <FluentButton Appearance="Appearance.Accent" @onclick="ShowEditNameDialog">Edit Name</FluentButton>
@@ -29,132 +29,101 @@
         </FluentStack>
     </FluentStack>
 
+    <FluentDivider Style="width: 100%; margin: 16px 0;" Role="DividerRole.Presentation"></FluentDivider>
 
-    <FluentDivider Style="width: 100%;" Role="DividerRole.Presentation"></FluentDivider>
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
 
-    <FluentStack Orientation="Orientation.Vertical" VerticalGap="4">
-
-        <FluentCard Class="d-flex flex-row flex-grow-1 gap-4">
+        <FluentCard Class="d-flex flex-row flex-grow-1 gap-4" Style="margin-bottom: 16px;">
             <FluentLabel>Log msg: @lastMsg</FluentLabel>
         </FluentCard>
 
         @if (statusModel.CurrentGroup == null)
         {
-            <FluentButton Appearance="Appearance.Accent" OnClick="Connect">Connect</FluentButton>
-
+            <FluentButton Appearance="Appearance.Accent" OnClick="Connect" Style="margin-bottom: 16px;">Connect</FluentButton>
         }
     </FluentStack>
 
-
     @if (statusModel.CurrentGroup != null) //statusModel.IsConnected
     {
-        <FluentGrid AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Columns="3" ColumnGap="10" RowGap="10">
-          <FluentGridItem xs="12" sm="12">
+        <FluentGrid AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Columns="3" ColumnGap="16" RowGap="16">
+          <FluentGridItem xs="12" sm="12" Style="margin-bottom: 16px;">
                 <HueEntertainmentPro.Client.Shared.PixiPreviewControl />
-            <FluentNavLink Href="/pixipreview" Target="_blank">Open in new tab</FluentNavLink>
-
+            <FluentNavLink Href="/pixipreview" Target="_blank" Style="margin-top: 8px; display: inline-block;">Open in new tab</FluentNavLink>
           </FluentGridItem>
 
             <FluentGridItem xs="6" sm="3">
-                <FluentCard>
-                    <FluentHeader>Control</FluentHeader>
-                    <FluentStack Orientation="Orientation.Vertical">
-
-                        <FluentButton Appearance="Appearance.Accent" OnClick="Disconnect">Disconnect</FluentButton>
-
-
-                        <FluentLabel>BPM</FluentLabel>
-                        <FluentNumberField Value="@statusModel.Bpm" Label="BPM" ValueChanged="@((int? value) => LightDJService.SetBPM(new IntRequest(value ?? 0)))" Min="1" Max="1000" />
-
-                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.SetBPM(new IntRequest(120)))">Reset BPM</FluentButton>
-
-                        <FluentStack Orientation="Orientation.Horizontal">
-
+                <FluentCard Style="padding: 16px; min-height: 100%;">
+                    <FluentHeader Style="margin-bottom: 12px;">Control</FluentHeader>
+                    <FluentStack Orientation="Orientation.Vertical" Gap="12">
+                        <FluentButton Appearance="Appearance.Accent" OnClick="Disconnect" Style="margin-bottom: 8px;">Disconnect</FluentButton>
+                        <FluentNumberField Value="@statusModel.Bpm" Label="BPM" ValueChanged="@((int? value) => LightDJService.SetBPM(new IntRequest(value ?? 0)))" Min="1" Max="1000" Style="margin-bottom: 8px;" />
+                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.SetBPM(new IntRequest(120)))" Style="margin-bottom: 8px;">Reset BPM</FluentButton>
+                        <FluentStack Orientation="Orientation.Horizontal" Gap="8" Style="margin-bottom: 8px;">
                             <FluentButton OnClick="(() => LightDJService.SetBPM(new IntRequest(20)))">Slow</FluentButton>
                             <FluentButton OnClick="(() => LightDJService.SetBPM(new IntRequest(400)))">Quick</FluentButton>
                             <FluentButton OnClick="(() => LightDJService.SetBPM(new IntRequest(600)))">Super Quick</FluentButton>
-
                         </FluentStack>
-                        <FluentDivider></FluentDivider>
-
-                        <FluentSlider Value="@Brightness" ValueChanged="@((double value) => { Brightness = value; LightDJService.SetBri(new DoubleRequest(value)); })" Min="0" Max="100" Step="1" Label="Brightness"></FluentSlider>
+                        <FluentDivider Style="margin: 8px 0;"></FluentDivider>
+                        <FluentSlider Value="@Brightness" ValueChanged="@((double value) => { Brightness = value; LightDJService.SetBri(new DoubleRequest(value)); })" Min="0" Max="100" Step="1" Label="Brightness" Style="margin-bottom: 8px;"></FluentSlider>
                         <FluentLabel>Brightness: @Brightness</FluentLabel>
-
                     </FluentStack>
                 </FluentCard>
             </FluentGridItem>
 
-
             <FluentGridItem xs="6" sm="3">
-                <FluentCard>
-                    <FluentHeader>Effects</FluentHeader>
-                    <FluentStack Orientation="Orientation.Vertical">
-
-                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StartRandom())">Random Effect</FluentButton>
-
+                <FluentCard Style="padding: 16px; min-height: 100%;">
+                    <FluentHeader Style="margin-bottom: 12px;">Effects</FluentHeader>
+                    <FluentStack Orientation="Orientation.Vertical" Gap="12">
+                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StartRandom())" Style="margin-bottom: 8px;">Random Effect</FluentButton>
                         @if (statusModel.IsAutoMode)
                         {
-                            <FluentCheckbox Value="@statusModel.AutoModeHasRandomEffects" ValueChange="@((bool value) => { statusModel.AutoModeHasRandomEffects = value; LightDJService.SetAutoRandomMode(new BoolRequest(value)); })" Label="Random effects"></FluentCheckbox>
-
-                            <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StopAutoMode())">Stop Auto Mode</FluentButton>
+                            <FluentCheckbox Value="@statusModel.AutoModeHasRandomEffects" ValueChange="@((bool value) => { statusModel.AutoModeHasRandomEffects = value; LightDJService.SetAutoRandomMode(new BoolRequest(value)); })" Label="Random effects" Style="margin-bottom: 8px;"></FluentCheckbox>
+                            <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StopAutoMode())" Style="margin-bottom: 8px;">Stop Auto Mode</FluentButton>
                         }
                         else
                         {
-                            <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StartAutoMode())">Start Auto Mode</FluentButton>
+                            <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StartAutoMode())" Style="margin-bottom: 8px;">Start Auto Mode</FluentButton>
                         }
-                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StopEffects())">Stop All Effects</FluentButton>
-                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.Beat(new DoubleRequest(1)))">Beat</FluentButton>
-
+                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StopEffects())" Style="margin-bottom: 8px;">Stop All Effects</FluentButton>
+                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.Beat(new DoubleRequest(1)))" Style="margin-bottom: 8px;">Beat</FluentButton>
                     </FluentStack>
                 </FluentCard>
             </FluentGridItem>
 
-            @* <FluentHeader>Long Running</FluentHeader> *@
             @foreach (var effectGroup in effectsVM.BaseEffects)
             {
                 <FluentGridItem xs="6" sm="3">
-                    <FluentCard>
-                        <FluentHeader>@effectGroup.Title</FluentHeader>
-
-                        <FluentStack Orientation="Orientation.Vertical">
+                    <FluentCard Style="padding: 16px; min-height: 100%;">
+                        <FluentHeader Style="margin-bottom: 12px;">@effectGroup.Title</FluentHeader>
+                        <FluentStack Orientation="Orientation.Vertical" Gap="10">
                             @foreach (var effect in effectGroup.Effects)
                             {
-                                <FluentButton OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = effect.IsRandom ? null : effect.Color }))">@effect.Name</FluentButton>
-
+                                <FluentButton OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = effect.IsRandom ? null : effect.Color }))" Style="margin-bottom: 8px;">@effect.Name</FluentButton>
                                 @if (effect.HasColorPicker)
                                 {
-                                    <FluentCheckbox Value="@effect.IsRandom" ValueChanged="@((bool value) => effect.IsRandom = value)" Label="Random"></FluentCheckbox>
-
+                                    <FluentCheckbox Value="@effect.IsRandom" ValueChanged="@((bool value) => effect.IsRandom = value)" Label="Random" Style="margin-bottom: 8px;"></FluentCheckbox>
                                     @if (!effect.IsRandom)
                                     {
-                                        <input type="color" @bind="effect.Color" @bind:event="oninput" />
+                                        <input type="color" @bind="effect.Color" @bind:event="oninput" style="margin-bottom: 8px;" />
                                     }
                                 }
-
                             }
                         </FluentStack>
-
-
                     </FluentCard>
                 </FluentGridItem>
             }
 
             <FluentGridItem xs="6" sm="3">
-                <FluentCard>
-
-                    <FluentHeader>Short Effects</FluentHeader>
-
-                    <FluentStack Orientation="Orientation.Vertical">
-
+                <FluentCard Style="padding: 16px; min-height: 100%;">
+                    <FluentHeader Style="margin-bottom: 12px;">Short Effects</FluentHeader>
+                    <FluentStack Orientation="Orientation.Vertical" Gap="10">
                         @foreach (var effect in effectsVM.ShortEffects)
                         {
-                            <FluentButton OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = "" }))">@effect.Name</FluentButton>
+                            <FluentButton OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = "" }))" Style="margin-bottom: 8px;">@effect.Name</FluentButton>
                         }
                     </FluentStack>
-
                 </FluentCard>
             </FluentGridItem>
-
         </FluentGrid>
     }
 
@@ -185,9 +154,7 @@ else
     protected override async Task OnParametersSetAsync()
     {
         statusModel = await LightDJService.GetStatus();
-
         effectsVM = await LightDJService.GetEffects();
-
         await base.OnParametersSetAsync();
     }
 
@@ -263,10 +230,8 @@ else
     public async Task Connect()
     {
         await LightDJService.Connect(config);
-
         statusModel = await LightDJService.GetStatus();
         this.InvokeAsync(() => this.StateHasChanged());
-
     }
 
     public async Task Disconnect()
@@ -280,5 +245,4 @@ else
         HubService.LogMsgEvent -= HubService_LogMsgEvent;
         HubService.StatusChangedEvent -= HubService_StatusChangedEvent;
     }
-
 }

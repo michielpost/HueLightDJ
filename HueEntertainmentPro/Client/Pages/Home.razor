@@ -89,13 +89,17 @@ else if (proAreas.Any())
                         {
                             <FluentLabel>No bridges connected</FluentLabel>
                         }
+
+                        <FluentStack>
                         <FluentButton @onclick="() => NavigateToArea(area.Id)">Edit</FluentButton>
 
                         @if (area.Connections.Any())
                         {
-                            <FluentButton @onclick="() => NavigateToPlay(area.Id)">Start</FluentButton>
-
+                            <FluentButton Appearance="Appearance.Accent" @onclick="() => NavigateToPlay(area.Id)">Start</FluentButton>
                         }
+
+                        </FluentStack>
+
 
                     </FluentStack>
                 </FluentCard>
