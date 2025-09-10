@@ -3,6 +3,7 @@ using HueEntertainmentPro.Client;
 using HueEntertainmentPro.Client.Extensions;
 using HueEntertainmentPro.Client.Services;
 using HueEntertainmentPro.Shared.Interfaces;
+using HueLightDJ.Blazor.Controls;
 using HueLightDJ.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -11,6 +12,7 @@ using Microsoft.FluentUI.AspNetCore.Components;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddFluentUIComponents();
 
+builder.Services.AddTransient<HueJsInterop>();
 builder.Services.AddSingleton<IHubService, SignalRClientHubService>();
 
 builder.RootComponents.Add<App>("#app");

@@ -1,0 +1,29 @@
+@using HueLightDJ.Blazor.Controls
+@using HueLightDJ.Services.Interfaces
+@inject HueJsInterop HueJsInterop
+@inject IHubService HubService
+
+<div id="pixiPreview"></div>
+
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        await HueJsInterop.InitializePreview();
+    }
+
+    protected override void OnInitialized()
+    {
+        HubService.PreviewEvent += HubService_PreviewEvent;
+        base.OnInitialized();
+    }
+
+    private void HubService_PreviewEvent(object? sender, IEnumerable<HueLightDJ.Services.Interfaces.Models.PreviewModel> e)
+    {
+        HueJsInterop.ShowPreview(e);
+    }
+
+    public void Dispose()
+    {
+        HubService.PreviewEvent -= HubService_PreviewEvent;
+    }
+}

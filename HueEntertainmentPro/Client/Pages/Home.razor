@@ -1,6 +1,7 @@
 @page "/"
 @using HueEntertainmentPro.Shared.Interfaces
 @using HueEntertainmentPro.Shared.Models
+@using HueEntertainmentPro.Shared.Models.Requests
 @inject IBridgeDataService BridgeDataService
 @inject IProAreaDataService ProAreaDataService
 @inject IDialogService DialogService
@@ -129,7 +130,7 @@ else if (proAreas.Any())
     {
         var number = proAreas?.Count() + 1;
 
-        var area = await ProAreaDataService.CreateProArea(new Shared.Models.Requests.CreateProAreaRequest
+        var area = await ProAreaDataService.CreateProArea(new CreateProAreaRequest
         {
             Name = $"Pro Entertainment Area {number}"
         });
