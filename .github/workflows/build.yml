@@ -18,6 +18,4 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Debug
     - name: Publish Website
-      run: dotnet publish HueLightDJ.BlazorWeb/Server -o publish/HueLightDJ.BlazorWeb.Server -c Debug
-    - name: Publish Website (OLD)
-      run: dotnet publish HueLightDJ.Web -o publish/HueLightDJ.Web -c Debug
+      run: dotnet publish HueEntertainmentPro/Server -o publish/HueEntertainmentPro.Server -c Debug

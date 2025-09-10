@@ -21,8 +21,9 @@
     {
         await ((SignalRClientHubService)HubService).OnInitializedAsync();
 
+        var currentUrl = NavigationManager.Uri;
         var status = await LightDJService.GetStatus();
-        if (status.CurrentGroup != null)
+        if (status.CurrentGroup != null && !currentUrl.EndsWith("/pixipreview"))
         {
             NavigationManager.NavigateTo($"/play/{status.CurrentGroup.Id}");
         }
