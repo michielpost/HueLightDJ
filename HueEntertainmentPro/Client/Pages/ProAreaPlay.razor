@@ -123,11 +123,11 @@
 
                                 @if (effect.HasColorPicker)
                                 {
-                                    <FluentCheckbox Value="@effect.IsRandom" ValueChange="@((bool value) => effect.IsRandom = value)" Label="Random"></FluentCheckbox>
+                                    <FluentCheckbox Value="@effect.IsRandom" ValueChanged="@((bool value) => effect.IsRandom = value)" Label="Random"></FluentCheckbox>
 
                                     @if (!effect.IsRandom)
                                     {
-                                        @* <FluentColorPicker @bind-Value="effect.Color" ColorPreview="true" ColorRepresentation="ColorRepresentation.Hex"></FluentColorPicker> *@
+                                        <input type="color" @bind="effect.Color" @bind:event="oninput" />
                                     }
                                 }
 
