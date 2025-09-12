@@ -13,6 +13,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddFluentUIComponents();
 
 builder.Services.AddTransient<HueJsInterop>();
+builder.Services.AddTransient<ThreejsPreviewJsInterop>();
 builder.Services.AddSingleton<IHubService, SignalRClientHubService>();
 
 builder.RootComponents.Add<App>("#app");
