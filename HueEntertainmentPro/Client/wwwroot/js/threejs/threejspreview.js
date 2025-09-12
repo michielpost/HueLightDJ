@@ -6,6 +6,9 @@
 
     import { OrbitControls } from './OrbitControls.js';
 
+    import { FontLoader } from './FontLoader.js';
+import { TextGeometry } from './TextGeometry.js';
+
     let camera, scene, renderer, bulbLight, hemiLight, stats;
     let ballMat, cubeMat, floorMat, bulbMat;
 
@@ -78,6 +81,31 @@
             bumpScale: 1
         } );
         
+  const loader = new FontLoader();
+loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+
+    const textGeometry = new TextGeometry('Hue Entertainment Pro', {
+        font: font,
+        size: 1,          // size of the letters
+        height: 0.05,      // extrusion depth
+        curveSegments: 1,
+        bevelEnabled: true,
+        bevelThickness: 0.02,
+        bevelSize: 0.02,
+        bevelSegments: 3
+    });
+
+    const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffaa00 });
+    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+    // Position so it sits nicely on your floorMesh
+    textGeometry.computeBoundingBox();
+    const centerOffset = -0.5 * (textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x);
+    textMesh.position.set(centerOffset, 0, -7.5); // adjust Y so it's just above the plane
+    textMesh.scale.set(1, 1, 0.001); // shrink 20% of original size
+    scene.add(textMesh);
+});
+
 
         const floorGeometry = new THREE.PlaneGeometry( 15, 15 );
         const floorMesh = new THREE.Mesh( floorGeometry, floorMat );

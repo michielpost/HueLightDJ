@@ -224,7 +224,6 @@ else
     {
         statusModel = await LightDJService.GetStatus();
         //StateHasChanged();
-        Console.WriteLine(statusModel.Bpm);
         this.InvokeAsync(() => this.StateHasChanged());
     }
 
