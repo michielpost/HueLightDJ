@@ -37,6 +37,7 @@ namespace HueLightDJ.Services
         Id = x.Id,
         X = x.ChannelLocation.X,
         Y = x.ChannelLocation.Y,
+        Z = x.ChannelLocation.Z,
         Hex = x.State.RGBColor.ToHex(),
         Bri = x.State.Brightness
       }));
