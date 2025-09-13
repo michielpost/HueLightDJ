@@ -1,0 +1,28 @@
+@implements IDialogContentComponent
+
+<FluentDialogHeader>Edit Bridge Name</FluentDialogHeader>
+<FluentDialogBody>
+    <FluentTextField Label="Bridge Name" @bind-Value="Content" Style="width: 100%;" />
+</FluentDialogBody>
+<FluentDialogFooter>
+    <FluentButton Appearance="Appearance.Accent" @onclick="Submit">Save</FluentButton>
+    <FluentButton Appearance="Appearance.Neutral" @onclick="Cancel">Cancel</FluentButton>
+</FluentDialogFooter>
+
+@code {
+    [CascadingParameter]
+    private FluentDialog Dialog { get; set; }
+
+    [Parameter]
+    public string Content { get; set; } = string.Empty;
+
+    private async Task Submit()
+    {
+        await Dialog.CloseAsync(Content);
+    }
+
+    private async Task Cancel()
+    {
+        await Dialog.CancelAsync();
+    }
+}

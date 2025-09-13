@@ -1,0 +1,16 @@
+services:
+  hueentertainmentpro.server:
+    image: ${DOCKER_REGISTRY-}hueentertainmentproserver
+    build:
+      context: .
+      dockerfile: HueEntertainmentPro/Server/Dockerfile
+    expose:
+      - "8080" # Expose port 8080 to the reverse proxy
+    volumes:
+      - sqlite-data:/app/data
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/HueEntertainmentPro.db;Cache=Shared
+volumes:
+  sqlite-data:

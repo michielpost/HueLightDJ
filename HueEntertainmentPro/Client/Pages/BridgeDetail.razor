@@ -1,0 +1,147 @@
+@page "/bridge/{Id:guid}"
+@using HueEntertainmentPro.Shared.Interfaces
+@using HueEntertainmentPro.Shared.Models
+@using HueEntertainmentPro.Shared.Models.Requests
+@using HueLightDJ.Services.Interfaces
+@using HueLightDJ.Services.Interfaces.Models
+@inject IBridgeDataService BridgeService
+@inject IHueSetupService HueSetupService
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject IToastService ToastService
+
+<h3>Bridge Details</h3>
+
+@if (errorMessage != null)
+{
+    <FluentMessageBar Intent="MessageIntent.Error" Style="margin-bottom: 16px;">
+        @errorMessage
+    </FluentMessageBar>
+}
+
+@if (bridge != null)
+{
+    <FluentStack Orientation="Orientation.Vertical" Gap="10">
+        <FluentLabel Typo="Typography.Header">Name: @bridge.Name</FluentLabel>
+        <FluentLabel Typo="Typography.Header">Bridge ID: @bridge.BridgeId</FluentLabel>
+        <FluentLabel Typo="Typography.Header">ip: @bridge.Ip</FluentLabel>
+        <FluentStack Orientation="Orientation.Horizontal" Gap="10">
+            <FluentButton Appearance="Appearance.Accent" @onclick="ShowEditNameDialog">Edit Name</FluentButton>
+            <FluentButton Appearance="Appearance.Neutral" @onclick="ShowDeleteConfirmation">Delete Bridge</FluentButton>
+        </FluentStack>
+    </FluentStack>
+
+    <h4 style="margin-top: 20px;">Entertainment Groups</h4>
+    @if (entertainmentGroups == null)
+    {
+        <FluentProgressRing>Loading entertainment groups...</FluentProgressRing>
+    }
+    else if (entertainmentGroups.Any())
+    {
+        <FluentDataGrid Items="@entertainmentGroups" TGridItem="SimpleEntertainmentGroup">
+            <PropertyColumn Title="Name" Property="@(g => g.Name)" Sortable="true" Align="Align.Start" />
+            <PropertyColumn Title="Lights" Property="@(g => g.LightCount)" Sortable="true" Align="Align.Start" />
+        </FluentDataGrid>
+    }
+    else
+    {
+        <FluentLabel>No entertainment groups found for this bridge.</FluentLabel>
+    }
+}
+else
+{
+    <FluentProgressRing>Loading bridge details...</FluentProgressRing>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Bridge? bridge;
+    private IQueryable<SimpleEntertainmentGroup>? entertainmentGroups;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Load bridge details
+            bridge = await BridgeService.GetBridge(new GuidRequest() { Id = Id });
+            if (bridge == null)
+            {
+                errorMessage = "Bridge not found.";
+                return;
+            }
+
+            // Load entertainment groups
+            var result = await HueSetupService.GetEntertainmentGroupsAsync(new HueLightDJ.Services.Interfaces.Models.Requests.HueSetupRequest()
+            {
+                Ip = bridge.Ip,
+                Key = bridge.Username
+            });
+            entertainmentGroups = result.Groups.AsQueryable();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load bridge details: {ex.Message}";
+        }
+    }
+
+    private async Task ShowEditNameDialog()
+    {
+        var dialogParameters = new DialogParameters
+        {
+            Title = "Edit Bridge Name",
+            PrimaryAction = "Save",
+            SecondaryAction = "Cancel",
+            Width = "400px",
+            Modal = true
+        };
+
+        var dialog = await DialogService.ShowDialogAsync<EditNameDialog>(bridge.Name, dialogParameters);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled && result.Data is string newName && !string.IsNullOrWhiteSpace(newName))
+        {
+            try
+            {
+                //Console.WriteLine("Cancelled:" + result.Cancelled);
+
+                var bridgeResult = await BridgeService.UpdateBridge(new UpdateBridgeRequest() { Id = bridge.Id, Name = newName });
+                bridge = bridgeResult;
+                ToastService.ShowSuccess("Bridge name updated successfully.");
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                ToastService.ShowError($"Failed to update bridge name: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task ShowDeleteConfirmation()
+    {
+        if (bridge == null)
+            return;
+
+        var dialog = await DialogService.ShowConfirmationAsync(
+            "Are you sure you want to delete this bridge?"
+            , "Delete", "Cancel", "Confirm Delete");
+
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            try
+            {
+                await BridgeService.DeleteBridge(new GuidRequest { Id = bridge.Id });
+                ToastService.ShowSuccess("Bridge deleted successfully.");
+                Navigation.NavigateTo("/bridges");
+            }
+            catch (Exception ex)
+            {
+                ToastService.ShowError($"Failed to delete bridge: {ex.Message}");
+            }
+        }
+    }
+}

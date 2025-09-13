@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - lights - physical lights</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	</head>
+	<body>
+
+		<div id="container"></div>
+
+		<script type="module">
+
+			import * as preview from './threejspreview.js';
+
+function startLightDemo() {
+  setTimeout(() => {
+    // Add initial demo lights
+    var data = [
+      //{ bridge: '127.0.0.1', id: 'red', x: 0, y: 0, z: 0, hex: 'ff0000', bri: 1 },
+      { bridge: '127.0.0.1', id: 'green', x: 1, y: 1, z: 1, hex: '00ff00', bri: 1 },
+     // { bridge: '127.0.0.1', id: 'blue', x: -1, y: -1, z: 1, hex: '0000ff', bri: 1 }
+    ];
+
+    preview.updateLights(data);
+
+    // Start modifying lights in a loop
+    setInterval(() => {
+      const updatedLights = lightData.map(light => ({
+        ...light,
+        //Z: Math.random(), // Small random movement
+        //HexColor: Math.floor(Math.random() * 0xffffff), // Random color
+        //Brightness: Math.random() // Random brightness between 0 and 1
+      }));
+      preview.updateLights(data);
+    }, 1000);
+  }, 1000);
+}
+
+
+			preview.renderPreviewGrid();
+			startLightDemo();
+
+		</script>
+	</body>
+</html>

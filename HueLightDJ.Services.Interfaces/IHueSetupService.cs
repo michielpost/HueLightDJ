@@ -11,7 +11,7 @@ namespace HueLightDJ.Services.Interfaces
   public interface IHueSetupService
   {
     [OperationContract]
-    Task<IEnumerable<SimpleEntertainmentGroup>> GetEntertainmentGroupsAsync(HueSetupRequest request, CallContext context = default);
+    Task<EntertainmentGroupResult> GetEntertainmentGroupsAsync(HueSetupRequest request, CallContext context = default);
 
     [OperationContract]
     Task<IEnumerable<LocatedBridge>> LocateBridgesAsync(CallContext context = default);

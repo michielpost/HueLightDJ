@@ -1,0 +1,187 @@
+@page "/"
+@using HueEntertainmentPro.Shared.Interfaces
+@using HueEntertainmentPro.Shared.Models
+@using HueEntertainmentPro.Shared.Models.Requests
+@inject IBridgeDataService BridgeDataService
+@inject IProAreaDataService ProAreaDataService
+@inject IDialogService DialogService
+@inject NavigationManager Navigation
+
+<PageTitle>Hue Entertainment Pro</PageTitle>
+
+@if (bridges == null || proAreas == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!bridges.Any() || !proAreas.Any())
+{
+
+    <text>
+        <h1>Setup</h1>
+        <p>
+            Combine entertainment area's from multiple bridges into one entertainment area.
+            Display effects and visualize your room in 3d.
+        </p>
+
+        <h2>1) Start by adding some bridges.</h2>
+
+        @if (bridges.Any())
+        {
+            <p>You have already added @bridges.Count() bridge(s). You can add more.</p>
+
+            <FluentButton @onclick="OpenAddBridgeDialog">Add Another Bridge</FluentButton>
+
+        }
+        else
+        {
+            <p>You haven't added any bridges yet.</p>
+            <p>Use the "Add Bridge" button below to add your Hue Bridges. You can add multiple bridges.</p>
+
+            <FluentButton @onclick="OpenAddBridgeDialog" Appearance="Appearance.Accent">Add Bridge</FluentButton>
+
+        }
+
+        <br />
+        <br />
+        <h2>2) Combine multiple entertainment area's into one</h2>
+        <p>
+            Don't worry, you can also start with 1 bridge and 1 area to see what Hue Entertainment Pro can do.
+        </p>
+
+        @if (bridges.Any())
+        {
+            <p>You have added @bridges.Count() bridge(s). Now you can create entertainment area's by combining entertainment groups from your bridges.</p>
+            <FluentButton @onclick="OpenAddAreaDialog" Appearance="Appearance.Accent">Add Area</FluentButton>
+        }
+        else
+        {
+            <p>Once you have added some bridges, you can create entertainment area's by combining entertainment groups from your bridges.</p>
+        }
+
+    </text>
+
+
+}
+else if (proAreas.Any())
+{
+    <h1>Entertainment Area's</h1>
+
+    <FluentButton @onclick="OpenAddAreaDialog">Add Area</FluentButton>
+
+    <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
+
+        @foreach (var area in proAreas)
+        {
+            <FluentGridItem xs="12" sm="6">
+                <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
+                    <FluentStack Orientation="Orientation.Vertical" Gap="10">
+                        <FluentLabel Typo="Typography.Header">@area.Name</FluentLabel>
+                        @if (area.Connections.Any())
+                        {
+                            <FluentLabel>Entertainment Groups:</FluentLabel>
+
+                            @foreach (var conn in area.Connections)
+                            {
+                                <FluentLabel> - @conn.Name (@conn.Bridge.Ip / @conn.Bridge.Name)</FluentLabel>
+                            }
+                        }
+                        else
+                        {
+                            <FluentLabel>No bridges connected</FluentLabel>
+                        }
+
+                        <FluentStack>
+                            <FluentButton @onclick="() => NavigateToArea(area.Id)">Edit</FluentButton>
+
+                            @if (area.Connections.Any())
+                            {
+                                <FluentButton Appearance="Appearance.Accent" @onclick="() => NavigateToPlay(area.Id)">Start</FluentButton>
+                            }
+
+                        </FluentStack>
+
+
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+        }
+
+    </FluentGrid>
+}
+
+<h1>Demo Area's</h1>
+
+<FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
+
+    <FluentGridItem xs="12" sm="6">
+        <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
+            <FluentStack Orientation="Orientation.Vertical" Gap="10">
+                <FluentLabel Typo="Typography.Header">Grid Demo</FluentLabel>
+                <FluentLabel>2 bridges with lights in a grid layout</FluentLabel>
+                <FluentButton Appearance="Appearance.Accent" @onclick="() => NavigateToPlay(ProAreaPlay.demo1Id)">Start</FluentButton>
+            </FluentStack>
+        </FluentCard>
+    </FluentGridItem>
+
+    <FluentGridItem xs="12" sm="6">
+        <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
+            <FluentStack Orientation="Orientation.Vertical" Gap="10">
+                <FluentLabel Typo="Typography.Header">Star Demo</FluentLabel>
+                <FluentLabel>Q42 Office Star Layout (32 lights)</FluentLabel>
+                <FluentButton Appearance="Appearance.Accent" @onclick="() => NavigateToPlay(ProAreaPlay.demo2Id)">Start</FluentButton>
+            </FluentStack>
+        </FluentCard>
+    </FluentGridItem>
+
+</FluentGrid>
+
+
+@code {
+    private IEnumerable<Bridge>? bridges;
+    private IEnumerable<ProArea>? proAreas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        bridges = await BridgeDataService.GetBridges();
+        proAreas = await ProAreaDataService.GetProAreas();
+    }
+
+    private async Task OpenAddBridgeDialog()
+    {
+        var dialog = await DialogService.ShowDialogAsync<AddBridgeDialog>(new DialogParameters()
+        {
+            Title = $"Add a bridge",
+            OnDialogResult = DialogService.CreateDialogCallback(this, HandleDialog),
+        });
+
+    }
+
+    private async Task OpenAddAreaDialog()
+    {
+        var number = proAreas?.Count() + 1;
+
+        var area = await ProAreaDataService.CreateProArea(new CreateProAreaRequest
+        {
+            Name = $"Pro Entertainment Area {number}"
+        });
+
+        NavigateToArea(area.Id);
+    }
+
+    private async Task HandleDialog(DialogResult result)
+    {
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    private void NavigateToArea(Guid id)
+    {
+        Navigation.NavigateTo($"/proarea/{id}");
+    }
+
+    private void NavigateToPlay(Guid id)
+    {
+        Navigation.NavigateTo($"/play/{id}");
+    }
+
+}

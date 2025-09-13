@@ -1,0 +1,251 @@
+@page "/play/{Id:guid}"
+@using HueEntertainmentPro.Shared.Interfaces
+@using HueEntertainmentPro.Shared.Models
+@using HueEntertainmentPro.Shared.Models.Requests
+@using HueLightDJ.Services.Interfaces
+@using HueLightDJ.Services.Interfaces.Models
+@using HueLightDJ.Services.Interfaces.Models.Requests;
+
+@inject IProAreaDataService ProAreaDataService
+@inject ILightDJService LightDJService
+@inject IHubService HubService
+
+<h3>Pro Entertainment Area</h3>
+
+@if (errorMessage != null)
+{
+    <FluentMessageBar Intent="MessageIntent.Error" Style="margin-bottom: 16px;">
+        @errorMessage
+    </FluentMessageBar>
+}
+
+@if (proArea != null)
+{
+    <FluentStack Orientation="Orientation.Vertical" Gap="16">
+        <FluentLabel Typo="Typography.Header">Name: @proArea.Name</FluentLabel>
+        <FluentStack Orientation="Orientation.Horizontal" Gap="10">
+            @*   <FluentButton Appearance="Appearance.Accent" @onclick="ShowEditNameDialog">Edit Name</FluentButton>
+            <FluentButton Appearance="Appearance.Neutral" @onclick="ShowDeleteConfirmation">Delete Area</FluentButton> *@
+        </FluentStack>
+    </FluentStack>
+
+    <FluentDivider Style="width: 100%; margin: 16px 0;" Role="DividerRole.Presentation"></FluentDivider>
+
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="12">
+
+        <FluentCard Class="d-flex flex-row flex-grow-1 gap-4" Style="margin-bottom: 16px;">
+            <FluentLabel>Log msg: @lastMsg</FluentLabel>
+        </FluentCard>
+
+        @if (statusModel.CurrentGroup == null)
+        {
+            <FluentButton Appearance="Appearance.Accent" OnClick="Connect" Style="margin-bottom: 16px;">Connect</FluentButton>
+        }
+    </FluentStack>
+
+    @if (statusModel.CurrentGroup != null) //statusModel.IsConnected
+    {
+        <FluentGrid AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Columns="3" ColumnGap="16" RowGap="16">
+          <FluentGridItem xs="12" sm="12" Style="margin-bottom: 16px;">
+                <HueEntertainmentPro.Client.Shared.PixiPreviewControl />
+                @* <HueEntertainmentPro.Client.Shared.ThreejsPreviewControl /> *@
+                <FluentStack Orientation="Orientation.Horizontal">
+                  <FluentNavLink Href="/pixipreview" Target="_blank" Style="margin-top: 8px; display: inline-block;">Open in new tab</FluentNavLink>
+                  <FluentNavLink Href="/3dpreview" Target="_blank" Style="margin-top: 8px; display: inline-block;">3D Preview</FluentNavLink>
+                </FluentStack>
+            </FluentGridItem>
+
+            <FluentGridItem xs="6" sm="3">
+                <FluentCard Style="padding: 16px; min-height: 100%;">
+                    <FluentHeader Style="margin-bottom: 12px;">Control</FluentHeader>
+                    <FluentStack Orientation="Orientation.Vertical" Gap="12">
+                        <FluentButton Appearance="Appearance.Accent" OnClick="Disconnect" Style="margin-bottom: 8px;">Disconnect</FluentButton>
+                        <FluentNumberField Value="@statusModel.Bpm" Label="BPM" ValueChanged="@((int? value) => LightDJService.SetBPM(new IntRequest(value ?? 0)))" Min="1" Max="1000" Style="margin-bottom: 8px;" />
+                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.SetBPM(new IntRequest(120)))" Style="margin-bottom: 8px;">Reset BPM</FluentButton>
+                        <FluentStack Orientation="Orientation.Horizontal" Gap="8" Style="margin-bottom: 8px;">
+                            <FluentButton OnClick="(() => LightDJService.SetBPM(new IntRequest(20)))">Slow</FluentButton>
+                            <FluentButton OnClick="(() => LightDJService.SetBPM(new IntRequest(400)))">Quick</FluentButton>
+                            <FluentButton OnClick="(() => LightDJService.SetBPM(new IntRequest(600)))">Super Quick</FluentButton>
+                        </FluentStack>
+                        <FluentDivider Style="margin: 8px 0;"></FluentDivider>
+                        <FluentSlider Value="@Brightness" ValueChanged="@((double value) => { Brightness = value; LightDJService.SetBri(new DoubleRequest(value)); })" Min="0" Max="100" Step="1" Label="Brightness" Style="margin-bottom: 8px;"></FluentSlider>
+                        <FluentLabel>Brightness: @Brightness</FluentLabel>
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+
+            <FluentGridItem xs="6" sm="3">
+                <FluentCard Style="padding: 16px; min-height: 100%;">
+                    <FluentHeader Style="margin-bottom: 12px;">Effects</FluentHeader>
+                    <FluentStack Orientation="Orientation.Vertical" Gap="12">
+                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StartRandom())" Style="margin-bottom: 8px;">Random Effect</FluentButton>
+                        @if (statusModel.IsAutoMode)
+                        {
+                            <FluentCheckbox Value="@statusModel.AutoModeHasRandomEffects" ValueChange="@((bool value) => { statusModel.AutoModeHasRandomEffects = value; LightDJService.SetAutoRandomMode(new BoolRequest(value)); })" Label="Random effects" Style="margin-bottom: 8px;"></FluentCheckbox>
+                            <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StopAutoMode())" Style="margin-bottom: 8px;">Stop Auto Mode</FluentButton>
+                        }
+                        else
+                        {
+                            <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StartAutoMode())" Style="margin-bottom: 8px;">Start Auto Mode</FluentButton>
+                        }
+                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.StopEffects())" Style="margin-bottom: 8px;">Stop All Effects</FluentButton>
+                        <FluentButton Appearance="Appearance.Accent" OnClick="(() => LightDJService.Beat(new DoubleRequest(1)))" Style="margin-bottom: 8px;">Beat</FluentButton>
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+
+            @foreach (var effectGroup in effectsVM.BaseEffects)
+            {
+                <FluentGridItem xs="6" sm="3">
+                    <FluentCard Style="padding: 16px; min-height: 100%;">
+                        <FluentHeader Style="margin-bottom: 12px;">@effectGroup.Title</FluentHeader>
+                        <FluentStack Orientation="Orientation.Vertical" Gap="10">
+                            @foreach (var effect in effectGroup.Effects)
+                            {
+                                <FluentButton OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = effect.IsRandom ? null : effect.Color }))" Style="margin-bottom: 8px;">@effect.Name</FluentButton>
+                                @if (effect.HasColorPicker)
+                                {
+                                    <FluentCheckbox Value="@effect.IsRandom" ValueChanged="@((bool value) => effect.IsRandom = value)" Label="Random" Style="margin-bottom: 8px;"></FluentCheckbox>
+                                    @if (!effect.IsRandom)
+                                    {
+                                        <input type="color" @bind="effect.Color" @bind:event="oninput" style="margin-bottom: 8px;" />
+                                    }
+                                }
+                            }
+                        </FluentStack>
+                    </FluentCard>
+                </FluentGridItem>
+            }
+
+            <FluentGridItem xs="6" sm="3">
+                <FluentCard Style="padding: 16px; min-height: 100%;">
+                    <FluentHeader Style="margin-bottom: 12px;">Short Effects</FluentHeader>
+                    <FluentStack Orientation="Orientation.Vertical" Gap="10">
+                        @foreach (var effect in effectsVM.ShortEffects)
+                        {
+                            <FluentButton OnClick="@(() => LightDJService.StartEffect(new StartEffectRequest { TypeName = effect.TypeName, ColorHex = "" }))" Style="margin-bottom: 8px;">@effect.Name</FluentButton>
+                        }
+                    </FluentStack>
+                </FluentCard>
+            </FluentGridItem>
+        </FluentGrid>
+    }
+
+}
+else
+{
+    <FluentProgressRing>Loading area details...</FluentProgressRing>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private ProArea? proArea;
+    private string? errorMessage;
+
+    GroupConfiguration? config;
+
+    private string lastMsg = string.Empty;
+    private StatusModel statusModel = new();
+    private EffectsVM effectsVM = new();
+    private double Brightness = 100;
+
+    public static Guid demo1Id = Guid.Parse("00000000-0000-0000-0000-000000000001");
+    public static Guid demo2Id = Guid.Parse("00000000-0000-0000-0000-000000000002");
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        statusModel = await LightDJService.GetStatus();
+        effectsVM = await LightDJService.GetEffects();
+        await base.OnParametersSetAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        HubService.LogMsgEvent += HubService_LogMsgEvent;
+        HubService.StatusChangedEvent += HubService_StatusChangedEvent;
+
+        try
+        {
+            // Load area details
+            proArea = await ProAreaDataService.GetProArea(new GuidRequest() { Id = Id });
+            if (proArea == null)
+            {
+                errorMessage = "Area not found.";
+                return;
+            }
+
+            if (!proArea.Connections.Any())
+            {
+                errorMessage = "No entertainment groups connected to this area. Please add some in the area details page.";
+            }
+
+            var useSimulator = Id == demo1Id || Id == demo2Id;
+            config = new GroupConfiguration
+            {
+                Name = proArea.Name,
+                Id = proArea.Id,
+                Connections = proArea.Connections.Select(x => new ConnectionConfiguration
+                {
+                    EntertainmentKey = x.Bridge.StreamingClientKey,
+                    GroupId = x.GroupId,
+                    Ip = x.Bridge.Ip,
+                    Key = x.Bridge.Username,
+                    UseSimulator = useSimulator
+                }).ToList()
+            };
+
+            if (config == null)
+            {
+                Console.WriteLine("Has group: " + statusModel.CurrentGroup != null);
+                if (Id == statusModel.CurrentGroup?.Id)
+                {
+                    config = statusModel.CurrentGroup;
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load area details: {ex.Message}";
+        }
+    }
+
+    private async void HubService_StatusChangedEvent(object? sender, EventArgs e)
+    {
+        await GetStatusAsync();
+    }
+
+    private void HubService_LogMsgEvent(object? sender, string? e)
+    {
+        lastMsg = e ?? string.Empty;
+    }
+
+    private async Task GetStatusAsync()
+    {
+        statusModel = await LightDJService.GetStatus();
+        //StateHasChanged();
+        this.InvokeAsync(() => this.StateHasChanged());
+    }
+
+    public async Task Connect()
+    {
+        await LightDJService.Connect(config);
+        statusModel = await LightDJService.GetStatus();
+        this.InvokeAsync(() => this.StateHasChanged());
+    }
+
+    public async Task Disconnect()
+    {
+        await LightDJService.Disconnect();
+        this.InvokeAsync(() => this.StateHasChanged());
+    }
+
+    public void Dispose()
+    {
+        HubService.LogMsgEvent -= HubService_LogMsgEvent;
+        HubService.StatusChangedEvent -= HubService_StatusChangedEvent;
+    }
+}

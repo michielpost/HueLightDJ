@@ -1,0 +1,29 @@
+@using HueLightDJ.Blazor.Controls
+@using HueLightDJ.Services.Interfaces
+@inject ThreejsPreviewJsInterop ThreejsPreviewJsInterop
+@inject IHubService HubService
+
+<div id="container"></div>
+
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        await ThreejsPreviewJsInterop.InitializePreview();
+    }
+
+    protected override void OnInitialized()
+    {
+        HubService.PreviewEvent += HubService_PreviewEvent;
+        base.OnInitialized();
+    }
+
+    private void HubService_PreviewEvent(object? sender, IEnumerable<HueLightDJ.Services.Interfaces.Models.PreviewModel> e)
+    {
+        ThreejsPreviewJsInterop.ShowPreview(e);
+    }
+
+    public void Dispose()
+    {
+        HubService.PreviewEvent -= HubService_PreviewEvent;
+    }
+}

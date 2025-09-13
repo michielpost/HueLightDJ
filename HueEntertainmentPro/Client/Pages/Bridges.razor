@@ -1,0 +1,60 @@
+@page "/bridges"
+@using HueEntertainmentPro.Shared.Models
+@using HueEntertainmentPro.Shared.Models.Requests
+@using HueEntertainmentPro.Shared.Interfaces
+@inject IBridgeDataService BridgeDataService
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+
+<PageTitle>Bridges</PageTitle>
+
+<h1>Bridges</h1>
+
+<FluentButton @onclick="OpenAddDialog">Add Bridge</FluentButton>
+
+@if (bridges == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <FluentDataGrid Id="bridgegrid" Items="@bridges" GridTemplateColumns="2fr 2fr 2fr" TGridItem="Bridge">
+        <TemplateColumn Title="Name" Sortable="true" Align="Align.Start">
+            <NavLink href="@($"/bridge/{context.Id}")">@context.Name</NavLink>
+        </TemplateColumn>
+        <PropertyColumn Title="IP" Property="@(b => b.Ip)" Sortable="true" Align="Align.Start" />
+        <PropertyColumn Title="Id" Property="@(b => b.Id)" Sortable="true" Align="Align.Start" />
+        <TemplateColumn Title="" Align="Align.Start">
+            <NavLink href="@($"/bridge/{context.Id}")">
+                <FluentIcon Value="@(new Icons.Regular.Size16.Pen())" />
+            </NavLink>
+        </TemplateColumn>
+    </FluentDataGrid>
+}
+
+
+@code {
+    private IQueryable<Bridge>? bridges;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await BridgeDataService.GetBridges();
+        bridges = result.AsQueryable();
+    }
+
+    private async Task OpenAddDialog()
+    {
+        var dialog = await DialogService.ShowDialogAsync<AddBridgeDialog>(new DialogParameters()
+        {
+            Title = $"Add a bridge",
+        });
+
+    }
+
+
+    private void NavigateToBridgeDetails(Guid id)
+    {
+        Navigation.NavigateTo($"/bridge/{id}");
+    }
+}
+

@@ -24,6 +24,9 @@ namespace HueLightDJ.Services
 {
   public class StreamingSetup
   {
+    public static Guid demo1Id = Guid.Parse("00000000-0000-0000-0000-000000000001");
+    public static Guid demo2Id = Guid.Parse("00000000-0000-0000-0000-000000000002");
+
     private static List<StreamingGroup> StreamingGroups { get; set; } = new List<StreamingGroup>();
     private static List<LightDJStreamingHueClient> StreamingHueClients { get; set; } = new List<LightDJStreamingHueClient>();
     public static List<EntertainmentLayer>? Layers { get; set; }
@@ -196,7 +199,10 @@ namespace HueLightDJ.Services
 
     public async Task SetupAndReturnGroupAsync(GroupConfiguration currentGroup)
     {
-      demoMode = currentGroup.Id == Guid.Empty || currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
+      demoMode = currentGroup.Id == Guid.Empty
+        || currentGroup.Id == demo1Id
+        || currentGroup.Id == demo2Id
+        || currentGroup.Name == "DEMO" || currentGroup.Connections.First().Key == "DEMO";
       bool useSimulator = demoMode ? true : currentGroup.Connections.First().UseSimulator;
 
       //Disconnect any current connections
@@ -346,7 +352,7 @@ namespace HueLightDJ.Services
       }
     }
 
-    public void SetBrightnessFilter(double value)
+    public async Task SetBrightnessFilter(double value)
     {
       if(value > 1)
         value = value / 100;
@@ -359,7 +365,10 @@ namespace HueLightDJ.Services
         stream.BrightnessFilter = value;
       }
 
-      hub.StatusChanged();
+      await hub.SendAsync("StatusMsg", $"Brightness set to: {(1-value)*100}");
+
+
+      await hub.StatusChanged();
     }
 
     private static EntertainmentLayer GetNewLayer(bool isBaseLayer = false)
@@ -436,18 +445,20 @@ namespace HueLightDJ.Services
       return BPM;
     }
 
-    public int SetBPM(int bpm)
+    public async Task<int> SetBPM(int bpm)
     {
       BPM = bpm;
       WaitTime.Value = TimeSpan.FromMilliseconds((60 * 1000) / bpm);
-      hub.StatusChanged();
+
+      await hub.SendAsync("StatusMsg", $"BPM set to: {bpm}");
+
+      await hub.StatusChanged();
       return GetBPM();
     }
 
-    public int IncreaseBPM(int value)
+    public async Task<int> IncreaseBPM(int value)
     {
-      var result = SetBPM(BPM + value);
-      hub.StatusChanged();
+      var result = await SetBPM(BPM + value);
       return result;
     }
   }

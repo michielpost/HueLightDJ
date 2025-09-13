@@ -1,0 +1,233 @@
+@implements IDialogContentComponent
+@inject IToastService ToastService
+@inject IHueSetupService HueSetupService
+@inject IBridgeDataService BridgeDataService
+@using HueEntertainmentPro.Client.Models
+@using HueEntertainmentPro.Shared.Interfaces
+@using HueEntertainmentPro.Shared.Models.Requests
+@using HueLightDJ.Services.Interfaces
+@using HueLightDJ.Services.Interfaces.Models
+@using Microsoft.FluentUI.AspNetCore.Components
+
+<FluentDialog Modal="true" TrapFocus="true" Header="Add Hue Bridge">
+    <FluentCard>
+        <FluentStack Orientation="Orientation.Vertical" Style="padding: 16px; min-width: 400px;">
+            
+                <FluentListbox 
+                               Items="@DiscoveredIps"
+                               Height="150px"
+                               Label="Discovered IP Addresses"
+                               OptionValue="@(i => i.BridgeId)"
+                           ValueChanged="@(async (string id) => await OnBridgeIdSelected(id))">
+                      <OptionTemplate>
+                          @context.IpAddress
+                      </OptionTemplate>
+                </FluentListbox>
+
+            <FluentCheckbox @bind-Value="@EditIp"
+                            Label="Manually enter IP" />
+
+            <FluentTextField Label="IP Address"
+                             @bind-Value="@BridgeConfig.IpAddress"
+                             Placeholder="e.g., 192.168.1.100"
+                             Disabled="@(!EditIp)" />
+
+          
+           
+                <FluentCheckbox @bind-Value="@ShowSecrets"
+                                Label="Manually enter username and key"
+                                />
+
+                @if (ShowSecrets)
+                {
+                    <FluentTextField Label="Username"
+                                     @bind-Value="@BridgeConfig.Username"
+                                     Placeholder="e.g., 1028d66426293e821ecfd9ef1a0731df" />
+                    <FluentTextField Label="Streaming Client Key"
+                                     @bind-Value="@BridgeConfig.StreamingClientKey"
+                                     Placeholder="Streaming Client Key" />
+                }
+
+            <FluentTextField Label="Name (optional)"
+                             @bind-Value="@BridgeConfig.Name"
+                             Placeholder="Name to identity the bridge" />
+
+
+            <FluentLabel Weight="FontWeight.Bold" Style="color: var(--error); margin-top: 8px;">
+                @ErrorMessage
+            </FluentLabel>
+
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Right" Style="margin-top: 16px;">
+                <FluentButton Appearance="Appearance.Neutral" OnClick="@CloseDialog">Cancel</FluentButton>
+                @if (ShowSecrets)
+                {
+                    <FluentButton Appearance="Appearance.Accent"
+                                  OnClick="@AddBridge"
+                                  Disabled="@(!IsFormValid)">
+                        Save
+                    </FluentButton>
+                }
+                else
+                {
+                    <FluentButton Appearance="Appearance.Accent"
+                                  OnClick="@AddBridge"
+                                  Disabled="@(!IsFormValid)">
+                        Push Bridge Button and Click Save
+                    </FluentButton>
+                }
+               
+            </FluentStack>
+        </FluentStack>
+    </FluentCard>
+</FluentDialog>
+
+@code {
+    [CascadingParameter]
+    public FluentDialog? Dialog { get; set; }
+
+    private bool EditIp { get; set; } = false;
+    private bool ShowSecrets { get; set; } = false;
+    private string ErrorMessage { get; set; } = string.Empty;
+    private IEnumerable<LocatedBridge> DiscoveredIps { get; set; } = new List<LocatedBridge>();
+    private HueBridgeConfig BridgeConfig { get; set; } = new();
+
+    private bool IsFormValid =>
+        !string.IsNullOrEmpty(BridgeConfig.IpAddress) &&
+        (EditIp == false || !ShowSecrets ||
+         (!string.IsNullOrEmpty(BridgeConfig.Username) && !string.IsNullOrEmpty(BridgeConfig.StreamingClientKey)));
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DiscoverIps();
+    }
+
+    private async Task OnModeChanged()
+    {
+        ErrorMessage = string.Empty;
+        BridgeConfig = new HueBridgeConfig();
+        // if (ConfigurationMode == "Discover")
+        // {
+        //     await DiscoverIps();
+        // }
+        StateHasChanged();
+    }
+
+    private async Task DiscoverIps()
+    {
+        try
+        {
+            DiscoveredIps = await HueSetupService.LocateBridgesAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to discover bridges: {ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    private async Task OnBridgeIdSelected(string bridgeId)
+    {
+        var selected = DiscoveredIps.FirstOrDefault(b => b.BridgeId == bridgeId);
+        if (selected == null)
+            return;
+
+        BridgeConfig.IpAddress = selected.IpAddress;
+        BridgeConfig.BridgeId = selected.BridgeId;
+        BridgeConfig.Username = string.Empty;
+        BridgeConfig.StreamingClientKey = string.Empty;
+
+        StateHasChanged();
+    }
+
+    private async Task AddBridge()
+    {
+        ErrorMessage = string.Empty;
+        try
+        {
+            if (!ShowSecrets)
+            {
+                var setup = await HueSetupService.RegisterAsync(new HueLightDJ.Services.Interfaces.Models.Requests.HueSetupRequest
+                    {
+                        Ip = BridgeConfig.IpAddress
+                    });
+
+                if(!string.IsNullOrEmpty(setup?.ErrorMessage))
+                {
+                    ErrorMessage = setup.ErrorMessage;
+                    StateHasChanged();
+                    return;
+                }
+
+                if (setup == null || string.IsNullOrEmpty(setup.Username) || string.IsNullOrEmpty(setup.StreamingClientKey))
+                {
+                    ErrorMessage = "Failed to register with bridge. Did you press the button on the bridge?";
+                    StateHasChanged();
+                    return;
+                }
+
+                BridgeConfig.Username = setup.Username;
+                BridgeConfig.StreamingClientKey = setup.StreamingClientKey;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(BridgeConfig.Username) || string.IsNullOrEmpty(BridgeConfig.StreamingClientKey))
+                {
+                    ErrorMessage = "Username and API Key are required.";
+                    StateHasChanged();
+                    return;
+                }
+
+                try
+                {
+                    var setup = await HueSetupService.GetEntertainmentGroupsAsync(new HueLightDJ.Services.Interfaces.Models.Requests.HueSetupRequest
+                        {
+                            Ip = BridgeConfig.IpAddress,
+                            Key = BridgeConfig.Username
+                        });
+
+                    if (!string.IsNullOrEmpty(setup?.ErrorMessage))
+                    {
+                        ErrorMessage = setup.ErrorMessage;
+                        StateHasChanged();
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorMessage = "Failed to connect to bridge with the values provided.";
+                    StateHasChanged();
+                    return;
+                }
+
+            }
+
+            var result = await BridgeDataService.AddBridge(new AddBridgeRequest
+            {
+                Ip = BridgeConfig.IpAddress,
+                BridgeId = BridgeConfig.BridgeId,
+                Name = !string.IsNullOrEmpty(BridgeConfig.Name) ? BridgeConfig.Name : BridgeConfig.BridgeId,
+                StreamingClientKey = BridgeConfig.StreamingClientKey,
+                Username = BridgeConfig.Username
+            });
+            if (result != null)
+            {
+                ToastService.ShowSuccess($"Added bridge {BridgeConfig.IpAddress} successfully.");
+                CloseDialog();
+            }
+            else
+            {
+                ErrorMessage = "Failed to add bridge. Ensure the bridge button was pressed.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error adding bridge: {ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    private void CloseDialog()
+    {
+        Dialog?.CloseAsync();
+    }
+}
