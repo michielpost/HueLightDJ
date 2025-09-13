@@ -33,11 +33,13 @@
     <h4 style="margin-top: 20px;">Entertainment Groups</h4>
     @if (proArea.Connections.Any())
     {
-        <FluentDataGrid Items="@proArea.Connections.AsQueryable()" GridTemplateColumns="1fr 1fr" TGridItem="BridgeGroupConnection">
+        <FluentDataGrid Items="@proArea.Connections.AsQueryable()"
+                        RowSize="@DataGridRowSize.Medium"
+                        TGridItem="BridgeGroupConnection">
             <PropertyColumn Title="IP" Property="@(g => g.Bridge.Ip)" Sortable="true" Align="Align.Start" />
             <PropertyColumn Title="Bridge" Property="@(g => g.Bridge.Name)" Sortable="true" Align="Align.Start" />
             <PropertyColumn Title="Entertainment Group" Property="@(g => g.Name)" Sortable="true" Align="Align.Start" />
-            <TemplateColumn Title="" Align="Align.Start">
+            <TemplateColumn Title="Action" Align="Align.Start">
                 <FluentButton Appearance="Appearance.Accent" @onclick="() => RemoveConnection(context.Id)">Remove</FluentButton>
             </TemplateColumn>
         </FluentDataGrid>
@@ -87,8 +89,10 @@
             }
             else if (entertainmentGroups.Any())
             {
-                <FluentDataGrid Items="@entertainmentGroups" GridTemplateColumns="1fr 1fr" TGridItem="SimpleEntertainmentGroup">
-                    <TemplateColumn Title="" Align="Align.Start">
+                <FluentDataGrid Items="@entertainmentGroups"
+                                RowSize="@DataGridRowSize.Medium"
+                  TGridItem="SimpleEntertainmentGroup">
+                    <TemplateColumn Title="Action" Align="Align.Start">
                         <FluentButton @onclick="() => AddToArea(selectedBridge.Value.Id, context.Id, context.Name)">Add</FluentButton>
                     </TemplateColumn>
                     <PropertyColumn Title="Name" Property="@(g => g.Name)" Sortable="true" Align="Align.Start" />

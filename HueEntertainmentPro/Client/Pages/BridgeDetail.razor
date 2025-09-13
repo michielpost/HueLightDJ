@@ -38,7 +38,7 @@
     }
     else if (entertainmentGroups.Any())
     {
-        <FluentDataGrid Items="@entertainmentGroups" GridTemplateColumns="1fr 1fr" TGridItem="SimpleEntertainmentGroup">
+        <FluentDataGrid Items="@entertainmentGroups" TGridItem="SimpleEntertainmentGroup">
             <PropertyColumn Title="Name" Property="@(g => g.Name)" Sortable="true" Align="Align.Start" />
             <PropertyColumn Title="Lights" Property="@(g => g.LightCount)" Sortable="true" Align="Align.Start" />
         </FluentDataGrid>

@@ -23,7 +23,7 @@
 
         var currentUrl = NavigationManager.Uri;
         var status = await LightDJService.GetStatus();
-        if (status.CurrentGroup != null && !currentUrl.EndsWith("/pixipreview"))
+        if (status.CurrentGroup != null && !currentUrl.EndsWith("/pixipreview") && !currentUrl.EndsWith("/3dpreview"))
         {
             NavigationManager.NavigateTo($"/play/{status.CurrentGroup.Id}");
         }

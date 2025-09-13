@@ -72,7 +72,7 @@ else if (proAreas.Any())
 
         @foreach (var area in proAreas)
         {
-            <FluentGridItem xs="6" sm="3">
+            <FluentGridItem xs="12" sm="6">
                 <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
                     <FluentStack Orientation="Orientation.Vertical" Gap="10">
                         <FluentLabel Typo="Typography.Header">@area.Name</FluentLabel>
@@ -91,12 +91,12 @@ else if (proAreas.Any())
                         }
 
                         <FluentStack>
-                        <FluentButton @onclick="() => NavigateToArea(area.Id)">Edit</FluentButton>
+                            <FluentButton @onclick="() => NavigateToArea(area.Id)">Edit</FluentButton>
 
-                        @if (area.Connections.Any())
-                        {
-                            <FluentButton Appearance="Appearance.Accent" @onclick="() => NavigateToPlay(area.Id)">Start</FluentButton>
-                        }
+                            @if (area.Connections.Any())
+                            {
+                                <FluentButton Appearance="Appearance.Accent" @onclick="() => NavigateToPlay(area.Id)">Start</FluentButton>
+                            }
 
                         </FluentStack>
 
@@ -113,22 +113,22 @@ else if (proAreas.Any())
 
 <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
 
-        <FluentGridItem xs="6" sm="3">
-            <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
-                <FluentStack Orientation="Orientation.Vertical" Gap="10">
-                    <FluentLabel Typo="Typography.Header">Grid Demo</FluentLabel>
-                        <FluentLabel>2 bridges with lights in a grid layout</FluentLabel>
-                        <FluentButton @onclick="() => NavigateToPlay(ProAreaPlay.demo1Id)">Start</FluentButton>
-                </FluentStack>
-            </FluentCard>
-        </FluentGridItem>
+    <FluentGridItem xs="12" sm="6">
+        <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
+            <FluentStack Orientation="Orientation.Vertical" Gap="10">
+                <FluentLabel Typo="Typography.Header">Grid Demo</FluentLabel>
+                <FluentLabel>2 bridges with lights in a grid layout</FluentLabel>
+                <FluentButton Appearance="Appearance.Accent" @onclick="() => NavigateToPlay(ProAreaPlay.demo1Id)">Start</FluentButton>
+            </FluentStack>
+        </FluentCard>
+    </FluentGridItem>
 
-    <FluentGridItem xs="6" sm="3">
+    <FluentGridItem xs="12" sm="6">
         <FluentCard Style="margin-bottom: 16px;" MinimalStyle="true">
             <FluentStack Orientation="Orientation.Vertical" Gap="10">
                 <FluentLabel Typo="Typography.Header">Star Demo</FluentLabel>
                 <FluentLabel>Q42 Office Star Layout (32 lights)</FluentLabel>
-                <FluentButton @onclick="() => NavigateToPlay(ProAreaPlay.demo2Id)">Start</FluentButton>
+                <FluentButton Appearance="Appearance.Accent" @onclick="() => NavigateToPlay(ProAreaPlay.demo2Id)">Start</FluentButton>
             </FluentStack>
         </FluentCard>
     </FluentGridItem>
