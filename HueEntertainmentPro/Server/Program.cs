@@ -5,6 +5,7 @@ using HueEntertainmentPro.Services;
 using HueLightDJ.Services;
 using HueLightDJ.Services.Interfaces;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 using ProtoBuf.Grpc.Server;
@@ -36,6 +37,13 @@ builder.Services.AddSingleton<IHubService, HubService>();
 builder.Services.AddHueLightDJServices();
 
 var app = builder.Build();
+
+var sqlLiteBuilder = new SqliteConnectionStringBuilder(connectionString);
+var dbPath = Path.GetDirectoryName(sqlLiteBuilder.DataSource);
+if (dbPath != null && !Directory.Exists(dbPath))
+{
+  Directory.CreateDirectory(dbPath);
+}
 
 // Ensure database is created and apply migrations
 using (var scope = app.Services.CreateScope())

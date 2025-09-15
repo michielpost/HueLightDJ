@@ -1,6 +1,6 @@
 services:
   hueentertainmentpro.server:
-    image: ${DOCKER_REGISTRY-}hueentertainmentproserver
+    image: ${DOCKER_REGISTRY-}michielpost/huelightdj
     build:
       context: .
       dockerfile: HueEntertainmentPro/Server/Dockerfile

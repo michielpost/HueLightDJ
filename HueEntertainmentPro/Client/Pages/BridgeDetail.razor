@@ -89,6 +89,9 @@ else
 
     private async Task ShowEditNameDialog()
     {
+        if (bridge == null)
+            return;
+
         var dialogParameters = new DialogParameters
         {
             Title = "Edit Bridge Name",
@@ -98,7 +101,7 @@ else
             Modal = true
         };
 
-        var dialog = await DialogService.ShowDialogAsync<EditNameDialog>(bridge.Name, dialogParameters);
+        var dialog = await DialogService.ShowDialogAsync<EditNameDialog>(bridge.Name ?? string.Empty, dialogParameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled && result.Data is string newName && !string.IsNullOrWhiteSpace(newName))

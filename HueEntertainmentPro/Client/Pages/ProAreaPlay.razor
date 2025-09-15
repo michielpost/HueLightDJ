@@ -232,6 +232,12 @@ else
 
     public async Task Connect()
     {
+        if (config == null)
+        {
+            errorMessage = "No entertainment groups connected to this area. Please add some in the area details page.";
+            return;
+        }
+
         await LightDJService.Connect(config);
         statusModel = await LightDJService.GetStatus();
         this.InvokeAsync(() => this.StateHasChanged());

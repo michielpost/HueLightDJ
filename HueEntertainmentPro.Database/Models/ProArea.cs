@@ -7,7 +7,7 @@ namespace HueEntertainmentPro.Database.Models
     //public bool IsAlwaysVisible { get; set; }
     //public bool HideDisconnect { get; set; }
 
-    public IList<ProAreaBridgeGroup> ProAreaBridgeGroups { get; set; }
+    public IList<ProAreaBridgeGroup>? ProAreaBridgeGroups { get; set; }
 
     public DateTime CreatedDate { get; set; }
   }

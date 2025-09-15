@@ -53,8 +53,8 @@
 
     <h4 style="margin-top: 20px;">Add Entertainment Groups</h4>
 
-    var disabled = bridgeOptions.Where(x => x.Disabled).Any();
-    var enabled = bridgeOptions.Where(x => !x.Disabled).Any();
+    var disabled = bridgeOptions?.Where(x => x.Disabled).Any() ?? false;
+    var enabled = bridgeOptions?.Where(x => !x.Disabled).Any() ?? false;
 
     @if (enabled && disabled)
     {
@@ -76,7 +76,7 @@
                        TOption="Option<Bridge>"
                        OptionText="@(i => i.Text)"
                        OptionDisabled="@(i => i.Disabled)"
-                       OptionValue="@(i => i.Value.Id.ToString())"
+                       OptionValue="@(i => i.Value?.Id.ToString())"
                        @bind-SelectedOption="@selectedBridge"
                        ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" />
 
@@ -91,7 +91,7 @@
             {
                 <FluentDataGrid Items="@entertainmentGroups"
                                 RowSize="@DataGridRowSize.Medium"
-                  TGridItem="SimpleEntertainmentGroup">
+                                TGridItem="SimpleEntertainmentGroup">
                     <TemplateColumn Title="Action" Align="Align.Start">
                         <FluentButton @onclick="() => AddToArea(selectedBridge.Value.Id, context.Id, context.Name)">Add</FluentButton>
                     </TemplateColumn>
@@ -159,6 +159,9 @@ else
 
     private async Task ShowEditNameDialog()
     {
+        if (proArea == null)
+            return;
+
         var dialogParameters = new DialogParameters
         {
             Title = "Edit Area Name",
@@ -168,7 +171,7 @@ else
             Modal = true
         };
 
-        var dialog = await DialogService.ShowDialogAsync<EditNameDialog>(proArea.Name, dialogParameters);
+        var dialog = await DialogService.ShowDialogAsync<EditNameDialog>(proArea.Name ?? string.Empty, dialogParameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled && result.Data is string newName && !string.IsNullOrWhiteSpace(newName))
@@ -221,7 +224,10 @@ else
         StateHasChanged();
 
         var id = Guid.Parse(bridgeId);
-        var bridge = bridges.FirstOrDefault(b => b.Id == id);
+        var bridge = bridges?.FirstOrDefault(b => b.Id == id);
+
+        if(bridge == null)
+            return;
 
         // Load entertainment groups
         var result = await HueSetupService.GetEntertainmentGroupsAsync(new HueLightDJ.Services.Interfaces.Models.Requests.HueSetupRequest()
@@ -236,6 +242,9 @@ else
 
     private async Task AddToArea(Guid bridgeId, Guid groupId, string? name)
     {
+        if (proArea == null)
+            return;
+
         var result = await ProAreaDataService.AddBridgeGroup(new AddBridgeGroupRequest
         {
             ProAreaId = proArea.Id,

@@ -36,7 +36,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./HueEntertainmentPro/Server/
+          context: ./
+          file: ./HueEntertainmentPro/Server/Dockerfile
           push: true
           tags: michielpost/huelightdj:latest,${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

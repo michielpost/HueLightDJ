@@ -49,7 +49,7 @@ namespace HueEntertainmentPro.Database
               entityBuilder
                   .Property(propertyInfo.Name)
                   .HasConversion(
-                      new ValueConverter<Guid?, string>(
+                      new ValueConverter<Guid?, string?>(
                           v => v.HasValue ? v.Value.ToString() : null,
                           v => v != null ? Guid.Parse(v) : (Guid?)null))
                   .UseCollation("NOCASE");

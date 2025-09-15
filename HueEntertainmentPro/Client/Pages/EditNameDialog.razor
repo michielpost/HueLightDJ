@@ -11,18 +11,20 @@
 
 @code {
     [CascadingParameter]
-    private FluentDialog Dialog { get; set; }
+    private FluentDialog? Dialog { get; set; }
 
     [Parameter]
     public string Content { get; set; } = string.Empty;
 
     private async Task Submit()
     {
-        await Dialog.CloseAsync(Content);
+        if (Dialog != null)
+            await Dialog.CloseAsync(Content);
     }
 
     private async Task Cancel()
     {
-        await Dialog.CancelAsync();
+        if (Dialog != null)
+            await Dialog.CancelAsync();
     }
 }

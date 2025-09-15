@@ -60,6 +60,12 @@ docker run -d -p 8080:8080 michielpost/huelightdj
 ```
 Hue Entertainment Pro is now available on port 8080
 
+## Build docker image locally
+```
+docker build -f HueEntertainmentPro/Server/Dockerfile -t hue-entertainment-pro:dev .
+docker run --rm -p 8080:8080 hue-entertainment-pro:dev
+```
+
 ### Docker Compose
 This application uses SQLite for storage. To keep your data between upgrades, use docker compose to store the database file on it's own volume.
 
@@ -67,7 +73,7 @@ Example docker compose file:
 ```yml
 services:
   hueentertainmentpro.server:
-    image: ${DOCKER_REGISTRY-}hueentertainmentproserver
+    image: ${DOCKER_REGISTRY-}michielpost/huelightdj
     build:
       context: .
       dockerfile: HueEntertainmentPro/Server/Dockerfile
