@@ -19,7 +19,7 @@ else if (!bridges.Any() || !proAreas.Any())
     <text>
         <h1>Setup</h1>
         <p>
-            Combine entertainment area's from multiple bridges into one entertainment area.
+            Combine entertainment areas from multiple bridges into one entertainment area.
             Display effects and visualize your room in 3d.
         </p>
 
@@ -43,19 +43,19 @@ else if (!bridges.Any() || !proAreas.Any())
 
         <br />
         <br />
-        <h2>2) Combine multiple entertainment area's into one</h2>
+        <h2>2) Combine multiple entertainment areas into one</h2>
         <p>
             Don't worry, you can also start with 1 bridge and 1 area to see what Hue Entertainment Pro can do.
         </p>
 
         @if (bridges.Any())
         {
-            <p>You have added @bridges.Count() bridge(s). Now you can create entertainment area's by combining entertainment groups from your bridges.</p>
+            <p>You have added @bridges.Count() bridge(s). Now you can create entertainment areas by combining entertainment groups from your bridges.</p>
             <FluentButton @onclick="OpenAddAreaDialog" Appearance="Appearance.Accent">Add Area</FluentButton>
         }
         else
         {
-            <p>Once you have added some bridges, you can create entertainment area's by combining entertainment groups from your bridges.</p>
+            <p>Once you have added some bridges, you can create entertainment areas by combining entertainment groups from your bridges.</p>
         }
 
     </text>
@@ -64,7 +64,7 @@ else if (!bridges.Any() || !proAreas.Any())
 }
 else if (proAreas.Any())
 {
-    <h1>Entertainment Area's</h1>
+    <h1>Entertainment Areas</h1>
 
     <FluentButton @onclick="OpenAddAreaDialog">Add Area</FluentButton>
 
@@ -109,7 +109,7 @@ else if (proAreas.Any())
     </FluentGrid>
 }
 
-<h1>Demo Area's</h1>
+<h1>Demo Areas</h1>
 
 <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
 
