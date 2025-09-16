@@ -15,6 +15,7 @@ builder.Services.AddFluentUIComponents();
 builder.Services.AddTransient<HueJsInterop>();
 builder.Services.AddTransient<ThreejsPreviewJsInterop>();
 builder.Services.AddSingleton<IHubService, SignalRClientHubService>();
+builder.Services.AddSingleton<EventMonitorService>();
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");

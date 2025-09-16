@@ -1,0 +1,109 @@
+@page "/eventmonitor"
+@using HueEntertainmentPro.Client.Services
+@using HueEntertainmentPro.Shared.Interfaces
+@using HueEntertainmentPro.Shared.Models
+@inject IBridgeDataService BridgeDataService
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject EventMonitorService EventMonitorService
+
+<PageTitle>Event Monitor</PageTitle>
+
+<h1>Event Monitor</h1>
+
+@if (bridges == null)
+{
+    <p><em>Loading bridges...</em></p>
+}
+else
+{
+    <FluentTabs Orientation="Orientation.Vertical">
+        @foreach (var item in bridges)
+        {
+            <FluentTab Id="@($"tab-{item.Id}")"
+                       @bind-Label="@item.Name"
+                       Data="@item">
+                Content #@item.Ip - @item.Name
+                <FluentButton OnClick="() => Subscribe(item.Id)">Connect</FluentButton>
+                <FluentButton OnClick="() => Unsubscribe(item.Id)">Disconnect</FluentButton>
+                @foreach (var evt in events.Where(x => x.BridgeIp == item.Ip))
+                {
+                    <li>
+                        <strong>Bridge IP:</strong> @evt.BridgeIp<br />
+                        <strong>Name:</strong> @evt.EventDetails.Name<br />
+                        <strong>ID:</strong> @evt.EventDetails.IdV1<br />
+                        <strong>Extension Data:</strong>
+                        <ul>
+                            @foreach (var kvp in evt.EventDetails.ExtensionData)
+                            {
+                                <li>@kvp.Key: @kvp.Value</li>
+                            }
+                        </ul>
+                    </li>
+                }
+            </FluentTab>
+        }
+    </FluentTabs>
+}
+
+
+@code {
+
+    private IQueryable<Bridge>? bridges;
+
+    private string bridgeIdInput = string.Empty;
+    private string status = "Not subscribed";
+    private List<EventData> events = new();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await BridgeDataService.GetBridges();
+        bridges = result.AsQueryable();
+
+        EventMonitorService.OnSubscribed += (message) =>
+        {
+            status = message;
+            StateHasChanged();
+        };
+
+        EventMonitorService.OnUnsubscribed += (message) =>
+        {
+            status = message;
+            StateHasChanged();
+        };
+
+        EventMonitorService.OnError += (message) =>
+        {
+            status = $"Error: {message}";
+            StateHasChanged();
+        };
+
+        EventMonitorService.OnEventReceived += (eventData) =>
+        {
+            events.Add(eventData);
+            StateHasChanged();
+        };
+    }
+
+    private async Task Subscribe(Guid bridgeId)
+    {
+        await EventMonitorService.SubscribeAsync(bridgeId);
+        status = $"Subscribing to bridge: {bridgeId}";
+       
+        StateHasChanged();
+    }
+
+    private async Task Unsubscribe(Guid bridgeId)
+    {
+        await EventMonitorService.UnsubscribeAsync(bridgeId);
+        status = "Unsubscribing...";
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await EventMonitorService.DisposeAsync();
+    }
+}

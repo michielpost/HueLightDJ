@@ -1,3 +1,4 @@
+using HueEntertainmentPro.Client.Pages;
 using HueEntertainmentPro.Database;
 using HueEntertainmentPro.Server.Hubs;
 using HueEntertainmentPro.Server.Services;
@@ -34,6 +35,7 @@ builder.Services.AddResponseCompression(opts =>
 builder.Services.AddCodeFirstGrpc();
 
 builder.Services.AddSingleton<IHubService, HubService>();
+builder.Services.AddScoped<BridgeService>();
 builder.Services.AddHueLightDJServices();
 
 var app = builder.Build();
@@ -79,6 +81,7 @@ app.MapGrpcService<HueSetupService>().EnableGrpcWeb();
 app.MapGrpcService<LightDJService>().EnableGrpcWeb();
 
 app.MapHub<PreviewHub>("/previewhub");
+app.MapHub<EventMonitorHub>("/eventmonitorhub");
 
 
 app.MapRazorPages();
