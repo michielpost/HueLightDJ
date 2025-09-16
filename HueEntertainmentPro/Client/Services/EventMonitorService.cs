@@ -7,10 +7,10 @@ namespace HueEntertainmentPro.Client.Services
   public class EventMonitorService : IAsyncDisposable
   {
     private readonly HubConnection _hubConnection;
-    private readonly EventMonitorClientProxy _clientProxy;
+    //private readonly EventMonitorClientProxy _clientProxy;
 
-    public event Action<string>? OnSubscribed;
-    public event Action<string>? OnUnsubscribed;
+    public event Action<Guid>? OnSubscribed;
+    public event Action<Guid>? OnUnsubscribed;
     public event Action<string>? OnError;
     public event Action<EventData>? OnEventReceived;
 
@@ -23,7 +23,14 @@ namespace HueEntertainmentPro.Client.Services
           .WithAutomaticReconnect()
           .Build();
 
-      _clientProxy = new EventMonitorClientProxy(this, url);
+      // Register typed client methods
+      _hubConnection.On<Guid>(nameof(IEventMonitorClient.Subscribed), Subscribed);
+      _hubConnection.On<Guid>(nameof(IEventMonitorClient.Unsubscribed), Unsubscribed);
+      _hubConnection.On<string>(nameof(IEventMonitorClient.Error), Error);
+      _hubConnection.On<EventData>(nameof(IEventMonitorClient.ReceiveEvent), ReceiveEvent);
+
+      _hubConnection.StartAsync();
+
     }
 
     public async Task SubscribeAsync(Guid bridgeId)
@@ -38,17 +45,17 @@ namespace HueEntertainmentPro.Client.Services
 
     public async ValueTask DisposeAsync()
     {
-      await _clientProxy.DisposeAsync();
+      //await _clientProxy.DisposeAsync();
       await _hubConnection.DisposeAsync();
     }
 
     // Protected methods to raise events
-    public void RaiseSubscribed(string message)
+    public void RaiseSubscribed(Guid message)
     {
       OnSubscribed?.Invoke(message);
     }
 
-    public void RaiseUnsubscribed(string message)
+    public void RaiseUnsubscribed(Guid message)
     {
       OnUnsubscribed?.Invoke(message);
     }
@@ -61,6 +68,36 @@ namespace HueEntertainmentPro.Client.Services
     public void RaiseEventReceived(EventData eventData)
     {
       OnEventReceived?.Invoke(eventData);
+    }
+
+    // Add a method to start the connection asynchronously
+    public async Task StartAsync()
+    {
+      await _hubConnection.StartAsync();
+    }
+
+    public async Task Subscribed(Guid message)
+    {
+      RaiseSubscribed(message);
+      await Task.CompletedTask;
+    }
+
+    public async Task Unsubscribed(Guid message)
+    {
+      RaiseUnsubscribed(message);
+      await Task.CompletedTask;
+    }
+
+    public async Task Error(string message)
+    {
+      RaiseError(message);
+      await Task.CompletedTask;
+    }
+
+    public async Task ReceiveEvent(EventData eventData)
+    {
+      RaiseEventReceived(eventData);
+      await Task.CompletedTask;
     }
   }
 }

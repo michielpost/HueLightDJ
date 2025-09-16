@@ -3,6 +3,7 @@ using HueApi.Models.Responses;
 using HueEntertainmentPro.Server.Services;
 using HueEntertainmentPro.Services;
 using HueEntertainmentPro.Shared.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
@@ -54,7 +55,7 @@ namespace HueEntertainmentPro.Server.Hubs
           }
         }
 
-        await Clients.Caller.Subscribed($"Subscribed to bridge: {bridgeId}");
+        await Clients.Caller.Subscribed(bridgeId);
       }
     }
 
@@ -80,7 +81,7 @@ namespace HueEntertainmentPro.Server.Hubs
           }
         }
 
-        await Clients.Caller.Unsubscribed($"Unsubscribed from bridge: {bridgeId}");
+        await Clients.Caller.Unsubscribed(bridgeId);
 
         // Clean up if no bridges remain for this connection
         if (!connectionBridges.Any())
@@ -135,6 +136,8 @@ namespace HueEntertainmentPro.Server.Hubs
 
           var eventData = new EventData
           {
+            CreationTime = hueEvent.CreationTime,
+            SendTime = DateTimeOffset.UtcNow,
             BridgeIp = bridgeIp,
             EventDetails = new EventDetails
             {

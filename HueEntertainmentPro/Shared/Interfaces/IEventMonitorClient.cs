@@ -1,9 +1,10 @@
+
 namespace HueEntertainmentPro.Shared.Interfaces
 {
   public interface IEventMonitorClient
   {
-    Task Subscribed(string message);
-    Task Unsubscribed(string message);
+    Task Subscribed(Guid message);
+    Task Unsubscribed(Guid message);
     Task Error(string message);
     Task ReceiveEvent(EventData eventData);
   }
@@ -12,6 +13,8 @@ namespace HueEntertainmentPro.Shared.Interfaces
   {
     public string BridgeIp { get; set; } = string.Empty;
     public EventDetails EventDetails { get; set; } = new EventDetails();
+    public DateTimeOffset CreationTime { get; set; }
+    public DateTimeOffset SendTime { get; set; }
   }
 
   public class EventDetails

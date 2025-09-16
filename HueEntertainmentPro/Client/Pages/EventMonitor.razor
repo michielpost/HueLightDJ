@@ -11,39 +11,55 @@
 
 <h1>Event Monitor</h1>
 
+<p>Monitor all events from a bridge. Select a bridge and click Connect.</p>
+
 @if (bridges == null)
 {
     <p><em>Loading bridges...</em></p>
 }
 else
 {
-    <FluentTabs Orientation="Orientation.Vertical">
-        @foreach (var item in bridges)
-        {
-            <FluentTab Id="@($"tab-{item.Id}")"
-                       @bind-Label="@item.Name"
-                       Data="@item">
-                Content #@item.Ip - @item.Name
-                <FluentButton OnClick="() => Subscribe(item.Id)">Connect</FluentButton>
-                <FluentButton OnClick="() => Unsubscribe(item.Id)">Disconnect</FluentButton>
-                @foreach (var evt in events.Where(x => x.BridgeIp == item.Ip))
+    <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
+        <FluentGridItem xs="12">
+            <FluentTabs Orientation="Orientation.Vertical">
+                @foreach (var item in bridges)
                 {
-                    <li>
-                        <strong>Bridge IP:</strong> @evt.BridgeIp<br />
-                        <strong>Name:</strong> @evt.EventDetails.Name<br />
-                        <strong>ID:</strong> @evt.EventDetails.IdV1<br />
-                        <strong>Extension Data:</strong>
-                        <ul>
-                            @foreach (var kvp in evt.EventDetails.ExtensionData)
-                            {
-                                <li>@kvp.Key: @kvp.Value</li>
-                            }
-                        </ul>
-                    </li>
+                    <FluentTab Id="@($"tab-{item.Id}")"
+                               @bind-Label="@item.Name"
+                               Data="@item">
+
+                        @if (!subscribedBridges.Contains(item.Id))
+                        {
+                            <FluentButton OnClick="() => Subscribe(item.Id)">Connect</FluentButton>
+                        }
+                        else
+                        {
+                            <FluentButton OnClick="() => Unsubscribe(item.Id)">Disconnect</FluentButton>
+                        }
+                        <FluentDataGrid Items="@events.Where(x => x.BridgeIp == item.Ip).OrderByDescending(x => x.CreationTime).ThenByDescending(x => x.SendTime).Take(100).AsQueryable()" ResizableColumns=true>
+
+                            <PropertyColumn Sortable="true" Property="x => x.CreationTime" Title="Time" />
+                            <PropertyColumn Property="x => x.BridgeIp" Title="IP" />
+                            <PropertyColumn Property="x => x.EventDetails.Name" Title="Name" />
+                            <PropertyColumn Property="x => x.EventDetails.IdV1" Title="IdV1" />
+
+                            <TemplateColumn Title="Data">
+                                <ul>
+                                    @foreach (var kvp in context.EventDetails.ExtensionData)
+                                    {
+                                        <li>@kvp.Key: @kvp.Value</li>
+                                    }
+                                </ul>
+                            </TemplateColumn>
+                        </FluentDataGrid>
+
+                    </FluentTab>
                 }
-            </FluentTab>
-        }
-    </FluentTabs>
+            </FluentTabs>
+        </FluentGridItem>
+    </FluentGrid>
+
+
 }
 
 
@@ -55,7 +71,7 @@ else
     private string status = "Not subscribed";
     private List<EventData> events = new();
 
-
+    private List<Guid> subscribedBridges = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,13 +80,16 @@ else
 
         EventMonitorService.OnSubscribed += (message) =>
         {
-            status = message;
+            subscribedBridges.Add(message);
+            Console.WriteLine();
+            status = $"Subscribed: {message}";
             StateHasChanged();
         };
 
         EventMonitorService.OnUnsubscribed += (message) =>
         {
-            status = message;
+            subscribedBridges.Remove(message);
+            status = $"Unsubscribed: {message}";
             StateHasChanged();
         };
 
@@ -91,7 +110,7 @@ else
     {
         await EventMonitorService.SubscribeAsync(bridgeId);
         status = $"Subscribing to bridge: {bridgeId}";
-       
+
         StateHasChanged();
     }
 
