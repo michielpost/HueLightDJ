@@ -25,34 +25,36 @@ else
                 @foreach (var item in bridges)
                 {
                     <FluentTab Id="@($"tab-{item.Id}")"
-                               @bind-Label="@item.Name"
                                Data="@item">
+                        <Header>
+                            <FluentLabel Typo="Typography.Header">@item.Name (@item.Ip)</FluentLabel>
+                        </Header>
+                        <Content>
+                            @if (!subscribedBridges.Contains(item.Id))
+                            {
+                                <FluentButton OnClick="() => Subscribe(item.Id)">Connect</FluentButton>
+                            }
+                            else
+                            {
+                                <FluentButton OnClick="() => Unsubscribe(item.Id)">Disconnect</FluentButton>
+                            }
+                            <FluentDataGrid Items="@events.Where(x => x.BridgeIp == item.Ip).OrderByDescending(x => x.CreationTime).ThenByDescending(x => x.SendTime).Take(100).AsQueryable()" ResizableColumns=true>
 
-                        @if (!subscribedBridges.Contains(item.Id))
-                        {
-                            <FluentButton OnClick="() => Subscribe(item.Id)">Connect</FluentButton>
-                        }
-                        else
-                        {
-                            <FluentButton OnClick="() => Unsubscribe(item.Id)">Disconnect</FluentButton>
-                        }
-                        <FluentDataGrid Items="@events.Where(x => x.BridgeIp == item.Ip).OrderByDescending(x => x.CreationTime).ThenByDescending(x => x.SendTime).Take(100).AsQueryable()" ResizableColumns=true>
+                                <PropertyColumn Sortable="true" Property="x => x.CreationTime" Title="Time" />
+                                <PropertyColumn Property="x => x.BridgeIp" Title="IP" />
+                                <PropertyColumn Property="x => x.EventDetails.Name" Title="Name" />
+                                <PropertyColumn Property="x => x.EventDetails.IdV1" Title="IdV1" />
 
-                            <PropertyColumn Sortable="true" Property="x => x.CreationTime" Title="Time" />
-                            <PropertyColumn Property="x => x.BridgeIp" Title="IP" />
-                            <PropertyColumn Property="x => x.EventDetails.Name" Title="Name" />
-                            <PropertyColumn Property="x => x.EventDetails.IdV1" Title="IdV1" />
-
-                            <TemplateColumn Title="Data">
-                                <ul>
-                                    @foreach (var kvp in context.EventDetails.ExtensionData)
-                                    {
-                                        <li>@kvp.Key: @kvp.Value</li>
-                                    }
-                                </ul>
-                            </TemplateColumn>
-                        </FluentDataGrid>
-
+                                <TemplateColumn Title="Data">
+                                    <ul>
+                                        @foreach (var kvp in context.EventDetails.ExtensionData)
+                                        {
+                                            <li>@kvp.Key: @kvp.Value</li>
+                                        }
+                                    </ul>
+                                </TemplateColumn>
+                            </FluentDataGrid>
+                        </Content>
                     </FluentTab>
                 }
             </FluentTabs>
