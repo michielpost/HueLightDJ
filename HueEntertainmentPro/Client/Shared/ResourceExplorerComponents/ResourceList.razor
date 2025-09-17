@@ -1,0 +1,37 @@
+@using HueApi
+@using HueApi.Models
+@using HueEntertainmentPro.Client.Services
+@inject NavigationManager NavigationManager
+@inject ResourceExplorerService ResourceExplorerService
+
+@if (Bridge != null && (HueResources?.Any() ?? false))
+{
+    <h3>Resource List</h3>
+
+    @foreach (var resource in HueResources)
+    {
+        <FluentNavLink Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, resource.Type, resource.Id)">@resource.Id</FluentNavLink>
+    }
+}
+
+@code {
+    [Parameter]
+    public HueEntertainmentPro.Shared.Models.Bridge? Bridge { get; set; }
+
+    [Parameter]
+    public required string Rtype { get; set; }
+
+
+    private List<HueResource>? HueResources = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Bridge != null)
+        {
+            var localHueApi = ResourceExplorerService.GetHueClient(Bridge);
+            var resources = await localHueApi.GetResourceAsync(Rtype);
+
+            HueResources = resources.Data;
+        }
+    }
+}

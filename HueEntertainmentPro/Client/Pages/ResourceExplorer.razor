@@ -1,56 +1,77 @@
 @page "/resource-explorer"
-@page "/resource-explorer/{Rtype}/{Rid}"
+@page "/resource-explorer/{Id:guid}"
+@page "/resource-explorer/{Id:guid}/{Rtype}"
+@page "/resource-explorer/{Id:guid}/{Rtype}/{Rid:guid}"
 @using HueEntertainmentPro.Client.Services
 @using HueEntertainmentPro.Shared.Interfaces
 @using HueEntertainmentPro.Shared.Models
+@using HueEntertainmentPro.Client.Shared.ResourceExplorerComponents;
 @inject IBridgeDataService BridgeDataService
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
+@inject ResourceExplorerService ResourceExplorerService
 
 <PageTitle>Resource Explorer</PageTitle>
 
 <h1>Resource Explorer</h1>
 
-<p>Explore available resources on your bridges.</p>
-
-@if (bridgeOptions == null)
+@if (!Id.HasValue || selectedBridge == null)
 {
-    <p><em>Loading bridges...</em></p>
+    <p>Explore available resources on your bridges.</p>
+
+    @if (bridgeOptions == null)
+    {
+        <p><em>Loading bridges...</em></p>
+    }
+    else
+    {
+        <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
+            <FluentGridItem xs="12">
+
+                <FluentSelect Items=@bridgeOptions
+                              TOption="Option<Bridge>"
+                              OptionText="@(i => i.Text)"
+                              Placeholder="Select a Hue Bridge..."
+                              OptionValue="@(i => i.Value?.Id.ToString())"
+                              ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" />
+
+            </FluentGridItem>
+        </FluentGrid>
+    }
+}
+else if (string.IsNullOrEmpty(Rtype))
+{
+    <p>Select a type on @Id </p>
+    <ClipList Bridge="@selectedBridge" />
+
+}
+else if (!Rid.HasValue)
+{
+    <ResourceList Bridge="@selectedBridge" Rtype="@Rtype" />
 }
 else
 {
-    <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
-        <FluentGridItem xs="12">
-
-            <FluentSelect Items=@bridgeOptions
-                          TOption="Option<Bridge>"
-                          OptionText="@(i => i.Text)"
-                          Placeholder="Select a Hue Bridge..."
-                          OptionValue="@(i => i.Value?.Id.ToString())"
-                          @bind-SelectedOption="@selectedBridge"
-                          ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" />
-            <p>
-                Selected Value: @selectedBridge?.Value?.Id<br />
-            </p>
-
-        </FluentGridItem>
-    </FluentGrid>
+    <ResourceDetail Bridge="@selectedBridge" Rtype="@Rtype" Rid="@Rid.Value" />
 
 
 }
-
 
 @code {
 
     private IQueryable<Bridge>? bridges;
     private List<Option<Bridge>>? bridgeOptions;
-    private Option<Bridge>? selectedBridge;
+
+    private Bridge? selectedBridge;
+
+
+    [Parameter]
+    public Guid? Id { get; set; }
 
     [Parameter]
     public string? Rtype { get; set; }
 
     [Parameter]
-    public string? Rid { get; set; }
+    public Guid? Rid { get; set; }
 
 
     protected override async Task OnInitializedAsync()
@@ -62,6 +83,19 @@ else
             Value = b,
             Text = $"{b.Name} ({b.Ip})"
         }).ToList();
+
+
+    }
+
+    protected override void OnParametersSet()
+    {
+        var bridge = bridges?.FirstOrDefault(b => b.Id == Id);
+
+        if (bridge == null)
+            return;
+
+        selectedBridge = bridge;
+
     }
 
     private async Task OnBridgeIdSelected(string bridgeId)
@@ -72,7 +106,15 @@ else
         if (bridge == null)
             return;
 
+        Id = bridge.Id;
+        selectedBridge = bridge;
+
+        var url = ResourceExplorerService.CreateResourceLink(Id.Value, null, null);
+        Navigation.NavigateTo(url);
+
         StateHasChanged();
     }
+
+
 
 }

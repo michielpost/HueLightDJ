@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Q42.HueApi\src\HueApi\HueApi.csproj" />
     <ProjectReference Include="..\Shared\HueEntertainmentPro.Shared.csproj" />
   </ItemGroup>
 
