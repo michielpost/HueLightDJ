@@ -1,5 +1,5 @@
-using HueEntertainmentPro.Client.Pages;
 using HueEntertainmentPro.Database;
+using HueEntertainmentPro.Server.Extensions;
 using HueEntertainmentPro.Server.Hubs;
 using HueEntertainmentPro.Server.Services;
 using HueEntertainmentPro.Services;
@@ -10,6 +10,10 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 using ProtoBuf.Grpc.Server;
+using System.Net;
+using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Forwarder;
+using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +41,9 @@ builder.Services.AddCodeFirstGrpc();
 builder.Services.AddSingleton<IHubService, HubService>();
 builder.Services.AddScoped<BridgeService>();
 builder.Services.AddHueLightDJServices();
+
+// Add YARP to proxy to Hue Bridge
+builder.Services.AddHueProxyService();
 
 var app = builder.Build();
 
@@ -71,6 +78,12 @@ else
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+
+//Reverse Proxy to Hue Bridge, disabled in DEMO mode
+if (app.Environment.EnvironmentName != "DEMO")
+{
+  app.MapReverseProxy();
+}
 
 app.UseRouting();
 

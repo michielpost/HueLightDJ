@@ -1,0 +1,78 @@
+@page "/resource-explorer"
+@page "/resource-explorer/{Rtype}/{Rid}"
+@using HueEntertainmentPro.Client.Services
+@using HueEntertainmentPro.Shared.Interfaces
+@using HueEntertainmentPro.Shared.Models
+@inject IBridgeDataService BridgeDataService
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+
+<PageTitle>Resource Explorer</PageTitle>
+
+<h1>Resource Explorer</h1>
+
+<p>Explore available resources on your bridges.</p>
+
+@if (bridgeOptions == null)
+{
+    <p><em>Loading bridges...</em></p>
+}
+else
+{
+    <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
+        <FluentGridItem xs="12">
+
+            <FluentSelect Items=@bridgeOptions
+                          TOption="Option<Bridge>"
+                          OptionText="@(i => i.Text)"
+                          Placeholder="Select a Hue Bridge..."
+                          OptionValue="@(i => i.Value?.Id.ToString())"
+                          @bind-SelectedOption="@selectedBridge"
+                          ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" />
+            <p>
+                Selected Value: @selectedBridge?.Value?.Id<br />
+            </p>
+
+        </FluentGridItem>
+    </FluentGrid>
+
+
+}
+
+
+@code {
+
+    private IQueryable<Bridge>? bridges;
+    private List<Option<Bridge>>? bridgeOptions;
+    private Option<Bridge>? selectedBridge;
+
+    [Parameter]
+    public string? Rtype { get; set; }
+
+    [Parameter]
+    public string? Rid { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await BridgeDataService.GetBridges();
+        bridges = result.AsQueryable();
+        bridgeOptions = bridges.Select(b => new Option<Bridge>
+        {
+            Value = b,
+            Text = $"{b.Name} ({b.Ip})"
+        }).ToList();
+    }
+
+    private async Task OnBridgeIdSelected(string bridgeId)
+    {
+        var id = Guid.Parse(bridgeId);
+        var bridge = bridges?.FirstOrDefault(b => b.Id == id);
+
+        if (bridge == null)
+            return;
+
+        StateHasChanged();
+    }
+
+}
