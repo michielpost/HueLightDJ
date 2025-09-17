@@ -7,7 +7,7 @@
 @if (Bridge != null && HueResources != null)
 {
 
-    <FluentBreadcrumb>
+    <FluentBreadcrumb Class="breadcrumb">
         <FluentBreadcrumbItem Href="/resource-explorer">
             Bridges
         </FluentBreadcrumbItem>
@@ -15,21 +15,50 @@
             @Bridge.Name (@Bridge.Ip)
         </FluentBreadcrumbItem>
         <FluentBreadcrumbItem>
-           @Rtype
+            @Rtype
         </FluentBreadcrumbItem>
     </FluentBreadcrumb>
-
-    <h3>Resource List (@HueResources.Count())</h3>
 
     @if (!HueResources.Any())
     {
         <p>No resources found.</p>
     }
 
-    @foreach (var resource in HueResources)
-    {
-        <FluentNavLink Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, resource.Type, resource.Id)">@resource.Type - @resource.Id</FluentNavLink>
-    }
+    <FluentGrid Spacing="4">
+        <FluentGridItem xs="12">
+            <h4>Resource List (@HueResources.Count())</h4>
+            <FluentDataGrid Items="HueResources.AsQueryable()" Style="width: 100%;" AutoFit="true">
+
+                <TemplateColumn Title="Id">
+                    <NavLink href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, context.Type, context.Id)">@context.Id</NavLink>
+                </TemplateColumn>
+
+                <PropertyColumn Property="@(p => p.Type)" Sortable="true" />
+
+                @if (HueResources.Where(x => x.IdV1 != null).Any())
+                {
+                    <PropertyColumn Property="@(p => p.IdV1)" Sortable="true" />
+                }
+
+                <TemplateColumn Title="Name">
+                    @context.Metadata?.Name
+                </TemplateColumn>
+
+                @if (HueResources.Where(x => x.CreationTime.HasValue).Any())
+                {
+                    <PropertyColumn Property="@(p => p.CreationTime)" Format="yyyy-MM-dd hh:mm" Sortable="true" />
+                }
+
+                <TemplateColumn Title="Owner">
+                    @if (context.Owner != null)
+                    {
+                        <NavLink href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, context.Owner.Rtype, context.Owner.Rid)">@context.Owner.Rtype (@context.Owner.Rid)</NavLink>
+                    }
+                </TemplateColumn>
+                @* <PropertyColumn Property="@(p => p.Owner!.Rid)" Sortable="true" /> *@
+            </FluentDataGrid>
+        </FluentGridItem>
+    </FluentGrid>
 }
 else
 {
@@ -52,7 +81,7 @@ else
         {
             var localHueApi = ResourceExplorerService.GetHueClient(Bridge);
 
-            if(Rtype == "all")
+            if (Rtype == "all")
             {
                 var resources = await localHueApi.GetResourcesAsync();
                 HueResources = resources.Data;
@@ -62,7 +91,7 @@ else
                 var resources = await localHueApi.GetResourceAsync(Rtype);
                 HueResources = resources.Data;
             }
-            
+
         }
     }
 }

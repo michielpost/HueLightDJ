@@ -6,7 +6,8 @@
 
 @if (Bridge != null && (Clips?.Any() ?? false))
 {
-    <FluentBreadcrumb>
+    <!-- Breadcrumb -->
+    <FluentBreadcrumb Class="breadcrumb">
         <FluentBreadcrumbItem Href="/resource-explorer">
             Bridges
         </FluentBreadcrumbItem>
@@ -15,18 +16,29 @@
         </FluentBreadcrumbItem>
     </FluentBreadcrumb>
 
-    <h3>API List</h3>
+    <!-- Title -->
+    <h2>API List</h2>
 
-    <FluentNavLink Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, "all")">all</FluentNavLink>
+    <!-- Vertical Links -->
+    <div class="link-list-vertical">
+        <FluentNavLink Class="nav-link" Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, "all")">
+            all
+        </FluentNavLink>
 
-    @foreach (var clip in Clips.First().Resources)
-    {
-        <FluentNavLink Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, clip)">@clip</FluentNavLink>
-    }
+        @foreach (var clip in Clips.First().Resources)
+        {
+            <FluentNavLink Class="nav-link" Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, clip)">
+                @clip
+            </FluentNavLink>
+        }
+    </div>
 }
 else
 {
-    <FluentProgressRing>Loading resources...</FluentProgressRing>
+    <div>
+        <FluentProgressRing />
+        <span>Loading resources...</span>
+    </div>
 }
 
 @code {

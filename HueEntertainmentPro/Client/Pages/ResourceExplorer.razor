@@ -21,7 +21,7 @@
 
     @if (bridges == null)
     {
-      <FluentProgressRing>Loading bridges...</FluentProgressRing>
+        <FluentProgressRing>Loading bridges...</FluentProgressRing>
     }
     else
     {
@@ -35,10 +35,13 @@
                               OptionValue="@(i => i.Value?.Id.ToString())"
                               ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" /> *@
 
-                @foreach (var bridge in bridges)
-                {
-                    <FluentNavLink Href="@ResourceExplorerService.CreateResourceLink(bridge.Id, null)">@bridge.Name (@bridge.Ip)</FluentNavLink>
-                }
+                <div class="link-list-vertical">
+
+                    @foreach (var bridge in bridges)
+                    {
+                        <FluentNavLink Class="nav-link" Href="@ResourceExplorerService.CreateResourceLink(bridge.Id, null)">@bridge.Name (@bridge.Ip)</FluentNavLink>
+                    }
+                </div>
 
             </FluentGridItem>
         </FluentGrid>
