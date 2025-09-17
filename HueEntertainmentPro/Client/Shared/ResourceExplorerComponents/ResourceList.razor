@@ -4,14 +4,36 @@
 @inject NavigationManager NavigationManager
 @inject ResourceExplorerService ResourceExplorerService
 
-@if (Bridge != null && (HueResources?.Any() ?? false))
+@if (Bridge != null && HueResources != null)
 {
-    <h3>Resource List</h3>
+
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/resource-explorer">
+            Bridges
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, null)">
+            @Bridge.Name (@Bridge.Ip)
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem>
+           @Rtype
+        </FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h3>Resource List (@HueResources.Count())</h3>
+
+    @if (!HueResources.Any())
+    {
+        <p>No resources found.</p>
+    }
 
     @foreach (var resource in HueResources)
     {
-        <FluentNavLink Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, resource.Type, resource.Id)">@resource.Id</FluentNavLink>
+        <FluentNavLink Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, resource.Type, resource.Id)">@resource.Type - @resource.Id</FluentNavLink>
     }
+}
+else
+{
+    <FluentProgressRing>Loading resources...</FluentProgressRing>
 }
 
 @code {
@@ -29,9 +51,18 @@
         if (Bridge != null)
         {
             var localHueApi = ResourceExplorerService.GetHueClient(Bridge);
-            var resources = await localHueApi.GetResourceAsync(Rtype);
 
-            HueResources = resources.Data;
+            if(Rtype == "all")
+            {
+                var resources = await localHueApi.GetResourcesAsync();
+                HueResources = resources.Data;
+            }
+            else
+            {
+                var resources = await localHueApi.GetResourceAsync(Rtype);
+                HueResources = resources.Data;
+            }
+            
         }
     }
 }

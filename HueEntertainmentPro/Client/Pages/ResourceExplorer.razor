@@ -19,21 +19,26 @@
 {
     <p>Explore available resources on your bridges.</p>
 
-    @if (bridgeOptions == null)
+    @if (bridges == null)
     {
-        <p><em>Loading bridges...</em></p>
+      <FluentProgressRing>Loading bridges...</FluentProgressRing>
     }
     else
     {
         <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
             <FluentGridItem xs="12">
 
-                <FluentSelect Items=@bridgeOptions
+                @* <FluentSelect Items=@bridgeOptions
                               TOption="Option<Bridge>"
                               OptionText="@(i => i.Text)"
                               Placeholder="Select a Hue Bridge..."
                               OptionValue="@(i => i.Value?.Id.ToString())"
-                              ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" />
+                              ValueChanged="@(async (string bridge) => await OnBridgeIdSelected(bridge))" /> *@
+
+                @foreach (var bridge in bridges)
+                {
+                    <FluentNavLink Href="@ResourceExplorerService.CreateResourceLink(bridge.Id, null)">@bridge.Name (@bridge.Ip)</FluentNavLink>
+                }
 
             </FluentGridItem>
         </FluentGrid>
@@ -52,8 +57,6 @@ else if (!Rid.HasValue)
 else
 {
     <ResourceDetail Bridge="@selectedBridge" Rtype="@Rtype" Rid="@Rid.Value" />
-
-
 }
 
 @code {

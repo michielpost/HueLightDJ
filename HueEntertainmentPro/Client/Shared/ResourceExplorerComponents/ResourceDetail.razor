@@ -6,11 +6,30 @@
 
 @if (Bridge != null && HueResource != null)
 {
+    <FluentBreadcrumb>
+        <FluentBreadcrumbItem Href="/resource-explorer">
+            Bridges
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, null)">
+            @Bridge.Name (@Bridge.Ip)
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, Rtype)">
+            @Rtype
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem>
+            @Rid
+        </FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
     <h3>Resource Detail</h3>
 
     <FluentTextField>@HueResource.Id</FluentTextField>
     <FluentTextField>@HueResource.Type</FluentTextField>
 
+}
+else
+{
+    <FluentProgressRing>Loading resource details...</FluentProgressRing>
 }
 
 @code {
