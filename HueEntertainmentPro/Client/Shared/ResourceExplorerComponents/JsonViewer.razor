@@ -1,0 +1,60 @@
+@using System.Text.Json
+
+<div class="json-node" style="margin-left:@(Level * 10)px">
+    @if (!string.IsNullOrEmpty(Key))
+    {
+        <b>@Key:</b>
+    }
+    <div class="json-content">
+        @if (Element.ValueKind == JsonValueKind.Object)
+        {
+            <ul>
+                @foreach (var prop in Element.EnumerateObject())
+                {
+                    <li>
+                        <JsonViewer Key="@prop.Name" Element="@prop.Value" Level="@(Level + 1)" />
+                    </li>
+                }
+            </ul>
+        }
+        else if (Element.ValueKind == JsonValueKind.Array)
+        {
+            <ol>
+                @{
+                    int idx = 0;
+                    foreach (var item in Element.EnumerateArray())
+                    {
+                        var keyName = $"[{idx}]";
+
+                        <li>
+                            <JsonViewer Key="@keyName" Element="@item" Level="@(Level + 1)" />
+                        </li>
+                        idx++;
+                    }
+                }
+            </ol>
+        }
+        else if (Element.ValueKind == JsonValueKind.String)
+        {
+            <span>@Element.GetString()</span>
+        }
+        else if (Element.ValueKind == JsonValueKind.Number)
+        {
+            <span>@Element.GetRawText()</span>
+        }
+        else if (Element.ValueKind == JsonValueKind.True || Element.ValueKind == JsonValueKind.False)
+        {
+            <span>@Element.GetBoolean()</span>
+        }
+        else if (Element.ValueKind == JsonValueKind.Null)
+        {
+            <span>null</span>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Key { get; set; }
+    [Parameter] public JsonElement Element { get; set; }
+    [Parameter] public int Level { get; set; } = 0;
+}

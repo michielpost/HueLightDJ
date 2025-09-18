@@ -1,8 +1,10 @@
 @using HueApi
 @using HueApi.Models
+@using HueEntertainmentPro.Client.Models
 @using HueEntertainmentPro.Client.Services
 @inject NavigationManager NavigationManager
 @inject ResourceExplorerService ResourceExplorerService
+@inject IDialogService DialogService
 
 @if (Bridge != null && HueResources != null)
 {
@@ -55,6 +57,16 @@
                         <NavLink href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, context.Owner.Rtype, context.Owner.Rid)">@context.Owner.Rtype (@context.Owner.Rid)</NavLink>
                     }
                 </TemplateColumn>
+
+                <TemplateColumn Title="Owner">
+                    @if (context.ExtensionData.Any())
+                    {
+                        <FluentButton @onclick="@(() => OpenMorePanel(context))">
+                            More (@context.ExtensionData.Count)
+                        </FluentButton>
+                    }
+                </TemplateColumn>
+
                 @* <PropertyColumn Property="@(p => p.Owner!.Rid)" Sortable="true" /> *@
             </FluentDataGrid>
         </FluentGridItem>
@@ -93,5 +105,25 @@ else
             }
 
         }
+    }
+
+    private IDialogReference? _dialog;
+    private async Task OpenMorePanel(HueResource hueResource)
+    {
+
+        var vm = new ExtensionDataPanelViewModel
+        {
+            Bridge = Bridge,
+            HueResource = hueResource
+        };
+
+        _dialog = await DialogService.ShowPanelAsync<ExtensionDataPanel>(vm, new DialogParameters<ExtensionDataPanelViewModel>()
+        {
+            Content = vm,
+            Alignment = HorizontalAlignment.Right,
+            Title = $"{hueResource.Type}",
+            SecondaryAction = null,
+        });
+
     }
 }

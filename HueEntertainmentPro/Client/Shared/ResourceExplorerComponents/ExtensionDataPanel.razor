@@ -1,0 +1,29 @@
+@using System.Text.Json
+@using HueEntertainmentPro.Client.Models
+@using HueEntertainmentPro.Client.Services
+@implements IDialogContentComponent<ExtensionDataPanelViewModel>
+@inject ResourceExplorerService ResourceExplorerService
+
+<FluentDialogBody>
+    <h4>@Content.HueResource.Id</h4>
+
+    @if (Content.Bridge != null)
+    {
+        <p>
+            <NavLink href="@ResourceExplorerService.CreateResourceLink(Content.Bridge.Id, Content.HueResource.Type, Content.HueResource.Id)">View Details</NavLink>
+        </p>
+    }
+
+    @foreach (var kv in Content.HueResource.ExtensionData)
+    {
+        var jsonElement = (JsonElement)kv.Value;
+        <JsonViewer Key="@kv.Key" Element="@jsonElement" />
+    }
+
+</FluentDialogBody>
+
+
+@code {
+    [Parameter]
+    public ExtensionDataPanelViewModel Content { get; set; } = default!;
+}

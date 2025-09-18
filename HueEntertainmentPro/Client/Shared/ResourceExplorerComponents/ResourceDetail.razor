@@ -1,6 +1,7 @@
 @using HueApi
 @using HueApi.Models
 @using HueEntertainmentPro.Client.Services
+@using System.Text.Json
 @inject NavigationManager NavigationManager
 @inject ResourceExplorerService ResourceExplorerService
 
@@ -23,8 +24,11 @@
 
     <h3>Resource Detail</h3>
 
-    <FluentTextField>@HueResource.Id</FluentTextField>
-    <FluentTextField>@HueResource.Type</FluentTextField>
+    @foreach (var kv in HueResource.ExtensionData)
+    {
+        var jsonElement = (JsonElement)kv.Value;
+        <JsonViewer Key="@kv.Key" Element="@jsonElement" />
+    }
 
 }
 else
