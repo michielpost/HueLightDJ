@@ -139,6 +139,8 @@ namespace HueEntertainmentPro.Server.Hubs
             CreationTime = hueEvent.CreationTime,
             SendTime = DateTimeOffset.UtcNow,
             BridgeIp = bridgeIp,
+            Id = data.Id,
+            Type = data.Type,
             EventDetails = new EventDetails
             {
               Name = data.Metadata?.Name,

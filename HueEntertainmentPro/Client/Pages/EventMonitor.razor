@@ -6,6 +6,7 @@
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
 @inject EventMonitorService EventMonitorService
+@inject ResourceExplorerService ResourceExplorerService
 
 <PageTitle>Event Monitor</PageTitle>
 
@@ -38,12 +39,26 @@ else
                             {
                                 <FluentButton OnClick="() => Unsubscribe(item.Id)">Disconnect</FluentButton>
                             }
-                            <FluentDataGrid Items="@events.Where(x => x.BridgeIp == item.Ip).OrderByDescending(x => x.CreationTime).ThenByDescending(x => x.SendTime).Take(100).AsQueryable()" ResizableColumns=true>
+                            <FluentDataGrid Items="@events.Where(x => x.BridgeIp == item.Ip).OrderByDescending(x => x.CreationTime).ThenByDescending(x => x.SendTime).Take(100).AsQueryable()" ResizableColumns=true Style="width: 100%;" AutoFit="true">
 
                                 <PropertyColumn Sortable="true" Property="x => x.CreationTime" Title="Time" />
                                 <PropertyColumn Property="x => x.BridgeIp" Title="IP" />
-                                <PropertyColumn Property="x => x.EventDetails.Name" Title="Name" />
-                                <PropertyColumn Property="x => x.EventDetails.IdV1" Title="IdV1" />
+
+                                <PropertyColumn Property="x => x.Type" Title="Type" />
+
+                                <TemplateColumn Title="Id">
+                                    <NavLink href="@ResourceExplorerService.CreateResourceLink(item.Id, context.Type, context.Id)">@context.Id</NavLink>
+                                </TemplateColumn>
+
+                                @if (events.Where(x => x.EventDetails.Name != null).Any())
+                                {
+                                    <PropertyColumn Property="x => x.EventDetails.Name" Title="Name" />
+                                }
+
+                                @if (events.Where(x => x.EventDetails.IdV1 != null).Any())
+                                {
+                                    <PropertyColumn Property="x => x.EventDetails.IdV1" Title="Name" />
+                                }
 
                                 <TemplateColumn Title="Data">
                                     <ul>
