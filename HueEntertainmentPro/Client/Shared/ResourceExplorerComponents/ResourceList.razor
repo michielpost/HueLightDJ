@@ -29,7 +29,7 @@
     <FluentGrid Spacing="4">
         <FluentGridItem xs="12">
             <h4>Resource List (@HueResources.Count())</h4>
-            <FluentDataGrid Items="HueResources.AsQueryable()" Style="width: 100%;" AutoFit="true">
+            <FluentDataGrid Items="HueResources.AsQueryable()" Style="width: 100%;" AutoFit="true" RowSize="@DataGridRowSize.Medium">
 
                 <TemplateColumn Title="Id">
                     <NavLink href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, context.Type, context.Id)">@context.Id</NavLink>

@@ -24,11 +24,9 @@
 
     <h3>Resource Detail</h3>
 
-    @foreach (var kv in HueResource.ExtensionData)
-    {
-        var jsonElement = (JsonElement)kv.Value;
-        <JsonViewer Key="@kv.Key" Element="@jsonElement" />
-    }
+    <HueResourceViewer Bridge="@Bridge" Resource="@HueResource" />
+
+   
 
 }
 else

@@ -17,7 +17,7 @@
     @foreach (var kv in Content.HueResource.ExtensionData)
     {
         var jsonElement = (JsonElement)kv.Value;
-        <JsonViewer Key="@kv.Key" Element="@jsonElement" />
+        <JsonViewer Key="@kv.Key" Element="@jsonElement" Bridge="@Content.Bridge" />
     }
 
 </FluentDialogBody>
