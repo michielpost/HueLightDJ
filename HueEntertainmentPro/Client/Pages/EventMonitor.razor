@@ -1,0 +1,145 @@
+@page "/eventmonitor"
+@using HueEntertainmentPro.Client.Services
+@using HueEntertainmentPro.Shared.Interfaces
+@using HueEntertainmentPro.Shared.Models
+@inject IBridgeDataService BridgeDataService
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject EventMonitorService EventMonitorService
+@inject ResourceExplorerService ResourceExplorerService
+
+<PageTitle>Event Monitor</PageTitle>
+
+<h1>Event Monitor</h1>
+
+<p>Monitor all events from a bridge. Select a bridge and click Connect.</p>
+
+@if (bridges == null)
+{
+    <p><em>Loading bridges...</em></p>
+}
+else
+{
+    <FluentGrid Spacing="3" AdaptiveRendering="true" Justify="JustifyContent.FlexStart" Style="padding: 4px; ">
+        <FluentGridItem xs="12">
+            <FluentTabs Orientation="Orientation.Vertical">
+                @foreach (var item in bridges)
+                {
+                    <FluentTab Id="@($"tab-{item.Id}")"
+                               Data="@item">
+                        <Header>
+                            <FluentLabel Typo="Typography.Header">@item.Name (@item.Ip)</FluentLabel>
+                        </Header>
+                        <Content>
+                            @if (!subscribedBridges.Contains(item.Id))
+                            {
+                                <FluentButton OnClick="() => Subscribe(item.Id)">Connect</FluentButton>
+                            }
+                            else
+                            {
+                                <FluentButton OnClick="() => Unsubscribe(item.Id)">Disconnect</FluentButton>
+                            }
+                            <FluentDataGrid Items="@events.Where(x => x.BridgeIp == item.Ip).OrderByDescending(x => x.CreationTime).ThenByDescending(x => x.SendTime).Take(100).AsQueryable()" ResizableColumns=true Style="width: 100%;" AutoFit="true">
+
+                                <PropertyColumn Sortable="true" Property="x => x.CreationTime" Title="Time" />
+                                <PropertyColumn Property="x => x.BridgeIp" Title="IP" />
+
+                                <PropertyColumn Property="x => x.Type" Title="Type" />
+
+                                <TemplateColumn Title="Id">
+                                    <NavLink href="@ResourceExplorerService.CreateResourceLink(item.Id, context.Type, context.Id)">@context.Id</NavLink>
+                                </TemplateColumn>
+
+                                @if (events.Where(x => x.EventDetails.Name != null).Any())
+                                {
+                                    <PropertyColumn Property="x => x.EventDetails.Name" Title="Name" />
+                                }
+
+                                @if (events.Where(x => x.EventDetails.IdV1 != null).Any())
+                                {
+                                    <PropertyColumn Property="x => x.EventDetails.IdV1" Title="Name" />
+                                }
+
+                                <TemplateColumn Title="Data">
+                                    <ul>
+                                        @foreach (var kvp in context.EventDetails.ExtensionData)
+                                        {
+                                            <li>@kvp.Key: @kvp.Value</li>
+                                        }
+                                    </ul>
+                                </TemplateColumn>
+                            </FluentDataGrid>
+                        </Content>
+                    </FluentTab>
+                }
+            </FluentTabs>
+        </FluentGridItem>
+    </FluentGrid>
+
+
+}
+
+
+@code {
+
+    private IQueryable<Bridge>? bridges;
+
+    private string bridgeIdInput = string.Empty;
+    private string status = "Not subscribed";
+    private List<EventData> events = new();
+
+    private List<Guid> subscribedBridges = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await BridgeDataService.GetBridges();
+        bridges = result.AsQueryable();
+
+        EventMonitorService.OnSubscribed += (message) =>
+        {
+            subscribedBridges.Add(message);
+            Console.WriteLine();
+            status = $"Subscribed: {message}";
+            StateHasChanged();
+        };
+
+        EventMonitorService.OnUnsubscribed += (message) =>
+        {
+            subscribedBridges.Remove(message);
+            status = $"Unsubscribed: {message}";
+            StateHasChanged();
+        };
+
+        EventMonitorService.OnError += (message) =>
+        {
+            status = $"Error: {message}";
+            StateHasChanged();
+        };
+
+        EventMonitorService.OnEventReceived += (eventData) =>
+        {
+            events.Add(eventData);
+            StateHasChanged();
+        };
+    }
+
+    private async Task Subscribe(Guid bridgeId)
+    {
+        await EventMonitorService.SubscribeAsync(bridgeId);
+        status = $"Subscribing to bridge: {bridgeId}";
+
+        StateHasChanged();
+    }
+
+    private async Task Unsubscribe(Guid bridgeId)
+    {
+        await EventMonitorService.UnsubscribeAsync(bridgeId);
+        status = "Unsubscribing...";
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await EventMonitorService.DisposeAsync();
+    }
+}
