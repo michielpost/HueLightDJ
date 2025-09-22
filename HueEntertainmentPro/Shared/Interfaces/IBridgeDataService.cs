@@ -15,7 +15,7 @@ namespace HueEntertainmentPro.Shared.Interfaces
     Task<Bridge?> GetBridge(GuidRequest req, CallContext context = default);
 
     [OperationContract]
-    Task<Bridge?> AddBridge(AddBridgeRequest req, CallContext context = default);
+    Task<Bridge> AddBridge(AddBridgeRequest req, CallContext context = default);
 
     [OperationContract]
     Task<Bridge?> UpdateBridge(UpdateBridgeRequest req, CallContext context = default);

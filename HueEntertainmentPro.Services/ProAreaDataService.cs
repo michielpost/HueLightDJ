@@ -2,6 +2,7 @@ using HueEntertainmentPro.Database;
 using HueEntertainmentPro.Database.Models;
 using HueEntertainmentPro.Services.Extensions;
 using HueEntertainmentPro.Shared.Interfaces;
+using HueEntertainmentPro.Shared.Models;
 using HueEntertainmentPro.Shared.Models.Requests;
 using Microsoft.EntityFrameworkCore;
 using ProtoBuf.Grpc;
@@ -42,7 +43,12 @@ namespace HueEntertainmentPro.Services
 
       await dbContext.SaveChangesAsync();
 
-      return await GetProArea(new GuidRequest { Id = proArea.Id }, context);
+      var area = await GetProArea(new GuidRequest { Id = proArea.Id }, context);
+      if (area == null)
+      {
+        throw new NullReferenceException($"Area is null. Id: {proArea.Id}");
+      }
+      return area;
     }
 
     public async Task DeleteBridgeGroup(GuidRequest req, CallContext context = default)
@@ -78,12 +84,17 @@ namespace HueEntertainmentPro.Services
         await dbContext.SaveChangesAsync();
       }
 
-      return await GetProArea(new GuidRequest { Id = req.Id }, context);
+      var area = await GetProArea(new GuidRequest { Id = req.Id }, context);
+      if (area == null)
+      {
+        throw new NullReferenceException($"Area is null. Id: {req.Id}");
+      }
+      return area;
     }
 
     public async Task<HueEntertainmentPro.Shared.Models.ProArea> CreateProArea(CreateProAreaRequest req, CallContext context = default)
     {
-      var newArea = new ProArea
+      var newArea = new Database.Models.ProArea
       {
         Id = Guid.NewGuid(),
         Name = req.Name,
@@ -93,11 +104,16 @@ namespace HueEntertainmentPro.Services
       dbContext.ProAreas.Add(newArea);
       await dbContext.SaveChangesAsync();
 
-      return await GetProArea(new GuidRequest { Id = newArea.Id }, context);
+      var area =  await GetProArea(new GuidRequest { Id = newArea.Id }, context);
+      if(area == null)
+      {
+        throw new NullReferenceException($"Area is null. Id: {newArea.Id}");
+      }
+      return area;
 
     }
 
-    public async Task<HueEntertainmentPro.Shared.Models.ProArea> GetProArea(GuidRequest req, CallContext context = default)
+    public async Task<HueEntertainmentPro.Shared.Models.ProArea?> GetProArea(GuidRequest req, CallContext context = default)
     {
       if (req.Id == demo1Id)
       {
@@ -159,8 +175,9 @@ namespace HueEntertainmentPro.Services
       var area = await dbContext.ProAreas
         .Include(x => x.ProAreaBridgeGroups).ThenInclude(bg => bg.Bridge)
         .FirstOrDefaultAsync(pa => pa.Id == req.Id);
+
       if (area == null)
-        return null!;
+        return null;
 
       return area.ToApiModel();
     }

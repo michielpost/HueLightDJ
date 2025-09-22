@@ -39,7 +39,7 @@ namespace HueLightDJ.Services
           ErrorMessage = "Unauthorized. Please check if your key is correct."
         };
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return new EntertainmentGroupResult()
         {
@@ -92,7 +92,7 @@ namespace HueLightDJ.Services
           ErrorMessage = "Link button not pressed. Please press the link button on the bridge and try again."
         };
       }
-      catch(Exception ex)
+      catch(Exception)
       {
         return new Interfaces.Models.RegisterEntertainmentResult()
         {
