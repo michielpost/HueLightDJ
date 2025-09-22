@@ -1,12 +1,9 @@
 using HueApi.Entertainment;
 using HueApi.Entertainment.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HueLightDJ.Services.Models;
 using HueLightDJ.Services.Interfaces;
 using HueLightDJ.Services.Interfaces.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace HueLightDJ.Services
 {
@@ -21,12 +18,12 @@ namespace HueLightDJ.Services
       this._hub = hub;
       _bridgeIp = ip;
       _demoMode = demoMode;
-     
+
     }
 
     protected override void Send(IEnumerable<IEnumerable<StreamingChannel>> chunks)
     {
-      if(!_demoMode)
+      if (!_demoMode)
         base.Send(chunks);
 
       var flatten = chunks.SelectMany(x => x);

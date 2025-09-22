@@ -1,0 +1,60 @@
+@using HueApi
+@using HueApi.Models
+@using HueEntertainmentPro.Client.Services
+@inject NavigationManager NavigationManager
+@inject ResourceExplorerService ResourceExplorerService
+
+@if (Bridge != null && (Clips?.Any() ?? false))
+{
+    <!-- Breadcrumb -->
+    <FluentBreadcrumb Class="breadcrumb">
+        <FluentBreadcrumbItem Href="/resource-explorer">
+            Bridges
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem>
+            API list
+        </FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <!-- Title -->
+    <h2>API List</h2>
+
+    <!-- Vertical Links -->
+    <div class="link-list-vertical">
+        <FluentNavLink Class="nav-link" Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, "all")">
+            all
+        </FluentNavLink>
+
+        @foreach (var clip in Clips.First().Resources)
+        {
+            <FluentNavLink Class="nav-link" Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, clip)">
+                @clip
+            </FluentNavLink>
+        }
+    </div>
+}
+else
+{
+    <div>
+        <FluentProgressRing />
+        <span>Loading resources...</span>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public HueEntertainmentPro.Shared.Models.Bridge? Bridge { get; set; }
+
+    private List<ClipResource>? Clips = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Bridge != null)
+        {
+            var localHueApi = ResourceExplorerService.GetHueClient(Bridge);
+            var clips = await localHueApi.Clip.GetAllAsync();
+
+            Clips = clips.Data;
+        }
+    }
+}

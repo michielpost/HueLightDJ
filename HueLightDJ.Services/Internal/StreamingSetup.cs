@@ -76,7 +76,7 @@ namespace HueLightDJ.Services
           continue;
 
         var localClient = new LocalHueApi(bridgeConfig.Ip, bridgeConfig.Key);
-        var group = await localClient.GetEntertainmentConfigurationAsync(bridgeConfig.GroupId.Value);
+        var group = await localClient.EntertainmentConfiguration.GetByIdAsync(bridgeConfig.GroupId.Value);
 
         var serviceLocations = group.Data.First().Locations.ServiceLocations;
 
@@ -136,7 +136,7 @@ namespace HueLightDJ.Services
             updateReq.Locations.ServiceLocations.Add(serviceLoc);
           }
 
-          await client.UpdateEntertainmentConfigurationAsync(groupId, updateReq);
+          await client.EntertainmentConfiguration.UpdateAsync(groupId, updateReq);
         }
       }
     }
@@ -156,17 +156,17 @@ namespace HueLightDJ.Services
           var client = new LocalHueApi(conn.Ip, conn.Key);
           var allCommand = new UpdateLight().TurnOn().SetColor(new RGBColor("0000FF")); //All blue
 
-          var result = await client.GetEntertainmentConfigurationAsync(conn.GroupId.Value);
+          var result = await client.EntertainmentConfiguration.GetByIdAsync(conn.GroupId.Value);
 
           var entServices = result.Data.First().Locations.ServiceLocations.Select(x => x.Service?.Rid).ToList();
-          var allResources = await client.GetResourcesAsync();
+          var allResources = await client.Resource.GetAllAsync();
 
           var devices = allResources.Data.Where(x => entServices.Contains(x.Id)).Select(x => x.Owner?.Rid).ToList();
           var lights = allResources.Data.Where(x => devices.Contains(x.Id)).Select(x => x.Services?.Where(x => x.Rtype == "light").FirstOrDefault()?.Rid).ToList();
 
           foreach (var singleLightId in lights.Where(x => x.HasValue))
           {
-            await client.UpdateLightAsync(singleLightId!.Value, allCommand);
+            await client.Light.UpdateAsync(singleLightId!.Value, allCommand);
           }
 
 
@@ -180,7 +180,7 @@ namespace HueLightDJ.Services
             var lightDeviceId = allResources.Data.Where(x => x.Id == device).Select(x => x.Services?.Where(x => x.Rtype == "light").FirstOrDefault()?.Rid).FirstOrDefault();
 
             if(lightDeviceId.HasValue)
-              await client.UpdateLightAsync(lightDeviceId.Value, alertCommand);
+              await client.Light.UpdateAsync(lightDeviceId.Value, alertCommand);
           }
         }
       }
@@ -275,7 +275,7 @@ namespace HueLightDJ.Services
         }
         else
         {
-          var all = await client.LocalHueApi.GetEntertainmentConfigurationsAsync();
+          var all = await client.LocalHueApi.EntertainmentConfiguration.GetAllAsync();
           var group = all.Data.Where(x => x.Id == bridgeConfig.GroupId).FirstOrDefault();
 
           if (group == null)
@@ -420,13 +420,13 @@ namespace HueLightDJ.Services
     public async static Task<bool> IsStreamingActive()
     {
       //Optional: Check if streaming is currently active
-      var entServices = await StreamingHueClients.First().LocalHueApi.GetEntertainmentServicesAsync();
+      var entServices = await StreamingHueClients.First().LocalHueApi.Entertainment.GetAllAsync();
       if (!entServices.Data.Any())
         return false;
 
       var numSupported = entServices.Data.Sum(x => x.MaxStreams);
 
-      var entConfigs = await StreamingHueClients.First().LocalHueApi.GetEntertainmentConfigurationsAsync();
+      var entConfigs = await StreamingHueClients.First().LocalHueApi.EntertainmentConfiguration.GetAllAsync();
       if (!entConfigs.Data.Any())
         return false;
 

@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
 using HueLightDJ.Services.Interfaces.Models;
-using System.ServiceModel;
 using HueLightDJ.Services.Interfaces.Models.Requests;
 using ProtoBuf.Grpc;
+using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace HueLightDJ.Services.Interfaces
 {

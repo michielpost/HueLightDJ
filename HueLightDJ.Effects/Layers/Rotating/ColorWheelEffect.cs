@@ -1,15 +1,11 @@
-using HueLightDJ.Effects.Base;
 using HueApi.ColorConverters;
 using HueApi.ColorConverters.HSB;
-using HueApi.Entertainment.Effects;
-using HueApi.Entertainment.Effects.BasEffects;
 using HueApi.Entertainment.Extensions;
 using HueApi.Entertainment.Models;
+using HueLightDJ.Effects.Base;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +15,7 @@ namespace HueLightDJ.Effects.Layers
   public class ColorWheelEffect : IHueEffect
   {
 
-    protected virtual int AddRotation  => 9;
+    protected virtual int AddRotation => 9;
     protected virtual int StartRotation { get; set; } = 0;
 
     public int Chunks { get; set; } = 3;

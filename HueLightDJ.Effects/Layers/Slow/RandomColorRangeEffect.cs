@@ -1,12 +1,9 @@
-using HueLightDJ.Effects.Base;
 using HueApi.ColorConverters;
 using HueApi.ColorConverters.HSB;
-using HueApi.Entertainment.Effects;
 using HueApi.Entertainment.Extensions;
 using HueApi.Entertainment.Models;
+using HueLightDJ.Effects.Base;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,12 +17,12 @@ namespace HueLightDJ.Effects
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
       Random r = new Random();
-      while(!cancellationToken.IsCancellationRequested)
+      while (!cancellationToken.IsCancellationRequested)
       {
         var nextcolor = color ?? RGBColor.Random();
         var hsb = nextcolor.GetHSB();
 
-        foreach(var light in layer)
+        foreach (var light in layer)
         {
           var addHue = r.Next(-6000, 6000);
           var addBri = r.Next(-100, 100);

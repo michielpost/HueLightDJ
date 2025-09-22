@@ -1,13 +1,9 @@
-using HueLightDJ.Effects.Base;
 using HueApi.ColorConverters;
-using HueApi.Entertainment.Effects;
+using HueApi.Entertainment.Effects.Examples;
 using HueApi.Entertainment.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using HueApi.Entertainment.Effects.Examples;
 
 namespace HueLightDJ.Effects.Touch
 {

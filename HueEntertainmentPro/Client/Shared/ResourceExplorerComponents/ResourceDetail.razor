@@ -1,0 +1,60 @@
+@using HueApi
+@using HueApi.Models
+@using HueEntertainmentPro.Client.Services
+@using System.Text.Json
+@inject NavigationManager NavigationManager
+@inject ResourceExplorerService ResourceExplorerService
+
+@if (Bridge != null && HueResource != null)
+{
+    <FluentBreadcrumb Class="breadcrumb">
+        <FluentBreadcrumbItem Href="/resource-explorer">
+            Bridges
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, null)">
+            @Bridge.Name (@Bridge.Ip)
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, Rtype)">
+            @Rtype
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem>
+            @Rid
+        </FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    <h3>Resource Detail</h3>
+
+    <HueResourceViewer Bridge="@Bridge" Resource="@HueResource" />
+
+   
+
+}
+else
+{
+    <FluentProgressRing>Loading resource details...</FluentProgressRing>
+}
+
+@code {
+    [Parameter]
+    public HueEntertainmentPro.Shared.Models.Bridge? Bridge { get; set; }
+
+    [Parameter]
+    public required string Rtype { get; set; }
+
+    [Parameter]
+    public Guid? Rid { get; set; }
+
+    private HueResource? HueResource = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Bridge != null)
+        {
+            var localHueApi = ResourceExplorerService.GetHueClient(Bridge);
+
+            var resources = await localHueApi.GetResourceAsync(Rtype, Rid);
+
+            HueResource = resources.Data.FirstOrDefault();
+        }
+    }
+}

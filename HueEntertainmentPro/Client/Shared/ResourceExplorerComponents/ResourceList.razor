@@ -1,0 +1,132 @@
+@using HueApi
+@using HueApi.Models
+@using HueEntertainmentPro.Client.Models
+@using HueEntertainmentPro.Client.Services
+@inject NavigationManager NavigationManager
+@inject ResourceExplorerService ResourceExplorerService
+@inject IDialogService DialogService
+
+@if (Bridge != null && HueResources != null)
+{
+
+    <FluentBreadcrumb Class="breadcrumb">
+        <FluentBreadcrumbItem Href="/resource-explorer">
+            Bridges
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem Href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, null)">
+            @Bridge.Name (@Bridge.Ip)
+        </FluentBreadcrumbItem>
+        <FluentBreadcrumbItem>
+            @Rtype
+        </FluentBreadcrumbItem>
+    </FluentBreadcrumb>
+
+    @if (!HueResources.Any())
+    {
+        <p>No resources found.</p>
+    }
+
+    <FluentGrid Spacing="4">
+        <FluentGridItem xs="12">
+            <h4>Resource List (@HueResources.Count())</h4>
+            <FluentDataGrid Items="HueResources.AsQueryable()" Style="width: 100%;" AutoFit="true" RowSize="@DataGridRowSize.Medium">
+
+                <TemplateColumn Title="Id">
+                    <NavLink href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, context.Type, context.Id)">@context.Id</NavLink>
+                </TemplateColumn>
+
+                <PropertyColumn Property="@(p => p.Type)" Sortable="true" />
+
+                @if (HueResources.Where(x => x.IdV1 != null).Any())
+                {
+                    <PropertyColumn Property="@(p => p.IdV1)" Sortable="true" />
+                }
+
+                <TemplateColumn Title="Name">
+                    @context.Metadata?.Name
+                </TemplateColumn>
+
+                @if (HueResources.Where(x => x.CreationTime.HasValue).Any())
+                {
+                    <PropertyColumn Property="@(p => p.CreationTime)" Format="yyyy-MM-dd hh:mm" Sortable="true" />
+                }
+
+                <TemplateColumn Title="Owner">
+                    @if (context.Owner != null)
+                    {
+                        <NavLink href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, context.Owner.Rtype, context.Owner.Rid)">@context.Owner.Rtype (@context.Owner.Rid)</NavLink>
+                    }
+                </TemplateColumn>
+
+                <TemplateColumn Title="More">
+                    @if (context.ExtensionData.Any())
+                    {
+                        <FluentButton @onclick="@(() => OpenMorePanel(context))">
+                            More (@context.ExtensionData.Count)
+                        </FluentButton>
+                    }
+                </TemplateColumn>
+
+                @* <PropertyColumn Property="@(p => p.Owner!.Rid)" Sortable="true" /> *@
+            </FluentDataGrid>
+        </FluentGridItem>
+    </FluentGrid>
+}
+else
+{
+    <FluentProgressRing>Loading resources...</FluentProgressRing>
+}
+
+@code {
+	[Parameter]
+	public HueEntertainmentPro.Shared.Models.Bridge? Bridge { get; set; }
+
+	[Parameter]
+	public required string Rtype { get; set; }
+
+
+	private List<HueResource>? HueResources = null;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Bridge != null)
+		{
+			Console.WriteLine("Rtype: " + Rtype);
+			var localHueApi = ResourceExplorerService.GetHueClient(Bridge);
+
+            if (Rtype == "all")
+            {
+				Console.WriteLine("yes: " + Rtype);
+
+                var resources = await localHueApi.GetResourcesAsync();
+                HueResources = resources.Data;
+            }
+            else
+            {
+                var resources = await localHueApi.GetResourceAsync(Rtype);
+                HueResources = resources.Data;
+            }
+
+        }
+    }
+
+    private IDialogReference? _dialog;
+    private async Task OpenMorePanel(HueResource hueResource)
+    {
+
+        var vm = new ExtensionDataPanelViewModel
+        {
+            Bridge = Bridge,
+            HueResource = hueResource
+        };
+
+        _dialog = await DialogService.ShowPanelAsync<ExtensionDataPanel>(vm, new DialogParameters<ExtensionDataPanelViewModel>()
+        {
+            Content = vm,
+            Alignment = HorizontalAlignment.Right,
+            Title = $"{hueResource.Type}",
+            SecondaryAction = null,
+        });
+
+    }
+}

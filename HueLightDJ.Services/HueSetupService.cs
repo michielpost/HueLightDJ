@@ -1,4 +1,5 @@
 using HueApi;
+using HueApi.Models.Requests;
 using HueLightDJ.Services.Interfaces;
 using HueLightDJ.Services.Interfaces.Models;
 using HueLightDJ.Services.Interfaces.Models.Requests;
@@ -6,7 +7,6 @@ using ProtoBuf.Grpc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HueLightDJ.Services
@@ -18,7 +18,7 @@ namespace HueLightDJ.Services
       try
       {
         var hueClient = new LocalHueApi(request.Ip, request.Key);
-        var entConfigsResult = await hueClient.GetEntertainmentConfigurationsAsync();
+        var entConfigsResult = await hueClient.EntertainmentConfiguration.GetAllAsync();
 
         var groups =  entConfigsResult.Data.Select(x => new SimpleEntertainmentGroup()
         {
@@ -46,6 +46,39 @@ namespace HueLightDJ.Services
           ErrorMessage = $"Could not connect to {request.Ip}"
         };
       }
+    }
+
+    public async Task IdentifyGroupsAsync(HueSetupRequest request, CallContext context = default)
+    {
+      if (!request.GroupId.HasValue)
+        throw new ArgumentNullException("GroupId is null");
+
+      var localHueClient = new LocalHueApi(request.Ip, request.Key);
+
+      //Turn all lights in this entertainment group on
+      var result = await localHueClient.EntertainmentConfiguration.GetByIdAsync(request.GroupId.Value);
+      var entServices = result.Data.First().Locations.ServiceLocations.Select(x => x.Service?.Rid).ToList();
+
+      var allEntResources = await localHueClient.Entertainment.GetAllAsync();
+
+      var renderResources = allEntResources.Data.Where(x => entServices.Contains(x.Id)).Select(x => x.RendererReference).ToList();
+
+      var lights = renderResources.Where(x => x?.Rtype == "light").ToList();
+
+      var update = new UpdateLight
+      {
+        Identify = new Identify()
+      };
+
+      foreach (var light in lights)
+      {
+        if (light == null)
+          continue;
+
+        var updateResult = await localHueClient.Light.UpdateAsync(light.Rid, update);
+        await Task.Delay(100); //prevent rate limitiing
+      }
+
     }
 
     public async Task<IEnumerable<LocatedBridge>> LocateBridgesAsync(CallContext context = default)

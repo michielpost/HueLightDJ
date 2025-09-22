@@ -1,0 +1,102 @@
+@using System.Text.Json
+@using HueApi.Models
+@using HueEntertainmentPro.Client.Services
+@inject ResourceExplorerService ResourceExplorerService
+
+<div class="json-node" style="margin-left:@(Level * 10)px">
+    @if (!string.IsNullOrEmpty(Key))
+    {
+        <b>@Key:</b>
+    }
+    <div class="json-content">
+        @if (Element.ValueKind == JsonValueKind.Object)
+        {
+            // Detect HueResource (must have rid + rtype properties)
+            if (Element.TryGetProperty("rid", out var ridProp) &&
+            Element.TryGetProperty("rtype", out var rtypeProp))
+            {
+                // Deserialize into your HueResource type
+                var resource = Element.Deserialize<ResourceIdentifier>();
+
+                @if (resource != null)
+                {
+                    <span class="hue-resource">
+                        @if (Bridge != null)
+                        {
+                            <p>
+                                <NavLink href="@ResourceExplorerService.CreateResourceLink(Bridge.Id, resource.Rtype, resource.Rid)">@resource.Rtype (@resource.Rid)</NavLink>
+                            </p>
+                        }
+                    </span>
+                }
+
+                <ul>
+                    @foreach (var prop in Element.EnumerateObject())
+                    {
+                        if (prop.NameEquals("rid") || prop.NameEquals("rtype"))
+                        {
+                            continue;
+                        }
+
+                        <li>
+                            <JsonViewer Key="@prop.Name" Element="@prop.Value" Level="@(Level + 1)" Bridge="@Bridge" />
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var prop in Element.EnumerateObject())
+                    {
+                        <li>
+                            <JsonViewer Key="@prop.Name" Element="@prop.Value" Level="@(Level + 1)" Bridge="@Bridge" />
+                        </li>
+                    }
+                </ul>
+            }
+        }
+        else if (Element.ValueKind == JsonValueKind.Array)
+        {
+            <ol>
+                @{
+                    int idx = 0;
+                    foreach (var item in Element.EnumerateArray())
+                    {
+                        var keyName = $"[{idx}]";
+
+                        <li>
+                            <JsonViewer Key="@keyName" Element="@item" Level="@(Level + 1)" Bridge="@Bridge" />
+                        </li>
+                        idx++;
+                    }
+                }
+            </ol>
+        }
+        else if (Element.ValueKind == JsonValueKind.String)
+        {
+            <span>@Element.GetString()</span>
+        }
+        else if (Element.ValueKind == JsonValueKind.Number)
+        {
+            <span>@Element.GetRawText()</span>
+        }
+        else if (Element.ValueKind == JsonValueKind.True || Element.ValueKind == JsonValueKind.False)
+        {
+            <span>@Element.GetBoolean()</span>
+        }
+        else if (Element.ValueKind == JsonValueKind.Null)
+        {
+            <span>null</span>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Key { get; set; }
+    [Parameter] public JsonElement Element { get; set; }
+    [Parameter] public int Level { get; set; } = 0;
+    [Parameter] public HueEntertainmentPro.Shared.Models.Bridge? Bridge { get; set; }
+
+
+}

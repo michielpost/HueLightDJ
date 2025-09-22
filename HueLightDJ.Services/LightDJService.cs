@@ -1,14 +1,10 @@
 using HueApi.Entertainment.Extensions;
-using HueLightDJ.Services;
 using HueLightDJ.Services.Interfaces;
 using HueLightDJ.Services.Interfaces.Models;
 using HueLightDJ.Services.Interfaces.Models.Requests;
-using HueLightDJ.Services.Models;
 using ProtoBuf.Grpc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HueLightDJ.Services
@@ -145,6 +141,6 @@ namespace HueLightDJ.Services
       return streamingSetup.DisconnectAsync();
     }
 
-    
+
   }
 }

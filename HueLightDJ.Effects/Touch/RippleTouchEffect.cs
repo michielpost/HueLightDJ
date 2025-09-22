@@ -1,10 +1,7 @@
-using HueLightDJ.Effects.Base;
 using HueApi.ColorConverters;
-using HueApi.Entertainment.Effects;
 using HueApi.Entertainment.Models;
+using HueLightDJ.Effects.Base;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

@@ -13,6 +13,8 @@ This web app can connect to multiple Philips Hue Bridges over the local network.
 - Things get really fun once you pass **10+ lights** — give it a try  
 - Includes a built-in **DEMO mode**, so you can preview how a 20+ light setup would look, even if you have fewer lights at home
 - Includes a top down preview and a **new 3D preview**
+- Hue Event Monitor to easily monitor events from your bridges
+- Resource Explorer to view all data on your Hue Bridge
 
 NOTE: The original [Hue Entertainment API](https://developers.meethue.com/entertainment-blog) supports max 20 lights in an Entertainment Group using the v2 API. To get this to work with more than 20 addressable lights, you need to have 1 bridge for every 20 lights. A led strip contains more than 1 addressable light (for example 3 or 5).
 Using Hue Entertainment Pro, you can merge these areas into one area to apply effects to.
@@ -103,6 +105,8 @@ volumes:
 ![Preview](screenshots/03_preview.jpg)
 ![Apply effects](screenshots/04_effects.jpg)
 ![3D preview](screenshots/05_3dpreview.jpg)
+![Event Monitor](screenshots/06_event_monitor.jpg)
+![Resource Explorer](screenshots/08_resource_explorer.jpg)
 
 
 ### SQL / Entity Framework Migrations

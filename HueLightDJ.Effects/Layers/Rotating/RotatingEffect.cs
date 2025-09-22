@@ -1,10 +1,8 @@
-using HueLightDJ.Effects.Base;
 using HueApi.ColorConverters;
 using HueApi.Entertainment.Effects.BasEffects;
 using HueApi.Entertainment.Models;
+using HueLightDJ.Effects.Base;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,7 +15,7 @@ namespace HueLightDJ.Effects.Layers
     {
       Func<TimeSpan> customWaitTime = () => waitTime() / 10;
 
-      if(!color.HasValue)
+      if (!color.HasValue)
         color = RGBColor.Random();
 
       var center = EffectSettings.LocationCenter;
@@ -26,7 +24,8 @@ namespace HueLightDJ.Effects.Layers
       rotatingEffect.Y = center.Y; layer.PlaceEffect(rotatingEffect);
       rotatingEffect.Start();
 
-      cancellationToken.Register(() => {
+      cancellationToken.Register(() =>
+      {
         rotatingEffect.Stop();
         layer.Effects.Remove(rotatingEffect);
       });
