@@ -19,6 +19,8 @@ This web app can connect to multiple Philips Hue Bridges over the local network.
 NOTE: The original [Hue Entertainment API](https://developers.meethue.com/entertainment-blog) supports max 20 lights in an Entertainment Group using the v2 API. To get this to work with more than 20 addressable lights, you need to have 1 bridge for every 20 lights. A led strip contains more than 1 addressable light (for example 3 or 5).
 Using Hue Entertainment Pro, you can merge these areas into one area to apply effects to.
 
+![3D preview](screenshots/2d_preview.gif)
+
 ## Live Demo
 NOTE: You can't use this demo to connect to your own bridge. But you can use the two included Demo Areas to view a simulation.  
 DEMO:  [https://huelightdj.azurewebsites.net/](https://huelightdj.azurewebsites.net/)
@@ -42,6 +44,8 @@ DEMO:  [https://huelightdj.azurewebsites.net/](https://huelightdj.azurewebsites.
 - DEMO mode, to test the app without a Hue Bridge
 - Connect to multiple Hue Bridges at the same time to control more than 20 lights 
 - Uses SQLite for storage
+
+![3D preview](screenshots/3d_preview.gif)
 
 ## Tech
 - ASP.Net Core 9.0 backend

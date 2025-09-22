@@ -66,26 +66,23 @@ namespace HueLightDJ.Services
       return Task.CompletedTask;
     }
 
-    public Task IncreaseBPM(IntRequest req, CallContext context = default)
+    public async Task IncreaseBPM(IntRequest req, CallContext context = default)
     {
-      streamingSetup.IncreaseBPM(req.Value);
-      return GetStatus();
-
+      await streamingSetup.IncreaseBPM(req.Value);
+      await GetStatus();
     }
 
-    public Task SetBPM(IntRequest req, CallContext context = default)
+    public async Task SetBPM(IntRequest req, CallContext context = default)
     {
-      streamingSetup.SetBPM(req.Value);
-      return GetStatus();
-
+      await streamingSetup.SetBPM(req.Value);
+      await GetStatus();
     }
 
     public Task SetBri(DoubleRequest req, CallContext context = default)
     {
       var filterValue = 100 - req.Value;
 
-      streamingSetup.SetBrightnessFilter(filterValue);
-      return Task.CompletedTask;
+      return streamingSetup.SetBrightnessFilter(filterValue);
     }
 
 

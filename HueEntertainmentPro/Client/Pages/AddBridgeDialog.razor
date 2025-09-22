@@ -18,7 +18,7 @@
                                Height="150px"
                                Label="Discovered IP Addresses"
                                OptionValue="@(i => i.BridgeId)"
-                           ValueChanged="@(async (string id) => await OnBridgeIdSelected(id))">
+                           ValueChanged="@(async (string id) => OnBridgeIdSelected(id))">
                       <OptionTemplate>
                           @context.IpAddress
                       </OptionTemplate>
@@ -101,17 +101,6 @@
         await DiscoverIps();
     }
 
-    private async Task OnModeChanged()
-    {
-        ErrorMessage = string.Empty;
-        BridgeConfig = new HueBridgeConfig();
-        // if (ConfigurationMode == "Discover")
-        // {
-        //     await DiscoverIps();
-        // }
-        StateHasChanged();
-    }
-
     private async Task DiscoverIps()
     {
         try
@@ -125,7 +114,7 @@
         StateHasChanged();
     }
 
-    private async Task OnBridgeIdSelected(string bridgeId)
+    private void OnBridgeIdSelected(string bridgeId)
     {
         var selected = DiscoveredIps.FirstOrDefault(b => b.BridgeId == bridgeId);
         if (selected == null)
@@ -192,7 +181,7 @@
                         return;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     ErrorMessage = "Failed to connect to bridge with the values provided.";
                     StateHasChanged();
