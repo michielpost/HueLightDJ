@@ -1,11 +1,10 @@
-using HueLightDJ.Effects.Base;
 using HueApi.ColorConverters;
 using HueApi.Entertainment.Effects;
 using HueApi.Entertainment.Extensions;
 using HueApi.Entertainment.Models;
+using HueLightDJ.Effects.Base;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace HueLightDJ.Effects
       return layer.To2DGroup().ChristmasFade(waitTime, cancellationToken);
     }
 
-   
+
   }
 
   public static class ChristmanExtensions
@@ -44,7 +43,7 @@ namespace HueLightDJ.Effects
       return group.IteratorEffect(cancellationToken, async (current, ct, timeSpan) =>
       {
         if (startGreen)
-          current.SetState(ct, new HueApi.ColorConverters.RGBColor("00FF00"), 1, TimeSpan.FromMilliseconds(waitTime().TotalMilliseconds / 6 * r.Next(1,5)));
+          current.SetState(ct, new HueApi.ColorConverters.RGBColor("00FF00"), 1, TimeSpan.FromMilliseconds(waitTime().TotalMilliseconds / 6 * r.Next(1, 5)));
         else
           current.SetState(ct, new HueApi.ColorConverters.RGBColor("FF0000"), 1, TimeSpan.FromMilliseconds(waitTime().TotalMilliseconds / 6 * r.Next(1, 5)));
 

@@ -1,9 +1,8 @@
 using HueApi.Entertainment.Models;
+using HueApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using HueApi.Models;
 
 namespace HueLightDJ.Services
 {
@@ -72,7 +71,7 @@ namespace HueLightDJ.Services
 
     private static int GetMatrixPositionX(HuePosition HuePosition, int matrixSize)
     {
-      double pos = ((HuePosition.X +1) / 2) * matrixSize;
+      double pos = ((HuePosition.X + 1) / 2) * matrixSize;
       return (int)pos;
     }
     private static int GetMatrixPositionY(HuePosition HuePosition, int matrixSize)

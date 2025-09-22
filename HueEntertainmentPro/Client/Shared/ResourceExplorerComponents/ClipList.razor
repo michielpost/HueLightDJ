@@ -52,7 +52,7 @@ else
         if (Bridge != null)
         {
             var localHueApi = ResourceExplorerService.GetHueClient(Bridge);
-            var clips = await localHueApi.GetClipsAsync();
+            var clips = await localHueApi.Clip.GetAllAsync();
 
             Clips = clips.Data;
         }

@@ -1,15 +1,10 @@
-using HueLightDJ.Effects.Base;
 using HueApi.ColorConverters;
 using HueApi.ColorConverters.HSB;
-using HueApi.Entertainment.Effects;
-using HueApi.Entertainment.Effects.BasEffects;
 using HueApi.Entertainment.Extensions;
 using HueApi.Entertainment.Models;
+using HueLightDJ.Effects.Base;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +14,7 @@ namespace HueLightDJ.Effects.Layers
   public class RainbowBottomTopEffect : IHueEffect
   {
 
-    protected virtual int Steps  => (int)(HSB.HueMaxValue * 0.85);
+    protected virtual int Steps => (int)(HSB.HueMaxValue * 0.85);
     protected virtual int StartStep { get; set; } = 0;
     protected virtual bool DipToBlack { get; set; } = true;
 
@@ -51,7 +46,7 @@ namespace HueLightDJ.Effects.Layers
             }
 
           });
-    
+
         }
 
         StartStep += Steps;

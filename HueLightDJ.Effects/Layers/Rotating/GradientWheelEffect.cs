@@ -1,17 +1,5 @@
-using HueLightDJ.Effects.Base;
-using HueApi.ColorConverters;
 using HueApi.ColorConverters.HSB;
-using HueApi.Entertainment.Effects;
-using HueApi.Entertainment.Effects.BasEffects;
-using HueApi.Entertainment.Extensions;
-using HueApi.Entertainment.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using HueLightDJ.Effects.Base;
 
 namespace HueLightDJ.Effects.Layers
 {

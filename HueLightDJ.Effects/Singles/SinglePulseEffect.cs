@@ -1,11 +1,7 @@
-using HueLightDJ.Effects.Base;
 using HueApi.ColorConverters;
-using HueApi.Entertainment.Effects;
-using HueApi.Entertainment.Extensions;
 using HueApi.Entertainment.Models;
+using HueLightDJ.Effects.Base;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +22,8 @@ namespace HueLightDJ.Effects
       var randomPulseEffect = new HueApi.Entertainment.Effects.Examples.RandomPulseEffect(fadeToZero: false, waitTime: customWaitTime);
       randomPulseEffect.X = center.X;
       randomPulseEffect.Y = center.Y;
-      cancellationToken.Register(() => {
+      cancellationToken.Register(() =>
+      {
         try
         {
           randomPulseEffect.Stop();

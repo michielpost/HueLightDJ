@@ -18,7 +18,7 @@ namespace HueLightDJ.Services
       try
       {
         var hueClient = new LocalHueApi(request.Ip, request.Key);
-        var entConfigsResult = await hueClient.GetEntertainmentConfigurationsAsync();
+        var entConfigsResult = await hueClient.EntertainmentConfiguration.GetAllAsync();
 
         var groups =  entConfigsResult.Data.Select(x => new SimpleEntertainmentGroup()
         {

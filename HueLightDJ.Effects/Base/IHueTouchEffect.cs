@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects
 {
-		  public interface IHueTouchEffect
-		  {
-					Task Start(EntertainmentLayer layer,
-                              Func<TimeSpan> waitTime,
-                              RGBColor? color,
-                              CancellationToken cancellationToken,
-                              double x,
-                              double y);
-		  }
+  public interface IHueTouchEffect
+  {
+    Task Start(EntertainmentLayer layer,
+              Func<TimeSpan> waitTime,
+              RGBColor? color,
+              CancellationToken cancellationToken,
+              double x,
+              double y);
+  }
 }

@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace HueLightDJ.Effects
 {
   public interface IHueGroupEffect
-		  {
-					Task Start(IEnumerable<IEnumerable<EntertainmentLight>> lights,
-                              Func<TimeSpan> waitTime,
-                              RGBColor? color,
-                              IteratorEffectMode iteratorMode,
-                              IteratorEffectMode secondaryIteratorMode,
-                              CancellationToken cancellationToken);
-		  }
+  {
+    Task Start(IEnumerable<IEnumerable<EntertainmentLight>> lights,
+              Func<TimeSpan> waitTime,
+              RGBColor? color,
+              IteratorEffectMode iteratorMode,
+              IteratorEffectMode secondaryIteratorMode,
+              CancellationToken cancellationToken);
+  }
 }

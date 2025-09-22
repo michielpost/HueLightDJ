@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using HueLightDJ.Effects.Base;
 using HueApi.ColorConverters;
 using HueApi.Entertainment.Models;
+using HueLightDJ.Effects.Base;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HueLightDJ.Effects.Layers
 {
@@ -23,7 +21,8 @@ namespace HueLightDJ.Effects.Layers
 
     public async Task Start(EntertainmentLayer layer, Func<TimeSpan> waitTime, RGBColor? color, CancellationToken cancellationToken)
     {
-      cancellationToken.Register(() => {
+      cancellationToken.Register(() =>
+      {
         _cts.Cancel();
       });
 

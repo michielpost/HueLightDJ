@@ -58,7 +58,7 @@
                     }
                 </TemplateColumn>
 
-                <TemplateColumn Title="Owner">
+                <TemplateColumn Title="More">
                     @if (context.ExtensionData.Any())
                     {
                         <FluentButton @onclick="@(() => OpenMorePanel(context))">
@@ -78,23 +78,26 @@ else
 }
 
 @code {
-    [Parameter]
-    public HueEntertainmentPro.Shared.Models.Bridge? Bridge { get; set; }
+	[Parameter]
+	public HueEntertainmentPro.Shared.Models.Bridge? Bridge { get; set; }
 
-    [Parameter]
-    public required string Rtype { get; set; }
+	[Parameter]
+	public required string Rtype { get; set; }
 
 
-    private List<HueResource>? HueResources = null;
+	private List<HueResource>? HueResources = null;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        if (Bridge != null)
-        {
-            var localHueApi = ResourceExplorerService.GetHueClient(Bridge);
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Bridge != null)
+		{
+			Console.WriteLine("Rtype: " + Rtype);
+			var localHueApi = ResourceExplorerService.GetHueClient(Bridge);
 
             if (Rtype == "all")
             {
+				Console.WriteLine("yes: " + Rtype);
+
                 var resources = await localHueApi.GetResourcesAsync();
                 HueResources = resources.Data;
             }
